@@ -35,7 +35,7 @@
       console.log("Ayaaaaa");
       user = $("#Username").val();
       pass = $("#Password").val();
-      $.post("http://localhost:2018/userLogin", {User:user, Pass:pass}, function(result){
+      $.post("/userLogin", {User:user, Pass:pass}, function(result){
         console.log("Ayoooo", result["success"]);
         if(result["success"]){
           $("#res").html("I will redirect you to the feeder list");

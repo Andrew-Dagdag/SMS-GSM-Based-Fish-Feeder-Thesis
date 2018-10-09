@@ -17,13 +17,13 @@
   </div>
   <script>
   $(document).ready(function(){
-    $.post("http://localhost:2018/getUserInfo", function(result){
+    $.post("/getUserInfo", function(result){
       // console.log("result is",result["user"]);
       if(result["user"] === undefined){
         window.location.href = "/";
       }
       $("#user").html(result["user"]);
-      $.post("http://localhost:2018/getFieldUnits", {uid:result["uid"]},function(res){
+      $.post("/getFieldUnits", {uid:result["uid"]},function(res){
         console.log(res);
         let insert = ""
         for(let i = 0; i < res.length; i++){
