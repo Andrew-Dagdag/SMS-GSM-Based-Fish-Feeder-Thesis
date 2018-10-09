@@ -15,9 +15,9 @@
 	<nav class="navbar" id="navbar">
 		<ul>
 			<li><a class="active" href="#">Tilapia1</a></li>
-			<li><a href="#">Tilapia2</a></li>
-			<li><a href="#">Bangus1</a></li>
-			<li><a href="#">Carp1</a></li>
+			<li><a href="#">Placeholder1</a></li>
+			<li><a href="#">Placeholder2</a></li>
+			<li><a href="#">Placeholder3</a></li>
 		</ul>
 	</nav>
 	<div class="contentBox container">
@@ -72,7 +72,7 @@
 				</div>
 				<div class="schedForm col-12">
 					<h4>Feed Amount</h4>
-					<input type="number" name="feedAmt" id="feedAmt"> g
+					<input type="number" name="feedAmt" id="feedAmt"> grams
 				</div>
 				<button type="button" class="col-12" id="changeSettings">Save Changes</button>
 			</form>
@@ -81,10 +81,17 @@
 	<script>
 	$(document).ready(function(){
 		var currentFID;
+		$.fn.logout = function(){
+			$.post("/logout", function(result){
+				currentFID = null;
+				window.location.href = "/";
+			});
+		};
+
 		$.fn.changeFeeder = function(fid){
-			console.log("Hey u wanted to change feeder views?",fid);
+			// console.log("Hey u wanted to change feeder views?",fid);
 			$.post("/getFieldUnit", {fid:fid}, function(result){
-				console.log(result);
+				// console.log(result);
 				currentFID = fid;
 				$("#fieldLabel").html(result[0].label);
 				$("#fieldNumber").html(result[0].phoneno);
@@ -102,7 +109,7 @@
 
 		$("#changeSettings").click(function(event){
 			event.preventDefault();
-			console.log("hellooo");
+			// console.log("hellooo");
 			let start = $("#startTime").val();
 			let end = $("#endTime").val();
 			let interval = $("#interval").val();
@@ -113,7 +120,7 @@
 				console.log("Error");
 			}else{
 				$.post("/updateSched", {fullSched: fullSched, amount:feedAmt, fid: currentFID}, function(result){
-					console.log(result);
+					alert(result.message.replace("(", ""));
 				});
 			}
 		});
@@ -128,11 +135,13 @@
 				currentFID = res[0].fid;
         let insert = "<ul>";
         for(let i = 0; i < res.length; i++){
-					insert += "<li><a class='active' href='#' onClick='$(this).changeFeeder("
+					insert += "<li><a href='#' onClick='$(this).changeFeeder("
 									+ res[i].fid +")'>"
 									+ res[i].label
 									+ "</a></li>";
 				}
+				insert += "<li><a href='#' onClick='$(this).logout()'>Logout</a></li>"
+								+ "<li><a href='/addFieldUnit'>Add Field Unit</a></li>";
 				insert += "</ul>";
 				$("#navbar").html(insert);
 				$("#fieldLabel").html(res[0].label);

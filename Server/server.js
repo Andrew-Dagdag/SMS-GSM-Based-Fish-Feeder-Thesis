@@ -10,7 +10,6 @@ let con         = mysql.createConnection({
                   })
 let sha256      = require("sha256")
 let userdata = {}
-let feederdata = {}
 
 app.use(express.static(__dirname + "/html"));
 app.use(express.static(__dirname + "/css"));
@@ -27,16 +26,25 @@ app.get("/FishFeedIndex", (request, response) => {
   response.sendFile('units.html', {"root": "html/"})
 });
 
+app.get("/addFieldUnit", (request, response) => {
+  response.sendFile('addUnit.html', {"root": "html/"})
+});
+
 /*********************
 **AJAX POST REQUESTS**
 *********************/
+
+app.post('/logout', (request, response) => {
+  userdata = {}
+  response.send("Success")
+});
 
 app.post('/updateSched', (request, response) => {
   let fid = request.body.fid
   let sched = request.body.fullSched
   let amount = request.body.amount
   let sql = "UPDATE `schedule` SET `amount`="+amount+", `sched`='"+sched+"' WHERE `schedule`.`fid`="+fid
-  console.log(sql)
+  // console.log(sql)
   con.query(sql, function(err, result){
     if(err){
       console.log(err)
@@ -74,8 +82,7 @@ app.post('/getFieldUnits', (request, response) => {
     if(err){
       // console.log(err)
     }
-    feederdata = result
-    response.json(feederdata)
+    response.json(result)
   })
 });
 
