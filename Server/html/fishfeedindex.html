@@ -8,8 +8,8 @@
 </head>
 <body>
   <h1>Welcome, <span id="user"></span>!</h1>
-  <div class="container">
-    <div class="row" id="stuff">
+  <div class="container" id="feeders">
+    <div class="row">
       <div class="col-sm">
         <h1 id="stuff">Stuff in ittt</h1>
       </div>
@@ -27,13 +27,20 @@
         console.log(res);
         let insert = ""
         for(let i = 0; i < res.length; i++){
+          if(i%2 == 0){
+            insert += "<div class='row'>"
+          }
           insert += "<div class='col-sm'>feeder load: " + res[i].feederload
-                  + "<br/>fid: " + res[i].fid
-                  + "<br/>label: " + res[i].label
-                  + "<br/>phone number: " + res[i].phoneno
-                  + "<br/>species: " + res[i].species
+                    + "<br/>fid: " + res[i].fid
+                    + "<br/>label: " + res[i].label
+                    + "<br/>phone number: " + res[i].phoneno
+                    + "<br/>species: " + res[i].species
                   + "</div>"
+          if(i%2 == 1){
+            insert += "</div>"
+          }
         }
+        console.log(insert);
         $("#stuff").html(insert);
       });
     });
