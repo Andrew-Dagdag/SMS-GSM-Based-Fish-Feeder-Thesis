@@ -41,7 +41,7 @@ app.post('/getFieldUnits', (request, response) => {
       }
       // console.log(result)
       feederdata = result
-      response.json(result)
+      response.json(feederdata)
     })
   })
 });
