@@ -1,81 +1,153 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-  		<meta charset="UTF-8">
-  		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-  		<link rel="stylesheet" type="text/css" href="../css/style.css">
-  		<title>Unit 1</title>
-	</head>
-	<body>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta charset="UTF-8">
+	
+	<link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="stylesheet" href="bootstrap/dist/css/bootstrap.css"/>
+  <script src="bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="jquery/dist/jquery.min.js"></script>
+	<title>Unit 1</title>
+</head>
+<body>
+	<h2 id="username">Welcome, <span id="user">[USER]</span></h2>
+	<nav class="navbar" id="navbar">
+		<ul>
+			<li><a class="active" href="#">Tilapia1</a></li>
+			<li><a href="#">Tilapia2</a></li>
+			<li><a href="#">Bangus1</a></li>
+			<li><a href="#">Carp1</a></li>
+		</ul>
+	</nav>
+	<div class="contentBox container">
+		<h2>Statistics</h2>
+		<hr>
+		<div id="mainContainer">
 
-		<h2 id="username">Welcome, [USER]</h2>
-
-		<nav class="navbar" id="navbar">
-			<ul>
-				<li><a class="active" href="#">Tilapia1</a></li>
-				<li><a href="#">Tilapia2</a></li>
-				<li><a href="#">Bangus1</a></li>
-				<li><a href="#">Carp1</a></li>
-			</ul>
-		</nav>
-
-		<div class="contentBox container">
-			<h2>Statistics</h2>
-			<hr>
-			<div class="row" id="statsContent">
-				<div class="col-4" id="unitDetails">
-					<table>
-						<tr>
-							<th>Field Unit Label</th>
-							<td>Tilapia1</td>
-						</tr>
-						<tr>
-							<th>Field Unit Number</th>
-							<td>+639xxxxxxxxx</td>
-						</tr>
-						<tr>
-							<th>Species</th>
-							<td>Tilapia</td>
-						</tr>
-						<tr>
-							<th>Feeder Load</th>
-							<td>1kg / 1.5kg</td>
-						</tr>
-					</table>
-				</div>
-				<div id="graph" class="col-7">
-					line graph here
-				</div>
+		</div>
+		<div class="row" id="statsContent">
+			<div class="col-4" id="unitDetails">
+				<table>
+					<tr>
+						<th>Field Unit Label</th>
+						<td id="fieldLabel">Tilapia1</td>
+					</tr>
+					<tr>
+						<th>Field Unit Number</th>
+						<td id="fieldNumber">+639xxxxxxxxx</td>
+					</tr>
+					<tr>
+						<th>Species</th>
+						<td id="fieldSpecies">aaa</td>
+					</tr>
+					<tr>
+						<th>Feeder Load</th>
+						<td id="fieldLoad">1kg / 1.5kg</td>
+					</tr>
+				</table>
+			</div>
+			<div class="col-7" id="graph">
+				line graph here
 			</div>
 		</div>
-
-		<div class="contentBox container">
-			<h2>Options</h2>
-			<hr>
-			<div id="optionsContent">
-				<form action="#" class="row">
-					<h3 class="col-12">Schedule</h3>
-					<div class="schedForm col-4">
-						<h4>Start Time</h4>
-						<input type="time" name="startTime">
-					</div>
-					<div class="schedForm col-4">
-						<h4>Interval</h4>
-						<input type="number" name="intervalHr" min="0"> hr/s
-					</div>
-					<div class="schedForm col-4">
-						<h4>End Time</h4>
-						<input type="time" name="endTime">
-					</div>
-					<div class="schedForm col-12">
-						<h4>Feed Amount</h4>
-						<input type="number" name="feedAmt"> kg
-					</div>
-					<input type="submit" value="Save Changes" class="col-12">
-				</form>
-			</div>
+	</div>
+	<div class="contentBox container">
+		<h2>Options</h2>
+		<hr>
+		<div id="optionsContent">
+			<form action="#" class="row">
+				<h3 class="col-12">Schedule</h3>
+				<div class="schedForm col-4">
+					<h4>Start Time</h4>
+					<input type="time" name="startTime" id="startTime"/>
+				</div>
+				<div class="schedForm col-4">
+					<h4>Interval</h4>
+					<input type="number" name="intervalHr" min="0" max="23" step="1" id="interval"> hr/s
+				</div>
+				<div class="schedForm col-4">
+					<h4>End Time</h4>
+					<input type="time" name="endTime" id="endTime">
+				</div>
+				<div class="schedForm col-12">
+					<h4>Feed Amount</h4>
+					<input type="number" name="feedAmt" id="feedAmt"> g
+				</div>
+				<button type="button" class="col-12" id="changeSettings">Save Changes</button>
+			</form>
 		</div>
+	</div>
+	<script>
+	$(document).ready(function(){
+		var currentFID;
+		$.fn.changeFeeder = function(fid){
+			console.log("Hey u wanted to change feeder views?",fid);
+			$.post("/getFieldUnit", {fid:fid}, function(result){
+				console.log(result);
+				currentFID = fid;
+				$("#fieldLabel").html(result[0].label);
+				$("#fieldNumber").html(result[0].phoneno);
+				$("#fieldSpecies").html(result[0].species);
+				$("#fieldLoad").html(String(result[0].feederload) + " grams");
+			});
+			$.post("/getSched", {fid:fid}, function(result){
+				let sched = result[0].sched.split(",");
+				$("#startTime").val(sched[0]);
+				$("#interval").val(sched[1]);
+				$("#endTime").val(sched[2]);
+				$("#feedAmt").val(result[0].amount);
+			});
+		};
 
-	</body>
+		$("#changeSettings").click(function(event){
+			event.preventDefault();
+			console.log("hellooo");
+			let start = $("#startTime").val();
+			let end = $("#endTime").val();
+			let interval = $("#interval").val();
+			let fullSched = start + "," + interval + "," + end;
+			let feedAmt = $("#feedAmt").val();
+			console.log(fullSched, feedAmt);
+			if(start > end || start == "" || end == "" || interval == "" || feedAmt == 0){
+				console.log("Error");
+			}else{
+				$.post("/updateSched", {fullSched: fullSched, amount:feedAmt, fid: currentFID}, function(result){
+					console.log(result);
+				});
+			}
+		});
+
+		$.post("/getUserInfo", function(result){
+      // console.log("result is",result["user"]);
+      if(result["user"] === undefined){
+        window.location.href = "/";
+      }
+			$("#user").html(result["user"]);
+      $.post("/getFieldUnits", {uid:result["uid"]},function(res){
+				currentFID = res[0].fid;
+        let insert = "<ul>";
+        for(let i = 0; i < res.length; i++){
+					insert += "<li><a class='active' href='#' onClick='$(this).changeFeeder("
+									+ res[i].fid +")'>"
+									+ res[i].label
+									+ "</a></li>";
+				}
+				insert += "</ul>";
+				$("#navbar").html(insert);
+				$("#fieldLabel").html(res[0].label);
+				$("#fieldNumber").html(res[0].phoneno);
+				$("#fieldSpecies").html(res[0].species);
+				$("#fieldLoad").html(String(res[0].feederload) + " grams");
+				$.post("/getSched", {fid:res[0].fid}, function(response){
+					let sched = response[0].sched.split(",");
+					$("#startTime").val(sched[0]);
+					$("#interval").val(sched[1]);
+					$("#endTime").val(sched[2]);
+					$("#feedAmt").val(response[0].amount);
+				});
+			});
+    });
+	});</script>
+</body>
 </html>
