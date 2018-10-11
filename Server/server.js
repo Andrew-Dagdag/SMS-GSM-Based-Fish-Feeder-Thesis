@@ -10,6 +10,7 @@ let con         = mysql.createConnection({
                   })
 let sha256      = require("sha256")
 let userdata = {}
+let currentFID = null
 
 app.use(express.static(__dirname + "/html"));
 app.use(express.static(__dirname + "/css"));
@@ -34,8 +35,27 @@ app.get("/addFieldUnit", (request, response) => {
 **AJAX POST REQUESTS**
 *********************/
 
+app.post('/addUnit', (request, response) => {
+  let uid = request.body.uid
+  let label = request.body.label
+  let phoneno = request.body.phoneno
+  let species = request.body.species
+  let feederload = request.body.feederload
+  let sql = "INSERT INTO `units` "
+          + "(`fid`, `uid`, `label`, `phoneno`, `species`, `feederload`) "
+          + "VALUES (NULL, '"+uid+"', '"+label+"', '"+phoneno+"', '"+species+"', '"+feederload+"')";
+  console.log(sql)
+  con.query(sql, function(err, result){
+    if(err){
+      console.log(err)
+    }
+    response.json(result)
+  })
+});
+
 app.post('/logout', (request, response) => {
   userdata = {}
+  currentFID = null
   response.send("Success")
 });
 
@@ -64,6 +84,15 @@ app.post('/getSched', (request, response) => {
   })
 });
 
+app.post('/setFID', (request, response) => {
+  currentFID = request.body.fid
+  response.send("Success")
+});
+
+app.post('/getFID', (request, response) => {
+  response.json(currentFID)
+});
+
 app.post('/getFieldUnit', (request, response) => {
   let fid = request.body.fid
   let sql = 'SELECT * from `units` WHERE fid='+fid
@@ -71,6 +100,7 @@ app.post('/getFieldUnit', (request, response) => {
     if(err){
       console.log(err)
     }
+    currentFID = result[0].fid
     response.json(result)
   })
 });
@@ -111,6 +141,10 @@ app.post('/userLogin', (request, response) => { //Ajax Request for Login
       userdata["uid"] = result[0].uid
       userdata["user_phone"] = result[0].phoneno
     }
+    sql = "SELECT * FROM `units` WHERE uid="+userdata["uid"]+" LIMIT 1"
+    con.query(sql, function(err, res){
+      currentFID = res[0].fid
+    })
     response.json(data)
   })
 });

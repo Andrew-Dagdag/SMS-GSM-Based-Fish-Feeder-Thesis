@@ -23,9 +23,6 @@
 	<div class="contentBox container">
 		<h2>Statistics</h2>
 		<hr>
-		<div id="mainContainer">
-
-		</div>
 		<div class="row" id="statsContent">
 			<div class="col-4" id="unitDetails">
 				<table>
@@ -80,10 +77,8 @@
 	</div>
 	<script>
 	$(document).ready(function(){
-		var currentFID;
 		$.fn.logout = function(){
 			$.post("/logout", function(result){
-				currentFID = null;
 				window.location.href = "/";
 			});
 		};
@@ -92,7 +87,6 @@
 			// console.log("Hey u wanted to change feeder views?",fid);
 			$.post("/getFieldUnit", {fid:fid}, function(result){
 				// console.log(result);
-				currentFID = fid;
 				$("#fieldLabel").html(result[0].label);
 				$("#fieldNumber").html(result[0].phoneno);
 				$("#fieldSpecies").html(result[0].species);
@@ -132,7 +126,6 @@
       }
 			$("#user").html(result["user"]);
       $.post("/getFieldUnits", {uid:result["uid"]},function(res){
-				currentFID = res[0].fid;
         let insert = "<ul>";
         for(let i = 0; i < res.length; i++){
 					insert += "<li><a href='#' onClick='$(this).changeFeeder("
@@ -140,23 +133,15 @@
 									+ res[i].label
 									+ "</a></li>";
 				}
-				insert += "<li><a href='#' onClick='$(this).logout()'>Logout</a></li>"
-								+ "<li><a href='/addFieldUnit'>Add Field Unit</a></li>";
-				insert += "</ul>";
+				insert += "<li><a href='/addFieldUnit'>Add Field Unit</a></li>"
+								+ "<li><a href='#' onClick='$(this).logout()'>Logout</a></li>"
+								+ "</ul>";
 				$("#navbar").html(insert);
-				$("#fieldLabel").html(res[0].label);
-				$("#fieldNumber").html(res[0].phoneno);
-				$("#fieldSpecies").html(res[0].species);
-				$("#fieldLoad").html(String(res[0].feederload) + " grams");
-				$.post("/getSched", {fid:res[0].fid}, function(response){
-					let sched = response[0].sched.split(",");
-					$("#startTime").val(sched[0]);
-					$("#interval").val(sched[1]);
-					$("#endTime").val(sched[2]);
-					$("#feedAmt").val(response[0].amount);
-				});
 			});
-    });
+		});
+		$.post("/getFID", function(result){
+			$(this).changeFeeder(result);
+		});
 	});</script>
 </body>
 </html>

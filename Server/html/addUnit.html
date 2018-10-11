@@ -27,23 +27,26 @@
 
 		</div>
 		<div class="row" id="statsContent">
-			<div class="col-4" id="unitDetails">
+			<div class="col-8" id="unitDetails">
 				<table>
 					<tr>
 						<th>Field Unit Label</th>
-						<td id="fieldLabel"><input type="text" placeholder=""/></td>
+						<td><input id="fieldLabel" type="text" placeholder="Field Unit Label"/></td>
 					</tr>
 					<tr>
-						<th>Field Unit Number</th>
-						<td id="fieldNumber">+639xxxxxxxxx</td>
+						<th>Field Unit Phone Number</th>
+						<td><input id="fieldNumber" type="text" placeholder="Phone Number of Field Unit" value="+639"/></td>
 					</tr>
 					<tr>
 						<th>Species</th>
-						<td id="fieldSpecies">aaa</td>
+						<td><input id="fieldSpecies" type="text" placeholder="Species"/></td>
 					</tr>
 					<tr>
 						<th>Feeder Load</th>
-						<td id="fieldLoad">1kg / 1.5kg</td>
+						<td><input id="fieldLoad" type="number" placeholder="Initial Feeder Weight (grams)"/></td>
+					</tr>
+					<tr>
+						<td colspan="2"><button id="addUnit">Submit</button></td>
 					</tr>
 				</table>
 			</div>
@@ -51,6 +54,60 @@
 	</div>
 	<script>
 	$(document).ready(function(){
+		let uid = null;
+
+		$.fn.logout = function(){
+			$.post("/logout", function(result){
+				window.location.href = "/";
+			});
+		};
+		
+		$.fn.changeFeeder = function(fid){
+			$.post("/setFID", {fid:fid}, function(result){
+				// alert(result);
+				window.location.href = "/FishFeedIndex";
+			});
+		};
+
+		$.post("/getUserInfo", function(result){
+      // console.log("result is",result["user"]);
+      if(result["user"] === undefined){
+				window.location.href = "/";
+      }
+			$("#user").html(result["user"]);
+			uid = result["uid"];
+      $.post("/getFieldUnits", {uid:result["uid"]},function(res){
+				let insert = "<ul>";
+        for(let i = 0; i < res.length; i++){
+					insert += "<li><a href='#' onClick='$(this).changeFeeder("
+									+ res[i].fid +")'>"
+									+ res[i].label
+									+ "</a></li>";
+				}
+				insert += "<li><a href='/addFieldUnit'>Add Field Unit</a></li>"
+								+ "<li><a href='#' onClick='$(this).logout()'>Logout</a></li>"
+								+ "</ul>";
+				$("#navbar").html(insert);
+			});
+		});
+		
+		$("#addUnit").click(function(){
+			console.log("CLICK");
+			let label = $("#fieldLabel").val();
+			let number = $("#fieldNumber").val();
+			let species = $("#fieldSpecies").val();
+			let load = $("#fieldLoad").val();
+			if(label == "" || number == "" || species == "" || load == ""){
+				alert("woi a field is missing");
+			}else{
+				//do query
+				$.post("/addUnit", {uid:uid, label:label, phoneno:number, species:species, feederload:load}, function(response){
+					// console.log(response);
+					alert("Successfully added the new field unit details!");
+					window.location.href = "/FishFeedIndex";
+				});
+			}
+		});
 	});</script>
 </body>
 </html>
