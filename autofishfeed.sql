@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 09, 2018 at 03:00 PM
+-- Generation Time: Oct 17, 2018 at 03:06 PM
 -- Server version: 10.1.29-MariaDB
 -- PHP Version: 7.2.0
 
@@ -45,8 +45,17 @@ CREATE TABLE `sample` (
   `fid` int(5) NOT NULL,
   `size` float NOT NULL,
   `weight` float NOT NULL,
-  `timestamp` time NOT NULL
+  `timestamp` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `sample`
+--
+
+INSERT INTO `sample` (`fid`, `size`, `weight`, `timestamp`) VALUES
+(3, 450, 18, '2018-10-04 00:00:00'),
+(3, 500, 20, '2018-10-11 00:00:00'),
+(3, 520, 21, '2018-10-18 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -56,8 +65,20 @@ CREATE TABLE `sample` (
 
 CREATE TABLE `schedule` (
   `fid` int(5) NOT NULL,
-  `sched` varchar(30) NOT NULL
+  `sched` varchar(30) NOT NULL,
+  `amount` int(9) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `schedule`
+--
+
+INSERT INTO `schedule` (`fid`, `sched`, `amount`) VALUES
+(1, '00:50,4,20:00', 400),
+(2, '08:40,2,23:00', 700),
+(3, '10:30,3,23:00', 1000),
+(4, '04:10,4,23:00', 300),
+(5, '07:20,4,23:00', 800);
 
 -- --------------------------------------------------------
 
@@ -79,8 +100,12 @@ CREATE TABLE `units` (
 --
 
 INSERT INTO `units` (`fid`, `uid`, `label`, `phoneno`, `species`, `feederload`) VALUES
-(1, 1, 'Label 1, Location 1, etc', '+639773518920', 'Tilapia', 9000),
-(2, 1, 'Label 2, Location 2, etc', '+639773518921', 'Koi', 10000);
+(1, 1, 'Dagdag, Unit 1', '+639773518920', 'Tilapia', 9000),
+(2, 1, 'Dagdag, Unit 2', '+639773518921', 'Koi', 10000),
+(3, 2, 'Articuno', '+639773518922', 'Tilapia', 10000),
+(4, 2, 'Zapdos', '+639773518923', 'Bangus', 15000),
+(5, 2, 'Moltres', '+639773518924', 'Lionfish', 20000),
+(6, 2, '4th legendary bird', '+639773518925', 'birdie', 9000);
 
 -- --------------------------------------------------------
 
@@ -100,7 +125,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`uid`, `name`, `password`, `phoneno`) VALUES
-(1, 'Andrew Dagdag', '07123e1f482356c415f684407a3b8723e10b2cbbc0b8fcd6282c49d37c9c1abc', '+639773518918');
+(1, 'Andrew Dagdag', '07123e1f482356c415f684407a3b8723e10b2cbbc0b8fcd6282c49d37c9c1abc', '+639773518918'),
+(2, 'Donn Mathew Cruz', 'd74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1', '+639301316858');
 
 --
 -- Indexes for dumped tables
@@ -122,6 +148,7 @@ ALTER TABLE `sample`
 -- Indexes for table `schedule`
 --
 ALTER TABLE `schedule`
+  ADD UNIQUE KEY `fid_2` (`fid`),
   ADD KEY `fid` (`fid`);
 
 --
@@ -145,13 +172,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `units`
 --
 ALTER TABLE `units`
-  MODIFY `fid` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `fid` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `uid` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `uid` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for dumped tables

@@ -151,40 +151,46 @@ app.post('/userLogin', (request, response) => { //Ajax Request for Login
 
 app.listen(2018, function(){
   console.log("Ayooo I started the server");
-  con.query("SELECT * FROM `schedule`", function(err, result){
+  setInterval(function(){
     let fieldUnits = []
-    for(let i = 0; i < result.length; i++){
-      let sched = result[i].sched.split(",")
-      let fid = result[i].fid
-      let start = sched[0].split(":")
-      let endTime = sched[2].split(":")
-      let interval = sched[1]
-      let intervals = []
-      for(let i = parseInt(start[0]); i < parseInt(endTime[0]); i += parseInt(interval)){
-        // console.log("heh", i)
-        intervals.push(i)
-      }
-      let load = result[i].amount
-      fieldUnits.push({fid:fid, start:start, intervals:intervals, endTime:endTime, load:load})
-    }
-    // console.log(fieldUnits)
-    setInterval(function(){
-      let x = new Date()
-      fieldUnits.forEach(unit => {
-        let currentHour = x.getHours()
-        let currentMinute = x.getMinutes()
-        if(unit.start[1] == currentMinute){
-          if(currentHour == unit.endTime[0]){
-            if(currentMinute > unit.endTime[1]){
-              return
-            }
-          }
-          if(unit.intervals.includes(currentHour)){
-            console.log("I am feeding feeder", unit.fid, "with", unit.load, "grams")
-            //trigger function to text feeder to feed!
+    con.query("SELECT * FROM `schedule`", function(err, result){
+      for(let i = 0; i < result.length; i++){
+        let sched = result[i].sched.split(",")
+        let fid = result[i].fid
+        let start = sched[0].split(":")
+        let endTime = sched[2].split(":")
+        let interval = sched[1]
+        let intervals = []
+        for(let i = parseInt(start[0]); i < parseInt(endTime[0]); i += parseInt(interval)){
+          intervals.push(i)
+        }
+        let load = result[i].amount
+        fieldUnits.push({fid:fid, start:start, intervals:intervals, endTime:endTime, load:load})
+      }    
+    })
+
+    let x = new Date()
+    fieldUnits.forEach(unit => {
+      let currentHour = x.getHours()
+      let currentMinute = x.getMinutes()
+      if(unit.start[1] == currentMinute){
+        if(currentHour == unit.endTime[0]){
+          if(currentMinute > unit.endTime[1]){
+            return
           }
         }
-      });
-    }, 60000)
-  })
+        if(unit.intervals.includes(currentHour)){
+          console.log("I am feeding feeder", unit.fid, "with", unit.load, "grams")
+          //trigger function to text feeder to feed!
+          let feederSQL = "SELECT `phoneno` FROM `units` WHERE `fid`="+unit.fid
+          con.query(feederSQL, function(err, result){
+            let phoneno = result[0].phoneno
+            let load = unit.load
+            let textmessage = "something, feed, load"
+            let textSQL = "INSERT into "
+          })
+        }
+      }
+    });
+  }, 60000)
 });
