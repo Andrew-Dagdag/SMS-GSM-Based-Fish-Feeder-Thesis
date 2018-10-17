@@ -8,6 +8,12 @@ let con         = mysql.createConnection({
                     password:"",
                     database:"autofishfeed"
                   })
+let textCon     = mysql.createConnection({
+                    host:"localhost",
+                    user:"root",
+                    password:"",
+                    database:"smsserver"
+                  })
 let sha256      = require("sha256")
 let userdata = {}
 let currentFID = null
@@ -149,6 +155,10 @@ app.post('/userLogin', (request, response) => { //Ajax Request for Login
   })
 });
 
+const sendTextMessage = (message, number) =>{
+  //set query for text message
+}
+
 app.listen(2018, function(){
   console.log("Ayooo I started the server");
   setInterval(function(){
@@ -185,12 +195,77 @@ app.listen(2018, function(){
           let feederSQL = "SELECT `phoneno` FROM `units` WHERE `fid`="+unit.fid
           con.query(feederSQL, function(err, result){
             let phoneno = result[0].phoneno
-            let load = unit.load
-            let textmessage = "something, feed, load"
-            let textSQL = "INSERT into "
+            let message = "feed"
+            sendTextMessage(message, phoneno)
           })
         }
       }
     });
   }, 60000)
+
+  setInterval(function(){
+    console.log("I'm checking for texts lol")
+    let query = "SELECT * FROM `messagereceive`"
+    textCon.query(query, function(err, result0){
+      console.log(result0)
+      for(let i = 0; i < result0.length; i++){
+        // console.log("With the message:", result0[i].MessageText)
+        let phoneno = result0[i].MessageFrom
+        let checkPhoneSQL = "SELECT * FROM `users` WHERE `users`.`phoneno`='"+phoneno+"'"
+        let text = result0[i].MessageText.replace(/\r\n/g, "").replace(" ", "").split(",")
+        con.query(checkPhoneSQL, function(err, result1){
+          if(result1.length == 0){
+            //text error, not a registered phone number
+            let message = "Error: Not a registered phone number"
+            sendTextMessage(message, phoneno)
+            return
+          }
+
+          let fieldUnitSQL = "SELECT * FROM `units` WHERE `units`.`uid`="+result1[0].uid+" AND `units`.`label`='"+text[0]+"'"
+          con.query(fieldUnitSQL, function(err, result2){
+            if(result2.length == 0){
+              let message = "Error: field unit -> '" + text[0] + "' <- does not exist for user " + result1[0].name
+              sendTextMessage(message, phoneno)
+              //text error, field unit does not exist for user
+              return
+            }
+            let type = text[1].toUpperCase()
+            if(type == "FEED"){
+              //make a text to feed
+              let unitPhoneNo = result2[0].phoneno
+              let message = "feed"
+              sendTextMessage(message, unitPhoneNo)
+              message = "Successfully sent feed signal to field unit: " + text[0]
+              sendTextMessage(message, phoneno)
+            }else if(type == "SCHEDULE"){
+              //make query to get sched, then send as text
+            }else if(type == "AMOUNT"){
+              let amount = result2[0].feederload
+              let message = "User: " + result1[0].name + ", Field Unit: " + text[0] + ", Feed Left (estimate): " + amount + "g"
+              sendTextMessage(message, phoneno)
+              //make a text to return amount of feed left
+              //e.g. "User: name, Field Unit: label, Feed Left (estimate): XXXX g"
+            }else if(type == "SPECIES"){
+              let species = result2[0].species
+              let message = "User: " + result1[0].name + ", Field Unit: " + text[0] + ", Species: " + species
+              sendTextMessage(message, phoneno)
+              //make a text to return species
+              //e.g. "User: name, Field Unit: label, Species: species"
+            }else if(type == "RENAME"){
+              let renameType = text[2].toUpperCase()
+              if(renameType == "LABEL"){
+                //make a query to update label to new label
+                let labelQuery = "UPDATE `units` SET `label`='"+text[3]+"' WHERE `units`.`fid`="+result2[0].fid
+                con.query(labelQuery, function(err, res){ if(err) throw err })
+              }else if(renameType == "SPECIES"){
+                let speciesQuery = "UPDATE `units` SET `species`='"+text[3]+"' WHERE `units`.`fid`="+result2[0].fid
+                con.query(speciesQuery, function(err, res){ if(err) throw err })
+                //make a query to update species to new species
+              }
+            }
+          })
+        })
+      }
+    })
+  }, 20000)
 });
