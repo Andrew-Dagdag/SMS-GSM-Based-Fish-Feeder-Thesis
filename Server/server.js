@@ -41,6 +41,26 @@ app.get("/addFieldUnit", (request, response) => {
 **AJAX POST REQUESTS**
 *********************/
 
+app.post('/getSampleStats', (request, response) => {
+  let sql = "SELECT * FROM `sample` WHERE `fid`="+currentFID+" ORDER BY `sample`.`timestamp` ASC"
+  con.query(sql, function(err, result){
+    if (err){
+      console.log(err)
+    }
+    response.json(result)    
+  })
+});
+
+app.post('/getFeedHist', (request, response) => {
+  let sql = "SELECT * FROM `feedhistory` WHERE `fid`="+currentFID+" ORDER BY `feedhistory`.`timestamp` ASC"
+  con.query(sql, function(err, result){
+    if(err){
+      console.log(err)
+    }
+    response.json(result)
+  }) 
+});
+
 app.post('/addUnit', (request, response) => {
   let uid = request.body.uid
   let label = request.body.label
@@ -66,7 +86,7 @@ app.post('/logout', (request, response) => {
 });
 
 app.post('/updateSched', (request, response) => {
-  let fid = request.body.fid
+  let fid = currentFID
   let sched = request.body.fullSched
   let amount = request.body.amount
   let sql = "UPDATE `schedule` SET `amount`="+amount+", `sched`='"+sched+"' WHERE `schedule`.`fid`="+fid
@@ -221,7 +241,7 @@ app.listen(2018, function(){
         let phoneno = result0[i].MessageFrom
         let checkPhoneSQL = "SELECT * FROM `users` WHERE `users`.`phoneno`='"+phoneno+"'"
         let textID = result0[i].Id
-        let text = result0[i].MessageText.replace(/\r\n/g, "").replace(" ", "").split(",")
+        let text = result0[i].MessageText.replace(/\r\n/g, "").replace(/ /g,"").split(",")
         console.log(text)
         let deleteMessage = "DELETE FROM `messagereceive` WHERE `messagereceive`.`Id` = "+textID
         textCon.query(deleteMessage, function(err, res){ if(err) throw err})
@@ -299,7 +319,7 @@ app.listen(2018, function(){
                 con.query(speciesQuery, function(err, res){ if(err) throw err })
                 //make a query to update species to new species
               }
-            }else if(type == "SHOW DATA"){
+            }else if(type == "SHOWDATA"){
               let amount = result2[0].feederload
               let species = result2[0].species
               let getSched = "SELECT sched FROM `schedule` WHERE `schedule`.`fid`="+result2[0].fid
@@ -312,6 +332,16 @@ app.listen(2018, function(){
                 message += schedMessage
                 sendTextMessage(message, phoneno)
               })
+            }else if(type == "FISHSAMPLE"){
+            // 2018-10-31 00:00:00
+              let size = text[2]
+              let weight = text[3]
+              let fid = result2[0].fid
+              let timestamp = result0[i].SendTime
+              let addSampleQuery = "INSERT INTO `sample` (`fid`, `size`, `weight`, `timestamp`) VALUES ('"
+                              + fid + "', '" + size + "', '" + weight + "', '" + timestamp + "')"
+              console.log(addSampleQuery)
+              // con.query(addSampleQuery, function(err, res){ if(err) throw err})
             }
           })
         })

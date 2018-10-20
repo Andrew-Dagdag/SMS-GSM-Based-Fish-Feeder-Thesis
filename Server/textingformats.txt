@@ -15,6 +15,9 @@ e.g. "species, Zapdos"
 ->Show data
 e.g. "show data, Moltres"
 ->field units
+e.g. "field units"
+->fish sample
+e.g. "fish sample, Articuno, size, weight"
 ->Rename
 --->,Label,[name]
 e.g. "rename, U1, label, new label"

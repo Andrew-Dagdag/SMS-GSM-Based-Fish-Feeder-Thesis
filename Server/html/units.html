@@ -48,8 +48,9 @@
 					</tr>
 				</table>
 			</div>
-			<div class="col-7" id="graph">
-				line graph here
+			<div class="col-4" id="feedhist">
+			</div>
+			<div class="col-4" id="sample">
 			</div>
 		</div>
 	</div>
@@ -103,6 +104,29 @@
 				$("#endTime").val(sched[2]);
 				$("#feedAmt").val(result[0].amount);
 			});
+
+			$.post("/getSampleStats", function(result){
+				let insert = "<table><tr><th>size</th><th>weight</th><th>timestamp</th></tr>";
+				for(let i = 0; i < result.length; i++){
+					insert	+= 	"<tr>"
+							+	"<td>" + result[i].size + "</td>"
+							+	"<td>" + result[i].weight + "</td>"
+							+	"<td>" + result[i].timestamp + "</td>"
+				}
+				insert += "</table>";
+				$("#sample").html(insert);
+			});
+
+			$.post("/getFeedHist", function(result){
+				let insert = "<table><tr><th>amount (g)</th><th>timestamp</th></tr>";
+				for(let i = 0; i < result.length; i++){
+					insert	+= 	"<tr>"
+							+	"<td>" + result[i].feedamt + "</td>"
+							+	"<td>" + result[i].timestamp + "</td>"
+				}
+				insert += "</table>";
+				$("#feedhist").html(insert);
+			});
 		};
 
 		$("#changeSettings").click(function(event){
@@ -117,29 +141,30 @@
 			if(start > end || start == "" || end == "" || interval == "" || feedAmt == 0){
 				console.log("Error");
 			}else{
-				$.post("/updateSched", {fullSched: fullSched, amount:feedAmt, fid: currentFID}, function(result){
+				$.post("/updateSched", {fullSched: fullSched, amount:feedAmt}, function(result){
 					alert(result.message.replace("(", ""));
 				});
 			}
 		});
 
 		$.post("/getUserInfo", function(result){
-      // console.log("result is",result["user"]);
-      if(result["user"] === undefined){
-        window.location.href = "/";
-      }
+			// console.log("result is",result["user"]);
+			if(result["user"] === undefined){
+				window.location.href = "/";
+			}
 			$("#user").html(result["user"]);
-      $.post("/getFieldUnits", {uid:result["uid"]},function(res){
-        let insert = "";
-        for(let i = 0; i < res.length; i++){
+			$.post("/getFieldUnits", {uid:result["uid"]},function(res){
+				let insert = "";
+				for(let i = 0; i < res.length; i++){
 					insert += "<li class='nav-item'><a href='#' onClick='$(this).changeFeeder("
-									+ res[i].fid +")'>"
-									+ res[i].label
-									+ "</a></li>";
+							+ res[i].fid +")'>"
+							+ res[i].label
+							+ "</a></li>";
 				}
 				$("#fieldUnits").html(insert);
 			});
 		});
+
 		$.post("/getFID", function(result){
 			$(this).changeFeeder(result);
 		});
