@@ -1,20 +1,24 @@
 delimiter => ","
 
 Format: Label, Type, [optional: type args]
-
-[Label]
+new Format: Type, Label, [Optional: type args]
 
 [Type]
 ->Feed
-e.g. "U1, feed"
+e.g. "feed, U1"
 ->Schedule
-e.g. "U2, schedule"
+e.g. "schedule, U2"
 ->Amount (of feed left, query)
-e.g. "Articuno, amount"
+e.g. "amount, Articuno"
 ->Species
-e.g. "Zapdos, species"
+e.g. "species, Zapdos"
+->Show data
+e.g. "show data, Moltres"
+->field units
 ->Rename
 --->,Label,[name]
-e.g. "U1, rename, label, new label"
+e.g. "rename, U1, label, new label"
 --->,Species,[name]
-e.g. "U1, rename, species, new species"
+e.g. "rename, U1, species, new species"
+
+[Label]

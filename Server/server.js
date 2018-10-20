@@ -157,6 +157,14 @@ app.post('/userLogin', (request, response) => { //Ajax Request for Login
 
 const sendTextMessage = (message, number) =>{
   //set query for text message
+  // console.log()
+  // console.log("I'm sending the text '" + message + "' with the number =>" + number)
+  let messageQuery = "INSERT INTO `messagesend` (`Id`, `MessageFrom`, `MessageTo`, `MessageText`) VALUES (NULL, NULL, '"+number+"', '"+message+"')"
+  // console.log(messageQuery)
+  textCon.query(messageQuery, function(err, res){
+    if(err)
+      throw err
+  })
 }
 
 app.listen(2018, function(){
@@ -196,7 +204,7 @@ app.listen(2018, function(){
           con.query(feederSQL, function(err, result){
             let phoneno = result[0].phoneno
             let message = "feed"
-            sendTextMessage(message, phoneno)
+            // sendTextMessage(message, phoneno)
           })
         }
       }
@@ -207,12 +215,16 @@ app.listen(2018, function(){
     console.log("I'm checking for texts lol")
     let query = "SELECT * FROM `messagereceive`"
     textCon.query(query, function(err, result0){
-      console.log(result0)
+      // console.log(result0)
       for(let i = 0; i < result0.length; i++){
         // console.log("With the message:", result0[i].MessageText)
         let phoneno = result0[i].MessageFrom
         let checkPhoneSQL = "SELECT * FROM `users` WHERE `users`.`phoneno`='"+phoneno+"'"
+        let textID = result0[i].Id
         let text = result0[i].MessageText.replace(/\r\n/g, "").replace(" ", "").split(",")
+        console.log(text)
+        let deleteMessage = "DELETE FROM `messagereceive` WHERE `messagereceive`.`Id` = "+textID
+        textCon.query(deleteMessage, function(err, res){ if(err) throw err})
         con.query(checkPhoneSQL, function(err, result1){
           if(result1.length == 0){
             //text error, not a registered phone number
@@ -221,33 +233,58 @@ app.listen(2018, function(){
             return
           }
 
-          let fieldUnitSQL = "SELECT * FROM `units` WHERE `units`.`uid`="+result1[0].uid+" AND `units`.`label`='"+text[0]+"'"
+          if(text[0].toUpperCase() == "FIELDUNITS"){
+            let fieldQuery = "SELECT label FROM `units` WHERE `units`.`uid`="+result1[0].uid
+            con.query(fieldQuery, function(err, res){
+              if(res.length == 0){
+                let message = "No field units for registered user: "+result1[0].name
+                sendTextMessage(message, phoneno)
+                return
+              }
+              let message = "Field Units Count: " + res.length
+              for(let i = 0; i < res.length; i++){
+                message += "\r\n->" + res[i].label
+              }
+              sendTextMessage(message, phoneno)
+            })
+            return
+          }
+
+          let fieldUnitSQL = "SELECT * FROM `units` WHERE `units`.`uid`="+result1[0].uid+" AND `units`.`label`='"+text[1]+"'"
           con.query(fieldUnitSQL, function(err, result2){
             if(result2.length == 0){
-              let message = "Error: field unit -> '" + text[0] + "' <- does not exist for user " + result1[0].name
+              let message = "Error: field unit '" + text[1] + "' does not exist for user " + result1[0].name
               sendTextMessage(message, phoneno)
               //text error, field unit does not exist for user
               return
             }
-            let type = text[1].toUpperCase()
+            let type = text[0].toUpperCase()
             if(type == "FEED"){
               //make a text to feed
               let unitPhoneNo = result2[0].phoneno
               let message = "feed"
               sendTextMessage(message, unitPhoneNo)
-              message = "Successfully sent feed signal to field unit: " + text[0]
+              message = "Successfully sent feed signal to field unit: " + text[1]
               sendTextMessage(message, phoneno)
             }else if(type == "SCHEDULE"){
               //make query to get sched, then send as text
+              let getSched = "SELECT sched FROM `schedule` WHERE `schedule`.`fid`="+result2[0].fid
+              con.query(getSched, function(err, res){
+                if(err)
+                  throw err
+                let sched = res[0].sched.split(",")
+                let message = "Schedule for unit: " + text[1] + " is START TIME: " + sched[0] + ", END TIME: " + sched[2] + ", INTERVAL: Every " + sched[1] + " hours"
+                sendTextMessage(message, phoneno)
+              })
             }else if(type == "AMOUNT"){
               let amount = result2[0].feederload
-              let message = "User: " + result1[0].name + ", Field Unit: " + text[0] + ", Feed Left (estimate): " + amount + "g"
+              let message = "User: " + result1[0].name + ", Field Unit: " + text[1] + ", Feed Left (estimate): " + amount + "g"
               sendTextMessage(message, phoneno)
               //make a text to return amount of feed left
               //e.g. "User: name, Field Unit: label, Feed Left (estimate): XXXX g"
             }else if(type == "SPECIES"){
               let species = result2[0].species
-              let message = "User: " + result1[0].name + ", Field Unit: " + text[0] + ", Species: " + species
+              let message = "User: " + result1[0].name + ", Field Unit: " + text[1] + ", Species: " + species
               sendTextMessage(message, phoneno)
               //make a text to return species
               //e.g. "User: name, Field Unit: label, Species: species"
@@ -262,6 +299,19 @@ app.listen(2018, function(){
                 con.query(speciesQuery, function(err, res){ if(err) throw err })
                 //make a query to update species to new species
               }
+            }else if(type == "SHOW DATA"){
+              let amount = result2[0].feederload
+              let species = result2[0].species
+              let getSched = "SELECT sched FROM `schedule` WHERE `schedule`.`fid`="+result2[0].fid
+              con.query(getSched, function(err, res){
+                let sched = res[0].sched.split(",")
+                let schedMessage = "Schedule for unit: " + text[1] + " is START TIME: " + sched[0] + ", END TIME: " + sched[2] + ", INTERVAL: Every " + sched[1] + " hours"
+                let message = "Field Unit: " + text[1] + "\r\n"
+                message += "Feed Amount (Estimate): " + amount + " g\r\n"
+                message += "Species: " + species + "\r\n"
+                message += schedMessage
+                sendTextMessage(message, phoneno)
+              })
             }
           })
         })
