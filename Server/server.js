@@ -223,7 +223,7 @@ app.listen(2018, function(){
           let feederSQL = "SELECT `phoneno` FROM `units` WHERE `fid`="+unit.fid
           con.query(feederSQL, function(err, result){
             let phoneno = result[0].phoneno
-            let message = "feed"
+            let message = "feed," + unit.load
             // sendTextMessage(message, phoneno)
           })
         }
@@ -282,7 +282,7 @@ app.listen(2018, function(){
             if(type == "FEED"){
               //make a text to feed
               let unitPhoneNo = result2[0].phoneno
-              let message = "feed"
+              let message = "feed," + text[2]
               sendTextMessage(message, unitPhoneNo)
               message = "Successfully sent feed signal to field unit: " + text[1]
               sendTextMessage(message, phoneno)

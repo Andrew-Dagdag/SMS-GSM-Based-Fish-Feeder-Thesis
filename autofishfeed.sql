@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 17, 2018 at 03:06 PM
+-- Generation Time: Oct 22, 2018 at 12:44 PM
 -- Server version: 10.1.29-MariaDB
 -- PHP Version: 7.2.0
 
@@ -30,7 +30,6 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `feedhistory` (
   `fid` int(5) NOT NULL,
-  `feedname` varchar(20) NOT NULL,
   `feedamt` float NOT NULL,
   `timestamp` time NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -100,12 +99,12 @@ CREATE TABLE `units` (
 --
 
 INSERT INTO `units` (`fid`, `uid`, `label`, `phoneno`, `species`, `feederload`) VALUES
-(1, 1, 'Dagdag, Unit 1', '+639773518920', 'Tilapia', 9000),
-(2, 1, 'Dagdag, Unit 2', '+639773518921', 'Koi', 10000),
-(3, 2, 'Articuno', '+639773518922', 'Tilapia', 10000),
-(4, 2, 'Zapdos', '+639773518923', 'Bangus', 15000),
-(5, 2, 'Moltres', '+639773518924', 'Lionfish', 20000),
-(6, 2, '4th legendary bird', '+639773518925', 'birdie', 9000);
+(1, 1, 'Dagdag, Unit 1', '+639486479304', 'Tilapia', 9000),
+(2, 1, 'Dagdag, Unit 2', '+639486479304', 'Koi', 10000),
+(3, 2, 'Articuno', '+639486479304', 'Tilapia', 10000),
+(4, 2, 'Zapdos', '+639486479304', 'Bangus', 15000),
+(5, 2, 'Moltres', '+639486479304', 'Lionfish', 20000),
+(6, 2, '4th legendary bird', '+639486479304', 'birdie', 9000);
 
 -- --------------------------------------------------------
 

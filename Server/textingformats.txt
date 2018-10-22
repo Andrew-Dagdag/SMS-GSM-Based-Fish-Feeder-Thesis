@@ -5,7 +5,7 @@ new Format: Type, Label, [Optional: type args]
 
 [Type]
 ->Feed
-e.g. "feed, U1"
+e.g. "feed, U1, 200"
 ->Schedule
 e.g. "schedule, U2"
 ->Amount (of feed left, query)
