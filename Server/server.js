@@ -70,7 +70,7 @@ app.post('/addUnit', (request, response) => {
   let sql = "INSERT INTO `units` "
           + "(`fid`, `uid`, `label`, `phoneno`, `species`, `feederload`) "
           + "VALUES (NULL, '"+uid+"', '"+label+"', '"+phoneno+"', '"+species+"', '"+feederload+"')";
-  // console.log(sql)
+  console.log(sql)
   con.query(sql, function(err, result){
     if(err){
       console.log(err)
@@ -177,14 +177,14 @@ app.post('/userLogin', (request, response) => { //Ajax Request for Login
 
 const sendTextMessage = (message, number) => {
   //set query for text message
-  // console.log()
-  // console.log("I'm sending the text '" + message + "' with the number =>" + number)
+   console.log()
+   console.log("I'm sending the text '" + message + "' with the number =>" + number)
   let messageQuery = "INSERT INTO `messagesend` (`Id`, `MessageFrom`, `MessageTo`, `MessageText`) VALUES (NULL, NULL, '"+number+"', '"+message+"')"
   // console.log(messageQuery)
-  textCon.query(messageQuery, function(err, res){
-    if(err)
-      throw err
-  })
+  // textCon.query(messageQuery, function(err, res){
+  //   if(err)
+  //     throw err
+  // })
 }
 
 const decrementFeed = (fid, amount) => {
@@ -247,7 +247,7 @@ app.listen(2018, function(){
           con.query(feederSQL, function(err, result){
             let phoneno = result[0].phoneno
             let message = "feed," + unit.load
-            // sendTextMessage(message, phoneno)
+            sendTextMessage(message, phoneno)
           })
         }
       }
@@ -297,6 +297,7 @@ app.listen(2018, function(){
           con.query(fieldUnitSQL, function(err, result2){
             if(result2.length == 0){
               let message = "Error: field unit '" + text[1] + "' does not exist for user " + result1[0].name
+              console.log(message)
               sendTextMessage(message, phoneno)
               //text error, field unit does not exist for user
               return
@@ -304,6 +305,24 @@ app.listen(2018, function(){
             let type = text[0].toUpperCase()
             if(type == "FEED"){
               //make a text to feed
+              console.log()
+              if(text[2] === undefined || isNaN(Number(text[2]))){
+                let message = "No amount specified and/or non-numeric characters, feeding failed"
+                sendTextMessage(message, phoneno)
+                return
+              }else if(Number(text[2])%100 > 0){
+                let message = "Feeder only feeds in 100g increments"
+                sendTextMessage(message, phoneno)
+                return
+              }else if(Number(text[2]) > result2[0].feederload){
+                let message = "Feeder only has " + result2[0].feederload + "g left. Command failed"
+                sendTextMessage(message, phoneno)
+                return
+              }else if(Number(text[2]) < 0){
+                let message = "Cannot feed in negative increments. Command failed"
+                sendTextMessage(message, phoneno)
+                return
+              }
               let unitPhoneNo = result2[0].phoneno
               let message = "feed," + text[2]
               decrementFeed(result2[0].fid, text[2])
@@ -342,6 +361,9 @@ app.listen(2018, function(){
                 let speciesQuery = "UPDATE `units` SET `species`='"+text[3]+"' WHERE `units`.`fid`="+result2[0].fid
                 con.query(speciesQuery, function(err, res){ if(err) throw err })
                 //make a query to update species to new species
+              }else{
+                let message = "Invalid update. Only label or species can be changed. Command failed."
+                sendTextMessage(message, phoneno)
               }
             }else if(type == "SHOWDATA"){
               let amount = result2[0].feederload
@@ -366,6 +388,9 @@ app.listen(2018, function(){
                               + fid + "', '" + size + "', '" + weight + "', '" + timestamp + "')"
               console.log(addSampleQuery)
               // con.query(addSampleQuery, function(err, res){ if(err) throw err})
+            }else{
+              let message = "Command unknown"
+              sendTextMessage(message, phoneno)
             }
           })
         })

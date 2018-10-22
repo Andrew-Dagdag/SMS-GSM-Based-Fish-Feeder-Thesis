@@ -31,7 +31,7 @@
 
 		</div>
 		<div class="row" id="statsContent">
-			<div class="col-8" id="unitDetails">
+			<div class="col-5" id="unitDetails">
 				<table>
 					<tr>
 						<th>Field Unit Label</th>
@@ -54,6 +54,28 @@
 					</tr>
 				</table>
 			</div>
+			<div class="col-6" id="unitOptions">
+				<form action="#" class="row">
+					<h3 class="col-12">Schedule</h3>
+					<div class="schedForm col-4">
+						<h4>Start Time</h4>
+						<input type="time" name="startTime" id="startTime" value="00:00"/>
+					</div>
+					<div class="schedForm col-4">
+						<h4>Interval</h4>
+						<input type="number" name="intervalHr" min="0" max="23" step="1" id="interval" value="0"/> hr/s
+					</div>
+					<div class="schedForm col-4">
+						<h4>End Time</h4>
+						<input type="time" name="endTime" id="endTime" value="23:59"/>
+					</div>
+					<div class="schedForm col-12">
+						<h4>Feed Amount</h4>
+						<input type="number" name="feedAmt" id="feedAmt" value="0"/> grams
+					</div>
+					<button type="button" class="col-12" id="changeSettings">Save Changes</button>
+				</form>
+			</div>
 		</div>
 	</div>
 	<script>
@@ -74,22 +96,22 @@
 		};
 
 		$.post("/getUserInfo", function(result){
-      // console.log("result is",result["user"]);
-      if(result["user"] === undefined){
+			// console.log("result is",result["user"]);
+			if(result["user"] === undefined){
 				window.location.href = "/";
-      }
+			}
 			$("#user").html(result["user"]);
-			uid = result["uid"];
-      $.post("/getFieldUnits", {uid:result["uid"]},function(res){
-        let insert = "";
-        for(let i = 0; i < res.length; i++){
+			$.post("/getFieldUnits", {uid:result["uid"]},function(res){
+				let insert = "";
+				for(let i = 0; i < res.length; i++){
 					insert += "<li class='nav-item'><a href='#' onClick='$(this).changeFeeder("
-									+ res[i].fid +")'>"
-									+ res[i].label
-									+ "</a></li>";
+							+ res[i].fid +")'>"
+							+ res[i].label
+							+ "</a></li>";
 				}
 				$("#fieldUnits").html(insert);
 			});
+			uid = result["uid"];
 		});
 		
 		$("#addUnit").click(function(){
@@ -100,8 +122,11 @@
 			let load = $("#fieldLoad").val();
 			if(label == "" || number == "" || species == "" || load == ""){
 				alert("woi a field is missing");
+			}else if(label.includes(" ")){
+				alert("label contains a space");
 			}else{
 				//do query
+				console.log("Im doing the query")
 				$.post("/addUnit", {uid:uid, label:label, phoneno:number, species:species, feederload:load}, function(response){
 					// console.log(response);
 					alert("Successfully added the new field unit details!");

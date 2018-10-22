@@ -7,7 +7,7 @@ void setup() {
   Serial.begin(9600);
   servo.attach(6);
   servo.write(180);
-  Serial.write("ass");
+  Serial.write("setup complete");
 }
 
 void loop() {

@@ -102,3 +102,10 @@ h3
 {
 	margin: auto;
 }
+
+#unitOptions
+{
+	border: 1px solid black;
+	text-align: center;
+	margin-left: 3%;
+}
