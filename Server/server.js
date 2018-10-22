@@ -191,8 +191,8 @@ app.post('/userLogin', (request, response) => { //Ajax Request for Login
 
 const sendTextMessage = (message, number) => {
   //set query for text message
-   console.log()
-   console.log("I'm sending the text '" + message + "' with the number =>" + number)
+  console.log()
+  console.log("I'm sending the text '" + message + "' with the number =>" + number)
   let messageQuery = "INSERT INTO `messagesend` (`Id`, `MessageFrom`, `MessageTo`, `MessageText`) VALUES (NULL, NULL, '"+number+"', '"+message+"')"
   // console.log(messageQuery)
   // textCon.query(messageQuery, function(err, res){
@@ -201,7 +201,7 @@ const sendTextMessage = (message, number) => {
   // })
 }
 
-const decrementFeed = (fid, amount) => {
+const feedNow = (fid, amount) => {
   let query = "SELECT `feederload` FROM `units` WHERE fid="+fid
   con.query(query, function(err, res){
     let feederload = parseInt(res[0].feederload) - parseInt(amount)
@@ -219,6 +219,16 @@ const decrementFeed = (fid, amount) => {
         let message = label + " has " + feederload + "grams remaining"
         sendTextMessage(message, phoneno)
       })
+    }
+  })
+  let currentTime = new Date().toISOString().slice(0, 19).replace('T', ' ')
+  console.log(currentTime)
+  let feedHist  = "INSERT INTO `feedhistory` "
+                + "(`fid`, `feedamt`, `timestamp`) VALUES ('"
+                + fid + "', '" + amount + "', '" + currentTime + "')"
+  con.query(feedHist, function(err, res){
+    if(err){
+      throw err
     }
   })
 }
@@ -257,7 +267,7 @@ app.listen(2018, function(){
           console.log("I am feeding feeder", unit.fid, "with", unit.load, "grams")
           //trigger function to text feeder to feed!
           let feederSQL = "SELECT `phoneno` FROM `units` WHERE `fid`="+unit.fid
-          decrementFeed(unit.fid, unit.load)
+          feedNow(unit.fid, unit.load)
           con.query(feederSQL, function(err, result){
             let phoneno = result[0].phoneno
             let message = "feed," + unit.load
@@ -319,7 +329,6 @@ app.listen(2018, function(){
             let type = text[0].toUpperCase()
             if(type == "FEED"){
               //make a text to feed
-              console.log()
               if(text[2] === undefined || isNaN(Number(text[2]))){
                 let message = "No amount specified and/or non-numeric characters, feeding failed"
                 sendTextMessage(message, phoneno)
@@ -339,7 +348,7 @@ app.listen(2018, function(){
               }
               let unitPhoneNo = result2[0].phoneno
               let message = "feed," + text[2]
-              decrementFeed(result2[0].fid, text[2])
+              feedNow(result2[0].fid, text[2])
               sendTextMessage(message, unitPhoneNo)
               message = "Successfully sent feed signal to field unit: " + text[1]
               sendTextMessage(message, phoneno)
