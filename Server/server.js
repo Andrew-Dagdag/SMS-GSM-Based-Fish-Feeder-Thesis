@@ -406,7 +406,7 @@ app.listen(2018, function(){
               let size = text[2]
               let weight = text[3]
               let fid = result2[0].fid
-              let timestamp = result0[i].SendTime
+              let timestamp = new Date().toISOString().slice(0, 19).replace('T', ' ')
               let addSampleQuery = "INSERT INTO `sample` (`fid`, `size`, `weight`, `timestamp`) VALUES ('"
                               + fid + "', '" + size + "', '" + weight + "', '" + timestamp + "')"
               console.log(addSampleQuery)
