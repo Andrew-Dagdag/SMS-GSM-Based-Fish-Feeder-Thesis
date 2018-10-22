@@ -59,21 +59,20 @@
 					<h3 class="col-12">Schedule</h3>
 					<div class="schedForm col-4">
 						<h4>Start Time</h4>
-						<input type="time" name="startTime" id="startTime" value="00:00"/>
+						<input type="time" name="startTime" id="startTime" value="00:00" required="required" />
 					</div>
 					<div class="schedForm col-4">
 						<h4>Interval</h4>
-						<input type="number" name="intervalHr" min="0" max="23" step="1" id="interval" value="0"/> hr/s
+						<input type="number" name="intervalHr" min="0" max="23" step="1" id="interval" value="4" required="required" /> hr/s
 					</div>
 					<div class="schedForm col-4">
 						<h4>End Time</h4>
-						<input type="time" name="endTime" id="endTime" value="23:59"/>
+						<input type="time" name="endTime" id="endTime" value="23:59" required="required" />
 					</div>
 					<div class="schedForm col-12">
 						<h4>Feed Amount</h4>
-						<input type="number" name="feedAmt" id="feedAmt" value="0"/> grams
+						<input type="number" name="feedAmt" id="feedAmt" value="100" min="100" required="required" /> grams
 					</div>
-					<button type="button" class="col-12" id="changeSettings">Save Changes</button>
 				</form>
 			</div>
 		</div>
@@ -120,14 +119,19 @@
 			let number = $("#fieldNumber").val();
 			let species = $("#fieldSpecies").val();
 			let load = $("#fieldLoad").val();
+			let startTime= $("#startTime").val();
+			let endTime= $("#endTime").val();
+			let interval= $("#interval").val();
+			let amount= $("#feedAmt").val();
 			if(label == "" || number == "" || species == "" || load == ""){
 				alert("woi a field is missing");
 			}else if(label.includes(" ")){
 				alert("label contains a space");
 			}else{
 				//do query
+				let schedule = startTime + "," + interval + "," + endTime;
 				console.log("Im doing the query")
-				$.post("/addUnit", {uid:uid, label:label, phoneno:number, species:species, feederload:load}, function(response){
+				$.post("/addUnit", {uid:uid, label:label, phoneno:number, species:species, feederload:load, schedule:schedule, amount:amount}, function(response){
 					// console.log(response);
 					alert("Successfully added the new field unit details!");
 					window.location.href = "/FishFeedIndex";

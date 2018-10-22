@@ -77,6 +77,20 @@ app.post('/addUnit', (request, response) => {
     }
     response.json(result)
   })
+
+  con.query("SELECT `fid` FROM `units` ORDER BY `units`.`fid` DESC LIMIT 1", function(err, result){
+    let fid = result[0].fid
+    let amount = request.body.amount
+    let sched = request.body.schedule
+    let schedSQL  = "INSERT INTO `schedule` "
+                  + "(`fid` ,    `sched`    ,     `amount`) VALUES ('"
+                  + fid + "','" + sched + "', '" + amount + "')"
+    con.query(schedSQL, function(err, res){
+      if(err){
+        throw err
+      }
+    })
+  })
 });
 
 app.post('/logout', (request, response) => {
