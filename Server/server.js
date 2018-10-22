@@ -175,7 +175,7 @@ app.post('/userLogin', (request, response) => { //Ajax Request for Login
   })
 });
 
-const sendTextMessage = (message, number) =>{
+const sendTextMessage = (message, number) => {
   //set query for text message
   // console.log()
   // console.log("I'm sending the text '" + message + "' with the number =>" + number)
@@ -184,6 +184,28 @@ const sendTextMessage = (message, number) =>{
   textCon.query(messageQuery, function(err, res){
     if(err)
       throw err
+  })
+}
+
+const decrementFeed = (fid, amount) => {
+  let query = "SELECT `feederload` FROM `units` WHERE fid="+fid
+  con.query(query, function(err, res){
+    let feederload = parseInt(res[0].feederload) - parseInt(amount)
+    let newLoad = "UPDATE `units` SET `feederload` = '"+feederload+"' WHERE `units`.`fid` = "+fid
+    con.query(newLoad, function(err, res){
+      if(err){
+        throw err
+      }
+    })
+    if(feederload <= 300){ //less than 500 grams
+      let sql = "SELECT `users`.`phoneno`, `units`.`label` FROM `units` INNER JOIN `users` ON `users`.`uid`=`units`.`uid` WHERE `units`.`fid`="+fid
+      con.query(sql, function(err, res){
+        let phoneno = res[0].phoneno
+        let label = res[0].label
+        let message = label + " has " + feederload + "grams remaining"
+        sendTextMessage(message, phoneno)
+      })
+    }
   })
 }
 
@@ -221,6 +243,7 @@ app.listen(2018, function(){
           console.log("I am feeding feeder", unit.fid, "with", unit.load, "grams")
           //trigger function to text feeder to feed!
           let feederSQL = "SELECT `phoneno` FROM `units` WHERE `fid`="+unit.fid
+          decrementFeed(unit.fid, unit.load)
           con.query(feederSQL, function(err, result){
             let phoneno = result[0].phoneno
             let message = "feed," + unit.load
@@ -283,6 +306,7 @@ app.listen(2018, function(){
               //make a text to feed
               let unitPhoneNo = result2[0].phoneno
               let message = "feed," + text[2]
+              decrementFeed(result2[0].fid, text[2])
               sendTextMessage(message, unitPhoneNo)
               message = "Successfully sent feed signal to field unit: " + text[1]
               sendTextMessage(message, phoneno)
