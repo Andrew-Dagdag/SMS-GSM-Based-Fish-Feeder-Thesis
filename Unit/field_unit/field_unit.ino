@@ -42,7 +42,15 @@ void loop() {
       buffer.remove(buffer.length() - 2, 2); // remove \r\n at the end
   
       Serial.println("SMS: '" + buffer + "'");
-      sequence();                             // begin firing sequence
+      String command = buffer.substring(0,4);
+      buffer = buffer.substring(5);
+      int amount = buffer.toInt();
+
+      for (amount; amount > 0; amount-100){   
+        sequence();                           // begin firing sequence
+        delay(200);
+      }
+      
       sim900a.print("AT+CMGD=1,4");           // clear inbox so it never gets full
     }else{
       Serial.println("Unauthorized number. Message ignored.\n");
