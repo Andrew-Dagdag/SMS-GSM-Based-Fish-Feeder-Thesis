@@ -4,8 +4,8 @@
 
 SoftwareSerial sim900a(4, 5);
 Servo loadDoor;
-String serverNo = "+639301316858";  // test number
-//String serverNo = "+639486479289";
+//String serverNo = "+639301316858";  // test number
+String serverNo = "+639486479289"; // server number
 unsigned long timer = 0;
 bool loaderOn = false;
 bool compOn = false;
@@ -42,7 +42,15 @@ void loop() {
       buffer.remove(buffer.length() - 2, 2); // remove \r\n at the end
   
       Serial.println("SMS: '" + buffer + "'");
-      sequence();                             // begin firing sequence
+      String command = buffer.substring(0,4);
+      buffer = buffer.substring(5);
+      int amount = buffer.toInt();
+
+      for (amount; amount > 0; amount-100){   
+        sequence();                           // begin firing sequence
+        delay(200);
+      }
+      
       sim900a.print("AT+CMGD=1,4");           // clear inbox so it never gets full
     }else{
       Serial.println("Unauthorized number. Message ignored.\n");
@@ -86,16 +94,6 @@ void prep() {
   Serial.println(" > reloading feeds & filling air tank");
   loaderOn = true;        // set loader flag to true
   compOn = true;          // set compressor flag to true
-  /*Serial.println("    > loader open, compressor on");
-  while (millis() - timer < 25000 && compOn) {
-    loadDoor.write(130);   // open loader
-    digitalWrite(2,LOW);  // turn on compressor for 25s; 60psi
-    if (millis() - timer > 3000 && loaderOn) {  // close loader after [edit]s
-      loadDoor.write(0);  // close loader
-      loaderOn = false;   // set loader flag to false
-      Serial.println("    > cannon loaded. loader closed");
-    }
-  }*/
 
   loadDoor.write(130);
   digitalWrite(2,LOW);  // turn on compressor for 25s; 60psi
