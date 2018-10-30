@@ -4,8 +4,8 @@
 
 SoftwareSerial sim900a(4, 5);
 Servo loadDoor;
-//String serverNo = "+639301316858";  // test number
-String serverNo = "+639486479289"; // server number
+String serverNo = "+639301316858";  // test number
+//String serverNo = "+639486479289"; // server number
 unsigned long timer = 0;
 bool loaderOn = false;
 bool compOn = false;

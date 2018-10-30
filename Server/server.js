@@ -315,7 +315,25 @@ app.listen(2018, function(){
               sendTextMessage(message, phoneno)
             })
             return
-          }
+          }else if(type == "HELP"){
+            let message1 =   "Possible Commands:\r\n"
+                message1 +=  "Feed: 'feed, unit1, 500g'\r\n"
+                message1 +=  "Schedule: 'schedule, unit2'\r\n"
+                message1 +=  "Amount: 'amount, unit3'\r\n"
+            console.log("Sending First section")
+            // sendTextMessage(message1, phoneno)
+
+            let message2  =  "Species: 'species, unit2'\r\n"
+                message2 +=  "Show Data: 'Show data, articuno'\r\n"
+                message2 +=  "Field Units: 'Field units'\r\n"
+            // sendTextMessage(message2, phoneno)
+
+            let message3  =  "Fish Sample: 'Fish Sample, unit2, 90cm, 5kg'\r\n"
+                message3 +=  "Rename: 'rename, unit3, label, newName'\r\n"
+                message3 +=  "Rename: 'rename, unit3, species, newSpecies"
+            // sendTextMessage(message3, phoneno)
+            return
+          } 
 
           let fieldUnitSQL = "SELECT * FROM `units` WHERE `units`.`uid`="+result1[0].uid+" AND `units`.`label`='"+text[1]+"'"
           con.query(fieldUnitSQL, function(err, result2){
