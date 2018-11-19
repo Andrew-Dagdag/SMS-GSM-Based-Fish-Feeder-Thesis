@@ -2,16 +2,25 @@ Paper:
 =======================================
 >> Place all unfinished hardware improvements in "recommendations" section
 
-Software:
+Server:
 =======================================
 >> find free alternative to diafaan
 >> change the way messages are parsed ; moderate to complete overhaul required
   - no spaces allowed for field unit labels
   - currently case insensitive (problem for labels, not commands)
 >> include feed amount left in server response to feed command
->> improve web server CSS
 
-Hardware: (note: all optional)
+Website:
+=======================================
+>> implement harvest function
+  - tallies costs and, with user input on estimated sales (price of fish per kilo x kilos harvested), provides net profit/income
+>> add financial data tab
+  - feed name
+  - cost per kilo
+  - which field units/fish pens use this feed
+>> improve CSS
+
+Field Unit: (note: all optional)
 =======================================
 >> buy own 220v to 12v universal adaptor
 >> weatherproof prototype
