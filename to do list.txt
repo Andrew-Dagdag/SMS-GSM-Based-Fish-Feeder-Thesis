@@ -1,0 +1,20 @@
+Paper:
+=======================================
+>> Place all unfinished hardware improvements in "recommendations" section
+
+Software:
+=======================================
+>> find free alternative to diafaan
+>> change the way messages are parsed ; moderate to complete overhaul required
+  - no spaces allowed for field unit labels
+  - currently case insensitive (problem for labels, not commands)
+>> include feed amount left in server response to feed command
+
+Hardware: (note: all optional)
+=======================================
+>> buy own 220v to 12v universal adaptor
+>> weatherproof
+  - encase solenoid valve
+  - cover exposed wires
+>> add actual handles on chassis
+>> add straps/mounts for other parts for easy transpo when not assembled
