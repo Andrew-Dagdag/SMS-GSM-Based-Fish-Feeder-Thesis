@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Simulate Texts Here</title>
+  <script src="jquery/dist/jquery.min.js"></script>
+</head>
+<body>
+  Text Message: <input type="text" id="textMessage"/><br/>
+  PhoneNo: <select id="PhoneNos"></select><br/>
+
+  <button id="submit">Send Text Message</button><br/>
+
+  <table id="owner-unitMatrix">
+    <tr>
+      <th>Owner Name</th>
+      <th>Unit Label</th>
+    </tr>
+  </table><br/>
+
+  Quick Format Guide:
+<br/>  [Type]
+<br/>  ->Feed
+<br/>  e.g. "feed, U1, 200"
+<br/>  ->Schedule
+<br/>  e.g. "schedule, U2"
+<br/>  ->Amount (of feed left, query)
+<br/>  e.g. "amount, Articuno"
+<br/>  ->Species
+<br/>  e.g. "species, Zapdos"
+<br/>  ->Show data
+<br/>  e.g. "show data, Moltres"
+<br/>  ->field units
+<br/>  e.g. "field units"
+<br/>  ->fish sample
+<br/>  e.g. "fish sample, Articuno, size, weight"
+<br/>  ->Rename
+<br/>  --->,Label,[name]
+<br/>  e.g. "rename, U1, label, new label"
+<br/>  --->,Species,[name]
+<br/>  e.g. "rename, U1, species, new species"
+
+<script type="text/javascript">
+$(document).ready(function(){
+  console.log("Getting Numbers");
+  $.post("/getNumbers", function(result){
+    console.log(result);
+    for(let i = 0; i < result.length; i++){
+      let insert = "<option value='" + result[i].phoneno + "'>" + result[i].name + "</option>";
+      $("#PhoneNos").append(insert);
+    }
+  });
+
+  $.post("/getOwnersAndUnits", function(result){
+    console.log(result);
+    for(let i = 0; i < result.length; i++){
+      let insert  = "<tr><td>"
+                  + result[i].name + "</td><td>"
+                  + result[i].label + "</td></tr>";
+      $("#owner-unitMatrix").append(insert);
+    }
+  })
+
+  $("#submit").click(function(){
+    let phoneno = $("#PhoneNos").children("option:selected").val();
+    let message = $("#textMessage").val();
+
+    console.log(phoneno + "\n" + message);
+
+    $.post("/sendDummyText", {phoneno, message}, function(result){
+      alert("Message Sent!");
+    });
+  });
+});
+
+</script>
+</body>
+</html>
