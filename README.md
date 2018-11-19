@@ -5,15 +5,21 @@ Setup:
 Please ensure you have nodejs and npm installed
 Proceed to Server/
 >npm install
+
 wait as it installs nodejs dependencies
 >npm install bower
+
 >bower install jquery
+
 >bower install bootstrap
 
 Running the server:
 Make sure you're in the Server/ folder
+
 >node server.js
+
 If you plan on using the testing tool, run this command in a separate terminal:
+
 >node noTextTest.js
 
 Help Area:
