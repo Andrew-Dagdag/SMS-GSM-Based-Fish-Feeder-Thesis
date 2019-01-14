@@ -4,11 +4,20 @@ Paper:
 
 Software:
 =======================================
->> find free alternative to diafaan
+>> create mobile app
 >> change the way messages are parsed ; moderate to complete overhaul required
   - no spaces allowed for field unit labels
   - currently case insensitive (problem for labels, not commands)
 >> include feed amount left in server response to feed command
+>> finish register.html
+  - prevent duplication of username
+  - black box testing
+  - rework css
+>> finish server.js
+  - test
+>> find alternative to sha256 encryption
+>> make website responsive
+>> overhaul css
 
 Hardware: (note: all optional)
 =======================================

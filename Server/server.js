@@ -37,6 +37,10 @@ app.get("/addFieldUnit", (request, response) => {
   response.sendFile('addUnit.html', {"root": "html/"})
 });
 
+app.get("/register", (request, response) => {
+  response.sendFile('register.html', {"root": "html/"})
+});
+
 /*********************
 **AJAX POST REQUESTS**
 *********************/
@@ -59,6 +63,27 @@ app.post('/getFeedHist', (request, response) => {
     }
     response.json(result)
   }) 
+});
+
+app.post('/addUser', (request, response) => {
+  let username = request.body.username
+  let password = sha256(request.body.password)
+  let userno = request.body.userno
+  let returnUID = {}
+  let sql = "INSERT INTO `users` "
+          + "(`uid`, `name`, `password`, `phoneno`) "
+          + "VALUES (NULL, '"+username+"', '"+password+"', '"+userno+"')";
+  console.log(sql)
+  con.query(sql, function(err, result){
+    if(err){
+      console.log(err)
+    }else{
+      con.query("SELECT uid FROM `users` ORDER BY `users`.`uid` DESC LIMIT 1", function(err,result2){
+        returnUID["uid"] = result2[0].uid
+        response.json(returnUID)
+      })
+    }
+  })
 });
 
 app.post('/addUnit', (request, response) => {

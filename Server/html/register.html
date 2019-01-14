@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta charset="UTF-8">
+	
+	<link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="stylesheet" href="bootstrap/dist/css/bootstrap.css"/>
+  <script src="bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="jquery/dist/jquery.min.js"></script>
+	<title>Register</title>
+</head>
+<body>
+	<h2 id="username">Welcome, new user</h2>
+	<nav class="navbar justify-content-between" id="navbar">
+		<a href='/'>Go Back to Login</a>
+	</nav>
+	<div class="contentBox container">
+		<h2>Username and Password</h2>
+		<hr>
+		<form>
+          <div class="form-group">
+            <label for="Username">Username</label>
+            <input id="Username" type="text" class="form-control" placeholder="Username" name="Username"/>
+          </div>
+          <div class="form-group">
+            <label for="Password">Password</label>
+            <input id="Password" type="password" class="form-control" placeholder="Password" name="Password">
+          </div>
+          <div class="form-group">
+            <label for="Userno">Cellphone Number</label>
+            <input id="Userno" type="text" class="form-control" value="+639" name="Userno">
+          </div>
+        </form>
+	</div>
+	<div class="contentBox container">
+		<h2>Field Unit Details</h2>
+		<hr>
+		<div class="row" id="statsContent">
+			<div class="col-5" id="unitDetails">
+				<table>
+					<tr>
+						<th>Field Unit Label</th>
+						<td><input id="fieldLabel" type="text" placeholder="Field Unit Label"/></td>
+					</tr>
+					<tr>
+						<th>Field Unit Phone Number</th>
+						<td><input id="fieldNumber" type="text" placeholder="Phone Number of Field Unit" value="+639"/></td>
+					</tr>
+					<tr>
+						<th>Species</th>
+						<td><input id="fieldSpecies" type="text" placeholder="Species"/></td>
+					</tr>
+					<tr>
+						<th>Feeder Load</th>
+						<td><input id="fieldLoad" type="number" placeholder="Initial Feeder Weight (grams)"/></td>
+					</tr>
+				</table>
+			</div>
+			<div class="col-6" id="unitOptions">
+				<form action="#" class="row">
+					<h3 class="col-12">Schedule</h3>
+					<div class="schedForm col-4">
+						<h4>Start Time</h4>
+						<input type="time" name="startTime" id="startTime" value="00:00" required="required" />
+					</div>
+					<div class="schedForm col-4">
+						<h4>Interval</h4>
+						<input type="number" name="intervalHr" min="0" max="23" step="1" id="interval" value="4" required="required" /> hr/s
+					</div>
+					<div class="schedForm col-4">
+						<h4>End Time</h4>
+						<input type="time" name="endTime" id="endTime" value="23:59" required="required" />
+					</div>
+					<div class="schedForm col-12">
+						<h4>Feed Amount</h4>
+						<input type="number" name="feedAmt" id="feedAmt" value="100" min="100" required="required" /> grams
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<button id="finalRegister">Submit</button>
+	<script>
+	$(document).ready(function(){
+		let uid = null;
+		
+		$.fn.back = function(){
+			$.post("/back", function(result){
+				window.location.href = "/";
+			});
+		};
+
+		$("#finalRegister").click(function(){
+			console.log("CLICK");
+			let username = $("#Username").val();
+			let password = $("#Password").val();
+			let userno = $("#Userno").val();
+			let label = $("#fieldLabel").val();
+			let number = $("#fieldNumber").val();
+			let species = $("#fieldSpecies").val();
+			let load = $("#fieldLoad").val();
+			let startTime= $("#startTime").val();
+			let endTime= $("#endTime").val();
+			let interval= $("#interval").val();
+			let amount= $("#feedAmt").val();
+			if(username == "" || password == "" || userno == "" || label == "" || number == "" || species == "" || load == ""){
+				alert("woi a field is missing");
+			}else if(label.includes(" ")){
+				alert("label contains a space");
+			}else{
+				//do user query
+				$.post("/addUser", {username:username, password:password, userno:userno}, function(response){
+					console.log(response);
+					alert("Successfully registered the user!");
+					let uid = response["uid"];
+					console.log(uid);
+
+					//do unit query
+					let schedule = startTime + "," + interval + "," + endTime;
+					console.log("Im doing the query");
+					$.post("/addUnit", {uid:uid, label:label, phoneno:number, species:species, feederload:load, schedule:schedule, amount:amount}, function(response2){
+						console.log(response2["insertId"]);
+						alert("Successfully added the new field unit details!");
+
+						// login user after registering
+						$.post("/userLogin", {User:username, Pass:password}, function(result3){
+					        console.log("Ayoooo", result3["success"]);
+					        if(result3["success"]){
+					          // $("#res").html("I will redirect you to the feeder list");
+					          window.location.href = "/FishFeedIndex";
+					        }else{
+					          console.log("Incorrect password or username, try again mofo");
+					        }
+					      });
+					});
+				});
+			}
+		});
+	});</script>
+</body>
+</html>
