@@ -2,7 +2,7 @@ Paper:
 =======================================
 >> Place all unfinished hardware improvements in "recommendations" section
 
-Software:
+Server:
 =======================================
 >> create mobile app
 >> change the way messages are parsed ; moderate to complete overhaul required
@@ -19,10 +19,20 @@ Software:
 >> make website responsive
 >> overhaul css
 
-Hardware: (note: all optional)
+Website:
+=======================================
+>> implement harvest function
+  - tallies costs and, with user input on estimated sales (price of fish per kilo x kilos harvested), provides net profit/income
+>> add financial data tab
+  - feed name
+  - cost per kilo
+  - which field units/fish pens use this feed
+>> improve CSS
+
+Field Unit: (note: all optional)
 =======================================
 >> buy own 220v to 12v universal adaptor
->> weatherproof
+>> weatherproof prototype
   - encase solenoid valve
   - cover exposed wires
 >> add actual handles on chassis
