@@ -15,7 +15,6 @@ body
 	padding: 0;
 	overflow: hidden;
 	background-color: #555;
-	border: 1px solid #111;
 }
 
 .navbar li
@@ -24,24 +23,35 @@ body
 	float: left;
 }
 
-.navbar a
+.navbar a, #editUnitBtn
 {
 	display: block;
 	text-decoration: none;	
-	color: white;
+	color: black;
 	text-align: center;
 	padding: 15px;
-	border-left: 2px solid #111;
+	margin: 5px 0px 5px 5px;
+	background-color: gray;
+	border: 1px solid black;
+	border-radius: 5px;
+}
+
+#editUnitBtn
+{
+	margin: auto;
+	margin-top: 20px;
 }
 
 .navbar li:last-child
 {
-	border-right: 1px solid #111;	
+	margin-right: 5px;	
 }
 
-.navbar a:hover:not(.active)
+.navbar a:hover:not(.active), #editUnitBtn:hover
 {
 	background-color: #333;
+	text-decoration: none;
+	color: white;
 }
 
 .active
@@ -108,4 +118,15 @@ h3
 	border: 1px solid black;
 	text-align: center;
 	margin-left: 3%;
+}
+
+#changeSettings
+{
+	margin: auto;
+	padding: 10px;
+}
+
+label
+{
+	font-weight: bold;
 }

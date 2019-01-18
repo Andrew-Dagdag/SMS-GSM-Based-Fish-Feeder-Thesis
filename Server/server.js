@@ -118,6 +118,38 @@ app.post('/addUnit', (request, response) => {
   })
 });
 
+app.post('/updateUnit', (request, response) => {
+  console.log("B O I")
+  let label = request.body.label
+  let phoneno = request.body.phoneno
+  let species = request.body.species
+  let feederload = request.body.feederload
+  let sql = "UPDATE `units` "
+          + "SET `label` = '"+label+"', `phoneno` = '"+phoneno+"', `species` = '"+species+"', `feederload` = '"+feederload+"' "
+          + "WHERE `fid` = '"+currentFID+"'"
+  console.log(sql)
+  con.query(sql, function(err, result){
+    if(err){
+      console.log(err)
+    }
+    response.json(result)
+  })
+
+  con.query("SELECT `fid` FROM `units` ORDER BY `units`.`fid` DESC LIMIT 1", function(err, result){
+    let fid = result[0].fid
+    let amount = request.body.amount
+    let sched = request.body.schedule
+    let schedSQL  = "UPDATE `schedule` "
+                  + "SET `sched` = '" + sched + "', `amount` = '" + amount + "' "
+                  + "WHERE `fid` = '"+fid+"'"
+    con.query(schedSQL, function(err, res){
+      if(err){
+        throw err
+      }
+    })
+  })
+});
+
 app.post('/logout', (request, response) => {
   userdata = {}
   currentFID = null

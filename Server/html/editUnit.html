@@ -19,7 +19,7 @@
 		</ul>
 	</nav>
 	<div class="contentBox container">
-		<h2>Add Field Unit</h2>
+		<h2>Details of <span class="fieldLabel">Current Unit</span></h2>
 		<hr>
 		<div id="mainContainer">
 
@@ -41,10 +41,9 @@
 					</tr>
 					<tr>
 						<th>Feeder Load</th>
-						<td><input id="fieldLoad" type="number" placeholder="Initial Feeder Weight (grams)"/></td>
+						<td><input id="fieldLoad" type="number" value="200"/></td>
 					</tr>
 				</table>
-				<button id="addUnit">Add Unit</button>
 			</div>
 			<div class="col-6" id="unitOptions">
 				<form action="#" class="row">
@@ -68,11 +67,10 @@
 				</form>
 			</div>
 		</div>
+		<button id="saveUnitChanges">Save Changes</button>
 	</div>
 	<script>
 	$(document).ready(function(){
-		let uid = null;
-
 		$.fn.logout = function(){
 			$.post("/logout", function(result){
 				window.location.href = "/";
@@ -80,17 +78,29 @@
 		};
 
 		$.fn.backToUnits = function(){
-			let back = confirm("Unit will not be added. Go back?");
+			let back = confirm("All changes will be lost. Go back?");
 			console.log(back);
 			if(back){
 				window.location.href = "/FishFeedIndex";
 			}
 		};
-		
-		$.fn.changeFeeder = function(fid){
-			$.post("/setFID", {fid:fid}, function(result){
-				// alert(result);
-				window.location.href = "/FishFeedIndex";
+
+		$.fn.getFeederDetails = function(fid){
+			// console.log("Hey u wanted to change feeder views?",fid);
+			$.post("/getFieldUnit", {fid:fid}, function(result){
+				// console.log(result);
+				$(".fieldLabel").html(result[0].label);
+				$("#fieldLabel").val(result[0].label);
+				$("#fieldNumber").val(result[0].phoneno);
+				$("#fieldSpecies").val(result[0].species);
+				$("#fieldLoad").val(result[0].feederload);
+			});
+			$.post("/getSched", {fid:fid}, function(result){
+				let sched = result[0].sched.split(",");
+				$("#startTime").val(sched[0]);
+				$("#interval").val(sched[1]);
+				$("#endTime").val(sched[2]);
+				$("#feedAmt").val(result[0].amount);
 			});
 		};
 
@@ -112,8 +122,14 @@
 			});
 			uid = result["uid"];
 		});
-		
-		$("#addUnit").click(function(){
+
+		$.post("/getFID", function(result){
+			$(this).getFeederDetails(result);
+			let fid = result[0];
+			console.log(fid)
+		});
+
+		$("#saveUnitChanges").click(function(){
 			console.log("CLICK");
 			let label = $("#fieldLabel").val();
 			let number = $("#fieldNumber").val();
@@ -136,9 +152,9 @@
 				//do query
 				let schedule = startTime + "," + interval + "," + endTime;
 				console.log("Im doing the query")
-				$.post("/addUnit", {uid:uid, label:label, phoneno:number, species:species, feederload:load, schedule:schedule, amount:amount}, function(response){
+				$.post("/updateUnit", {uid:uid, label:label, phoneno:number, species:species, feederload:load, schedule:schedule, amount:amount}, function(response){
 					// console.log(response);
-					alert("Successfully added the new field unit details!");
+					alert("Successfully updated the new field unit details!");
 					window.location.href = "/FishFeedIndex";
 				});
 			}

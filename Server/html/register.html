@@ -29,7 +29,7 @@
           </div>
           <div class="form-group">
             <label for="Userno">Cellphone Number</label>
-            <input id="Userno" type="text" class="form-control" value="+639" name="Userno">
+            <input id="Userno" type="text" class="form-control" placeholder="+639xxxxxxxxx" pattern="[+]639\d{9}$" name="Userno">
           </div>
         </form>
 	</div>
@@ -45,7 +45,7 @@
 					</tr>
 					<tr>
 						<th>Field Unit Phone Number</th>
-						<td><input id="fieldNumber" type="text" placeholder="Phone Number of Field Unit" value="+639"/></td>
+						<td><input id="fieldNumber" type="text" placeholder="Phone Number of Field Unit" placeholder="+639xxxxxxxxx" pattern="[+]639\d{9}$"/></td>
 					</tr>
 					<tr>
 						<th>Species</th>
@@ -104,10 +104,15 @@
 			let endTime= $("#endTime").val();
 			let interval= $("#interval").val();
 			let amount= $("#feedAmt").val();
+
+			const phoneRegEx = /[+]639\d{9}$/
+
 			if(username == "" || password == "" || userno == "" || label == "" || number == "" || species == "" || load == ""){
-				alert("woi a field is missing");
+				alert("A field has been left blank. Please fill in all forms completely.");
 			}else if(label.includes(" ")){
-				alert("label contains a space");
+				alert("Field unit labels must not have spaces.");
+			}else if(!phoneRegEx.test(userno) || !phoneRegEx.test(phoneno)){
+				alert("The fields highlighted in red contain invalid inputs. Please follow the proper formats.");
 			}else{
 				//do user query
 				$.post("/addUser", {username:username, password:password, userno:userno}, function(response){

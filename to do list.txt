@@ -9,28 +9,37 @@ Server:
   - no spaces allowed for field unit labels
   - currently case insensitive (problem for labels, not commands)
 >> include feed amount left in server response to feed command
->> finish register.html
-  - prevent duplication of username
-  - black box testing
-  - rework css
->> finish server.js
-  - test
 >> find alternative to sha256 encryption
->> make website responsive
->> overhaul css
+>> overhaul scheduled feeding parsing
+  - type 1: intervals
+  - type 2: specific time
+  - fix front end accordingly
+>> include feed amount left in server response to feed command
 
 Website:
 =======================================
+>> implement profile tab
+  - add edit profile option
 >> implement harvest function
   - tallies costs and, with user input on estimated sales (price of fish per kilo x kilos harvested), provides net profit/income
 >> add financial data tab
   - feed name
   - cost per kilo
   - which field units/fish pens use this feed
->> improve CSS
+>> finish register.html
+  - implement client-side checking of inputs
+  - black box testing
+  - rework css
+>> finish server.js
+  - implement server-side checking of inputs
+  - test
+>> make website responsive
+>> overhaul css
+>> implement/fix error warning texts (i.e. wrong password etc)
 
 Field Unit: (note: all optional)
 =======================================
+>> replace nails with woodscrews
 >> buy own 220v to 12v universal adaptor
 >> weatherproof prototype
   - encase solenoid valve
