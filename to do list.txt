@@ -36,6 +36,7 @@ Website:
 >> make website responsive
 >> overhaul css
 >> implement/fix error warning texts (i.e. wrong password etc)
+>> change format of schedule
 
 Field Unit: (note: all optional)
 =======================================
