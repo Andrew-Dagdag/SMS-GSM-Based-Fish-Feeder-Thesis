@@ -258,7 +258,7 @@ const sendTextMessage = (message, number) => {
   // })
 }
 
-const feedNow = (fid, amount) => {
+const feedNow = (fid, amount, userphone, text) => {
   let query = "SELECT `feederload` FROM `units` WHERE fid="+fid
   con.query(query, function(err, res){
     let feederload = parseInt(res[0].feederload) - parseInt(amount)
@@ -277,15 +277,21 @@ const feedNow = (fid, amount) => {
         sendTextMessage(message, phoneno)
       })
     }
-  })
-  let currentTime = new Date().toISOString().slice(0, 19).replace('T', ' ')
-  console.log(currentTime)
-  let feedHist  = "INSERT INTO `feedhistory` "
-                + "(`fid`, `feedamt`, `timestamp`) VALUES ('"
-                + fid + "', '" + amount + "', '" + currentTime + "')"
-  con.query(feedHist, function(err, res){
-    if(err){
-      throw err
+
+    let currentTime = new Date().toISOString().slice(0, 19).replace('T', ' ')
+    console.log(currentTime)
+    let feedHist  = "INSERT INTO `feedhistory` "
+                  + "(`fid`, `feedamt`, `timestamp`) VALUES ('"
+                  + fid + "', '" + amount + "', '" + currentTime + "')"
+    con.query(feedHist, function(err, res){
+      if(err){
+        throw err
+      }
+    })
+    console.log(feederload)
+    if(userphone !== undefined && text !== undefined){
+      message = "Successfully sent feed signal to field unit: " + text + " with remaining feed: " + feederload + "g"
+      sendTextMessage(message, userphone)
     }
   })
 }
@@ -429,10 +435,9 @@ app.listen(2018, function(){
               }
               let unitPhoneNo = result2[0].phoneno
               let message = "feed," + text[2]
-              feedNow(result2[0].fid, text[2])
               sendTextMessage(message, unitPhoneNo)
-              message = "Successfully sent feed signal to field unit: " + text[1]
-              sendTextMessage(message, phoneno)
+
+              feedNow(result2[0].fid, text[2], phoneno, text[1])
             }else if(type == "SCHEDULE"){
               //make query to get sched, then send as text
               let getSched = "SELECT sched FROM `schedule` WHERE `schedule`.`fid`="+result2[0].fid

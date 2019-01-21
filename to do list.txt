@@ -6,9 +6,7 @@ Server:
 =======================================
 >> create mobile app
 >> change the way messages are parsed ; moderate to complete overhaul required
-  - no spaces allowed for field unit labels
   - currently case insensitive (problem for labels, not commands)
->> include feed amount left in server response to feed command
 >> find alternative to sha256 encryption
 >> overhaul scheduled feeding parsing
   - type 1: intervals
