@@ -345,7 +345,13 @@ app.listen(2018, function(){
         let phoneno = result0[i].MessageFrom
         let checkPhoneSQL = "SELECT * FROM `users` WHERE `users`.`phoneno`='"+phoneno+"'"
         let textID = result0[i].Id
-        let text = result0[i].MessageText.replace(/\r\n/g, "").replace(/ /g,"").split(",")
+        // let text = result0[i].MessageText.replace(/\r\n/g, "").replace(/ /g,"").split(",")
+
+        let text = result0[i].MessageText.replace(/\r\n/g, "").split(",")
+        for(let z = 0; z < text.length; z++){
+          text[z] = text[z].trim()
+        }
+
         console.log(text)
         let deleteMessage = "DELETE FROM `messagereceive` WHERE `messagereceive`.`Id` = "+textID
         textCon.query(deleteMessage, function(err, res){ if(err) throw err})
@@ -357,7 +363,7 @@ app.listen(2018, function(){
             return
           }
 
-          if(text[0].toUpperCase() == "FIELDUNITS"){
+          if(text[0].toUpperCase() == "FIELDUNITS" || text[0].toUpperCase() == "FIELD UNITS"){
             let fieldQuery = "SELECT label FROM `units` WHERE `units`.`uid`="+result1[0].uid
             con.query(fieldQuery, function(err, res){
               if(res.length == 0){
@@ -372,7 +378,7 @@ app.listen(2018, function(){
               sendTextMessage(message, phoneno)
             })
             return
-          }else if(text[0].toUpperCase == "HELP"){
+          }else if(text[0].toUpperCase() == "HELP"){
             let message1 =   "Possible Commands:\r\n"
                 message1 +=  "Feed: 'feed, unit1, 500g'\r\n"
                 message1 +=  "Schedule: 'schedule, unit2'\r\n"
@@ -463,7 +469,7 @@ app.listen(2018, function(){
                 let message = "Invalid update. Only label or species can be changed. Command failed."
                 sendTextMessage(message, phoneno)
               }
-            }else if(type == "SHOWDATA"){
+            }else if(type == "SHOWDATA" || type == "SHOW DATA"){
               let amount = result2[0].feederload
               let species = result2[0].species
               let getSched = "SELECT sched FROM `schedule` WHERE `schedule`.`fid`="+result2[0].fid
@@ -476,7 +482,7 @@ app.listen(2018, function(){
                 message += schedMessage
                 sendTextMessage(message, phoneno)
               })
-            }else if(type == "FISHSAMPLE"){
+            }else if(type == "FISHSAMPLE" || type == "FISH SAMPLE"){
             // 2018-10-31 00:00:00
               let size = text[2]
               let weight = text[3]

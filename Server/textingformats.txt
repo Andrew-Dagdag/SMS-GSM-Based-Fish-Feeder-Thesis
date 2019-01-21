@@ -4,8 +4,6 @@ Format: Label, Type, [optional: type args]
 new Format: Type, Label, [Optional: type args]
 
 [Type]
-->Feed
-e.g. "feed, U1, 200"
 ->Schedule
 e.g. "schedule, U2"
 ->Amount (of feed left, query)
@@ -16,6 +14,8 @@ e.g. "species, Zapdos"
 e.g. "show data, Moltres"
 ->field units
 e.g. "field units"
+->Feed
+e.g. "feed, U1, 200"
 ->fish sample
 e.g. "fish sample, Articuno, size, weight"
 ->Rename
