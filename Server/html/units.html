@@ -133,9 +133,11 @@
 				$("#sample").html(insert);
 			});
 			$.post("/getFeedHist", function(result){
-				let insert = "<table><tr><th>amount (g)</th><th>timestamp</th></tr>";
+				let insert = "<table><tr><th>Feed Type</th><th>amount (g)</th><th>timestamp</th></tr>";
+				console.log(result);
 				for(let i = 0; i < result.length; i++){
 					insert	+= 	"<tr>"
+							+	"<td>" + result[i].type + "</td>"
 							+	"<td>" + result[i].feedamt + "</td>"
 							+	"<td>" + result[i].timestamp + "</td>"
 				}
@@ -147,18 +149,18 @@
 		$.fn.changeEstimate = function(days){
 			let feedamt = parseInt($("#feedAmt").val());
 			let estimate = feedamt*parseInt(days);
-			$("#estimateResult").html(estimate);
-			let feedremaining = parseInt($("#fieldLoad").html().split(" ")[0]);
-			if(estimate > feedremaining){
-				let warning = "You do not have enough feed to last " + days + " days!";
-				console.log(warning);
-				$("#estimateWarning").html(warning);
-			}else{
-				$.post("/getDailyScheduleLength", function(result){
-					console.log(result);
-				});
-				$("#estimateWarning").html("No Warning");
-			}
+			$.post("/getDailyScheduleLength", function(result){
+				estimate = estimate * parseInt(result);
+				let feedremaining = parseInt($("#fieldLoad").html().split(" ")[0]);
+				$("#estimateResult").html(estimate);
+				if(estimate > feedremaining){
+					let warning = "You do not have enough feed to last " + days + " days!";
+					console.log(warning + " est:" + estimate + ", fdrmng:" + feedremaining);
+					$("#estimateWarning").html(warning);
+				}else{
+					$("#estimateWarning").html("No Warning");
+				}
+			});
 		}
 
 		$("#estimateOption").change(function(event){

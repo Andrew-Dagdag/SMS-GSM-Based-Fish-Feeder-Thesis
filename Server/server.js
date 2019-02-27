@@ -47,7 +47,7 @@ app.get("/register", (request, response) => {
 
 app.post('/getDailyScheduleLength', (request, response) => {
   con.query("SELECT * FROM `schedule` WHERE fid=" + currentFID, function(err, result){
-    let fieldUnits = {}
+    let fieldUnits = []
     for(let i = 0; i < result.length; i++){
       let sched = result[i].sched.split(",")
       let fid = result[i].fid
@@ -58,10 +58,14 @@ app.post('/getDailyScheduleLength', (request, response) => {
       for(let i = parseInt(start[0]); i < parseInt(endTime[0]); i += parseInt(interval)){
         intervals.push(i)
       }
-      let load = result[i].amount
-      fieldUnits.push({fid:fid, start:start, intervals:intervals, endTime:endTime, load:load})
+      response.send(String(intervals.length))
+
+      // let load = result[i].amount
+      // fieldUnits.push({fid:fid, start:start, intervals:intervals, endTime:endTime, load:load})
+
     }
-    response.send(Object.keys(fieldUnits).length)
+    // response.send(Object.keys(fieldUnits).length)
+    // response.send(fieldUnits.length)
   })
 
 });
@@ -302,8 +306,8 @@ const feedNow = (fid, amount, userphone, text) => {
     let currentTime = new Date().toISOString().slice(0, 19).replace('T', ' ')
     console.log(currentTime)
     let feedHist  = "INSERT INTO `feedhistory` "
-                  + "(`fid`, `feedamt`, `timestamp`) VALUES ('"
-                  + fid + "', '" + amount + "', '" + currentTime + "')"
+                  + "(`fid`, `feedamt`, `timestamp`, `type`, `index`) VALUES ('"
+                  + fid + "', '" + amount + "', '" + currentTime + "', '" + (userphone==undefined?"Scheduled":"Manual") + "', " + NULL + ")"
     con.query(feedHist, function(err, res){
       if(err){
         throw err
