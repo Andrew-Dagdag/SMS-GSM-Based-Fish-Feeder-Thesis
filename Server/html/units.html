@@ -44,7 +44,23 @@
 					</tr>
 					<tr>
 						<th>Feeder Load</th>
-						<td id="fieldLoad">1kg / 1.5kg</td>
+						<td id="fieldLoad">1000 grams</td>
+					</tr>
+					<tr>
+						<th>
+							<select id="estimateOption">
+								<option value="1">1 Day</option>
+								<option value="7">1 Week</option>
+								<option value="14">2 Weeks</option>
+								<option value="30">1 Month (30 Days)</option>
+							</select>
+						</th>
+						<td><span id="estimateResult"></span></td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<span id="estimateWarning">No Warning</span>
+						</td>
 					</tr>
 				</table>
 			</div>
@@ -105,7 +121,6 @@
 				$("#endTime").val(sched[2]);
 				$("#feedAmt").val(result[0].amount);
 			});
-
 			$.post("/getSampleStats", function(result){
 				let insert = "<table><tr><th>size</th><th>weight</th><th>timestamp</th></tr>";
 				for(let i = 0; i < result.length; i++){
@@ -117,7 +132,6 @@
 				insert += "</table>";
 				$("#sample").html(insert);
 			});
-
 			$.post("/getFeedHist", function(result){
 				let insert = "<table><tr><th>amount (g)</th><th>timestamp</th></tr>";
 				for(let i = 0; i < result.length; i++){
@@ -129,6 +143,27 @@
 				$("#feedhist").html(insert);
 			});
 		};
+
+		$.fn.changeEstimate = function(days){
+			let feedamt = parseInt($("#feedAmt").val());
+			let estimate = feedamt*parseInt(days);
+			$("#estimateResult").html(estimate);
+			let feedremaining = parseInt($("#fieldLoad").html().split(" ")[0]);
+			if(estimate > feedremaining){
+				let warning = "You do not have enough feed to last " + days + " days!";
+				console.log(warning);
+				$("#estimateWarning").html(warning);
+			}else{
+				$.post("/getDailyScheduleLength", function(result){
+					console.log(result);
+				});
+				$("#estimateWarning").html("No Warning");
+			}
+		}
+
+		$("#estimateOption").change(function(event){
+			$(this).changeEstimate($("#estimateOption").children("option:selected").val());
+		});
 
 		$("#changeSettings").click(function(event){
 			event.preventDefault();
@@ -168,6 +203,7 @@
 
 		$.post("/getFID", function(result){
 			$(this).changeFeeder(result);
+			$(this).changeEstimate(1);
 		});
 	});</script>
 </body>

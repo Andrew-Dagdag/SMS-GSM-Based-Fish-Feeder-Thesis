@@ -45,6 +45,27 @@ app.get("/register", (request, response) => {
 **AJAX POST REQUESTS**
 *********************/
 
+app.post('/getDailyScheduleLength', (request, response) => {
+  con.query("SELECT * FROM `schedule` WHERE fid=" + currentFID, function(err, result){
+    let fieldUnits = {}
+    for(let i = 0; i < result.length; i++){
+      let sched = result[i].sched.split(",")
+      let fid = result[i].fid
+      let start = sched[0].split(":")
+      let endTime = sched[2].split(":")
+      let interval = sched[1]
+      let intervals = []
+      for(let i = parseInt(start[0]); i < parseInt(endTime[0]); i += parseInt(interval)){
+        intervals.push(i)
+      }
+      let load = result[i].amount
+      fieldUnits.push({fid:fid, start:start, intervals:intervals, endTime:endTime, load:load})
+    }
+    response.send(Object.keys(fieldUnits).length)
+  })
+
+});
+
 app.post('/getSampleStats', (request, response) => {
   let sql = "SELECT * FROM `sample` WHERE `fid`="+currentFID+" ORDER BY `sample`.`timestamp` ASC"
   con.query(sql, function(err, result){
