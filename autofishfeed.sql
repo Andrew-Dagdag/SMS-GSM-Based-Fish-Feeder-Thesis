@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 27, 2019 at 08:22 PM
+-- Generation Time: Feb 27, 2019 at 09:08 PM
 -- Server version: 10.1.30-MariaDB
 -- PHP Version: 7.1.13
 
@@ -31,7 +31,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `feedhistory` (
   `fid` int(5) NOT NULL,
   `feedamt` float NOT NULL,
-  `timestamp` time NOT NULL,
+  `timestamp` datetime NOT NULL,
   `type` varchar(10) NOT NULL,
   `index` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -41,11 +41,9 @@ CREATE TABLE `feedhistory` (
 --
 
 INSERT INTO `feedhistory` (`fid`, `feedamt`, `timestamp`, `type`, `index`) VALUES
-(3, 500, '12:41:26', 'Manual', 1),
-(3, 500, '12:42:05', 'Manual', 2),
-(3, 500, '12:44:07', 'Manual', 3),
-(3, 500, '12:46:08', 'Manual', 4),
-(3, 500, '12:53:19', 'Manual', 5);
+(3, 500, '2019-02-28 12:41:26', 'Manual', 1),
+(3, 500, '2019-02-28 12:42:05', 'Manual', 2),
+(3, 500, '2019-02-28 12:44:07', 'Manual', 3);
 
 -- --------------------------------------------------------
 
@@ -114,7 +112,7 @@ CREATE TABLE `units` (
 INSERT INTO `units` (`fid`, `uid`, `label`, `phoneno`, `species`, `feederload`) VALUES
 (1, 1, 'Dagdag, Unit 1', '+639486479304', 'Tilapia', 9000),
 (2, 1, 'Dagdag, Unit 2', '+639486479304', 'Koi', 10000),
-(3, 2, 'Articuno', '+639486479304', 'Tilapia', 6500),
+(3, 2, 'Articuno', '+639486479304', 'Tilapia', 13800),
 (4, 2, 'Zapdos', '+639486479304', 'Bangus', 15000),
 (5, 2, 'Moltres', '+639486479304', 'Lionfish', 20000),
 (6, 2, '4th legendary bird', '+639486479304', 'birdie', 9000);
@@ -185,7 +183,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `feedhistory`
 --
 ALTER TABLE `feedhistory`
-  MODIFY `index` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `index` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `units`

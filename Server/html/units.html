@@ -99,6 +99,15 @@
 	</div>
 	<script>
 	$(document).ready(function(){
+		var readableTime = (dateTime) =>{
+			var res = new Date(dateTime);
+			let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+			console.log(res);
+			console.log(res.toLocaleString());
+			// console.log(months[res.getMonth()] + " " + res.getDay() + ", " + res.getFullYear() + " " + res.getTime());
+			return res.toLocaleString();
+		}
+
 		$.fn.logout = function(){
 			$.post("/logout", function(result){
 				window.location.href = "/";
@@ -124,22 +133,24 @@
 			$.post("/getSampleStats", function(result){
 				let insert = "<table><tr><th>size</th><th>weight</th><th>timestamp</th></tr>";
 				for(let i = 0; i < result.length; i++){
+					time = readableTime(result[i].timestamp);
 					insert	+= 	"<tr>"
 							+	"<td>" + result[i].size + "</td>"
 							+	"<td>" + result[i].weight + "</td>"
-							+	"<td>" + result[i].timestamp + "</td>"
+							+	"<td>" + time + "</td>"
 				}
 				insert += "</table>";
 				$("#sample").html(insert);
 			});
 			$.post("/getFeedHist", function(result){
 				let insert = "<table><tr><th>Feed Type</th><th>amount (g)</th><th>timestamp</th></tr>";
-				console.log(result);
+				// console.log(result);
 				for(let i = 0; i < result.length; i++){
+					time = readableTime(result[i].timestamp);
 					insert	+= 	"<tr>"
 							+	"<td>" + result[i].type + "</td>"
 							+	"<td>" + result[i].feedamt + "</td>"
-							+	"<td>" + result[i].timestamp + "</td>"
+							+	"<td>" + time + "</td>"
 				}
 				insert += "</table>";
 				$("#feedhist").html(insert);
@@ -155,7 +166,6 @@
 				$("#estimateResult").html(estimate);
 				if(estimate > feedremaining){
 					let warning = "You do not have enough feed to last " + days + " days!";
-					console.log(warning + " est:" + estimate + ", fdrmng:" + feedremaining);
 					$("#estimateWarning").html(warning);
 				}else{
 					$("#estimateWarning").html("No Warning");

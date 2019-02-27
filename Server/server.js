@@ -67,7 +67,6 @@ app.post('/getDailyScheduleLength', (request, response) => {
     // response.send(Object.keys(fieldUnits).length)
     // response.send(fieldUnits.length)
   })
-
 });
 
 app.post('/getSampleStats', (request, response) => {
@@ -271,6 +270,10 @@ app.post('/userLogin', (request, response) => { //Ajax Request for Login
   })
 });
 
+/***************************************
+***Const Functions for repeating code***
+***************************************/
+
 const sendTextMessage = (message, number) => {
   //set query for text message
   console.log()
@@ -307,7 +310,7 @@ const feedNow = (fid, amount, userphone, text) => {
     console.log(currentTime)
     let feedHist  = "INSERT INTO `feedhistory` "
                   + "(`fid`, `feedamt`, `timestamp`, `type`, `index`) VALUES ('"
-                  + fid + "', '" + amount + "', '" + currentTime + "', '" + (userphone==undefined?"Scheduled":"Manual") + "', " + NULL + ")"
+                  + fid + "', '" + amount + "', '" + currentTime + "', '" + (userphone==undefined?"Scheduled":"Manual") + "', NULL)"
     con.query(feedHist, function(err, res){
       if(err){
         throw err
