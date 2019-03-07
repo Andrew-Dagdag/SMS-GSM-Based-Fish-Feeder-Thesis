@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.3
+-- version 4.7.4
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 17, 2018 at 06:59 PM
--- Server version: 10.1.36-MariaDB
--- PHP Version: 7.2.10
+-- Generation Time: Mar 07, 2019 at 05:12 AM
+-- Server version: 10.1.30-MariaDB
+-- PHP Version: 7.1.13
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -21,6 +21,21 @@ SET time_zone = "+00:00";
 --
 -- Database: `smsserver`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `messagelog`
+--
+
+CREATE TABLE `messagelog` (
+  `Id` int(11) NOT NULL,
+  `SendTime` datetime DEFAULT NULL,
+  `StatusCode` int(11) DEFAULT NULL,
+  `MessageTo` varchar(80) DEFAULT NULL,
+  `MessageText` text,
+  `MessageId` varchar(80) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -54,6 +69,13 @@ CREATE TABLE `messagesend` (
 --
 
 --
+-- Indexes for table `messagelog`
+--
+ALTER TABLE `messagelog`
+  ADD PRIMARY KEY (`Id`),
+  ADD KEY `IDX_MessageId` (`MessageId`,`SendTime`);
+
+--
 -- Indexes for table `messagereceive`
 --
 ALTER TABLE `messagereceive`
@@ -71,10 +93,16 @@ ALTER TABLE `messagesend`
 --
 
 --
+-- AUTO_INCREMENT for table `messagelog`
+--
+ALTER TABLE `messagelog`
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `messagereceive`
 --
 ALTER TABLE `messagereceive`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `messagesend`
