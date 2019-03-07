@@ -329,7 +329,8 @@ const feedNow = (fid, amount, userphone, text) => {
       })
     }
 
-    let currentTime = new Date().toISOString().slice(0, 19).replace('T', ' ')
+    // let currentTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    let currentTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
     console.log(currentTime)
     let feedHist  = "INSERT INTO `feedhistory` "
                   + "(`fid`, `feedamt`, `timestamp`, `type`, `index`) VALUES ('"
@@ -364,32 +365,31 @@ app.listen(2018, function(){
         }
         let load = result[i].amount
         fieldUnits.push({fid:fid, start:start, intervals:intervals, endTime:endTime, load:load})
-      }    
-    })
-
-    let x = new Date()
-    fieldUnits.forEach(unit => {
-      let currentHour = x.getHours()
-      let currentMinute = x.getMinutes()
-      if(unit.start[1] == currentMinute){
-        if(currentHour == unit.endTime[0]){
-          if(currentMinute > unit.endTime[1]){
-            return
+      }
+      let x = new Date()
+      fieldUnits.forEach(unit => {
+        let currentHour = x.getHours()
+        let currentMinute = x.getMinutes()
+        if(unit.start[1] == currentMinute){
+          if(currentHour == unit.endTime[0]){
+            if(currentMinute > unit.endTime[1]){
+              return
+            }
+          }
+          if(unit.intervals.includes(currentHour)){
+            console.log("I am feeding feeder", unit.fid, "with", unit.load, "grams")
+            //trigger function to text feeder to feed!
+            let feederSQL = "SELECT `phoneno` FROM `units` WHERE `fid`="+unit.fid
+            feedNow(unit.fid, unit.load)
+            con.query(feederSQL, function(err, result){
+              let phoneno = result[0].phoneno
+              let message = "feed," + unit.load
+              sendTextMessage(message, phoneno)
+            })
           }
         }
-        if(unit.intervals.includes(currentHour)){
-          console.log("I am feeding feeder", unit.fid, "with", unit.load, "grams")
-          //trigger function to text feeder to feed!
-          let feederSQL = "SELECT `phoneno` FROM `units` WHERE `fid`="+unit.fid
-          feedNow(unit.fid, unit.load)
-          con.query(feederSQL, function(err, result){
-            let phoneno = result[0].phoneno
-            let message = "feed," + unit.load
-            sendTextMessage(message, phoneno)
-          })
-        }
-      }
-    });
+      });
+    })
   }, 60000)
 
   setInterval(function(){

@@ -102,10 +102,10 @@
 	$(document).ready(function(){
 		var readableTime = (dateTime) =>{
 			var res = new Date(dateTime);
-			let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-			console.log(res);
-			console.log(res.toLocaleString());
-			// console.log(months[res.getMonth()] + " " + res.getDay() + ", " + res.getFullYear() + " " + res.getTime());
+			console.log(res.getTime());
+			// console.log(res.toLocaleString());
+			// console.log(res.getTimezoneOffset());
+
 			return res.toLocaleString();
 		}
 
