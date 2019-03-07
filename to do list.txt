@@ -5,8 +5,8 @@ Paper:
 Server: (note: * = optional)
 =======================================
 >> create mobile app*
->> change the way messages are parsed ; moderate to complete overhaul required
-  - currently case insensitive (problem for labels, not commands)
+>> change the way messages are parsed ; moderate to complete overhaul required (done)
+  - currently case insensitive (done)
 >> find alternative to sha256 encryption
 >> overhaul scheduled feeding parsing
   - type 1: intervals
