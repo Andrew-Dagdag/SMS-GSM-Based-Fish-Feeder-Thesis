@@ -41,6 +41,10 @@ app.get("/register", (request, response) => {
   response.sendFile('register.html', {"root": "html/"})
 });
 
+app.get("/profile", (request, response) => {
+  response.sendFile('profile.html', {"root": "html/"})
+});
+
 /*********************
 **AJAX POST REQUESTS**
 *********************/
@@ -172,6 +176,25 @@ app.post('/updateUnit', (request, response) => {
       }
     })
   })
+});
+
+app.post('/updateUser', (request, response) => {
+  console.log("B O I")
+  let uid = request.body.uid
+  let name = request.body.name
+  let phoneno = request.body.phoneno
+  let sql = "UPDATE `users` "
+          + "SET `name` = '"+name+"', `phoneno` = '"+phoneno+"' "
+          + "WHERE `uid` = '"+uid+"'"
+  console.log(sql)
+  con.query(sql, function(err, result){
+    if(err){
+      console.log(err)
+    }
+    response.json(result)
+  })
+  userdata["user"] = name
+  userdata["user_phone"] = phoneno
 });
 
 app.post('/logout', (request, response) => {

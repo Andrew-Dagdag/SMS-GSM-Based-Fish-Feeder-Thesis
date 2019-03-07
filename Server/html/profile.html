@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta charset="UTF-8">
+	
+	<link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="stylesheet" href="bootstrap/dist/css/bootstrap.css"/>
+  <script src="bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="jquery/dist/jquery.min.js"></script>
+	<title>Your Profile</title>
+</head>
+<body>
+	<h2 id="username">Welcome, <span id="user">[USER]</span></h2>
+	<nav class="navbar justify-content-between" id="navbar">
+		<ul class="form-inline">
+			<li><a href='units.html'>Back to Units</a></li>
+			<li><a href='#' onClick='$(this).logout()'>Logout</a></li>
+		</ul>
+	</nav>
+	<div class="contentBox container">
+		<h2>Account Details</h2>
+		<hr>
+		<h6>Name:</h6>
+		<h3><span id="name">[USER]</span></h3>
+		<h6>Cellphone Number:</h6>
+		<h4><span id="phoneno">+639xxxxxxxxx</span></h4>
+		<hr>
+		<h5>Field Units Owned:</h5>
+		<div class="row" id="ownedUnits">
+			<p>field unit labels</p>
+		</div>
+		<a id="editProfileBtn" href="editProfile.html">Edit Account Details</a>
+	</div>
+	<script>
+	$(document).ready(function(){
+		$.fn.logout = function(){
+			$.post("/logout", function(result){
+				window.location.href = "/";
+			});
+		};
+
+		$.post("/getUserInfo", function(result){
+			// console.log("result is",result["user"]);
+			if(result["user"] === undefined){
+				window.location.href = "/";
+			}
+			$("#user").html(result["user"]);
+			$("#name").html(result["user"]);
+			$("#phoneno").html(result["user_phone"]);
+			$.post("/getFieldUnits", {uid:result["uid"]},function(res){
+				let insert = "<p id='userUnitList'>";
+				for(let i = 0; i < res.length; i++){
+					if(i == res.length-1){
+						insert += res[i].label
+								+ "</p>";
+					}else{
+						insert += res[i].label
+								+ ", ";
+					}
+				}
+				$("#ownedUnits").html(insert);
+			});
+		});
+
+		$.post("/getFID", function(result){
+			$(this).changeFeeder(result);
+		});
+	});</script>
+</body>
+</html>

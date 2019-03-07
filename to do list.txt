@@ -2,9 +2,9 @@ Paper:
 =======================================
 >> Place all unfinished hardware improvements in "recommendations" section
 
-Server:
+Server: (note: * = optional)
 =======================================
->> create mobile app
+>> create mobile app*
 >> change the way messages are parsed ; moderate to complete overhaul required
   - currently case insensitive (problem for labels, not commands)
 >> find alternative to sha256 encryption
@@ -12,18 +12,31 @@ Server:
   - type 1: intervals
   - type 2: specific time
   - fix front end accordingly
->> include feed amount left in server response to feed command
+>> implement texting of users regarding feed estimate warnings
+  - add option: warn me when I have insufficient feed for (timespan)
 
 Website:
 =======================================
+>> FIX REGISTRATION PAGE
 >> implement profile tab
   - add edit profile option
+>> implement delete unit option
+  - are you sure? input password to delete
+>> implement add fish sample button on unit page
+>> implement deeper statistical analysis of fish sampling
+  - ave size, weight, population, etc 
 >> implement harvest function
   - tallies costs and, with user input on estimated sales (price of fish per kilo x kilos harvested), provides net profit/income
->> add financial data tab
+>> implement feed financial data tab
   - feed name
   - cost per kilo
+  - total amount on hand
+    - total used every (timespan)
   - which field units/fish pens use this feed
+>> make unit state whether it is currently online or offline
+  - every n minutes, server will call the units. if the call is not answered, switch unit status to offline and text a warning to the user.
+    - https://www.arduino.cc/en/Tutorial/GSMExamplesMakeVoiceCall
+>> interval: check if total hours between start time and end time is divisible by interval time; adjust form maximum accordingly
 >> finish register.html
   - implement client-side checking of inputs
   - black box testing
@@ -34,14 +47,15 @@ Website:
 >> make website responsive
 >> overhaul css
 >> implement/fix error warning texts (i.e. wrong password etc)
->> change format of schedule
 
-Field Unit: (note: all optional)
+Field Unit: (note: * = optional)
 =======================================
->> replace nails with woodscrews
+>> troubleshoot GSM module
+>> send error message to user
 >> buy own 220v to 12v universal adaptor
->> weatherproof prototype
+>> replace nails with woodscrews*
+>> weatherproof prototype*
   - encase solenoid valve
   - cover exposed wires
->> add actual handles on chassis
->> add straps/mounts for other parts for easy transpo when not assembled
+>> add actual handles on chassis*
+>> add straps/mounts for other parts for easy transpo when not assembled*

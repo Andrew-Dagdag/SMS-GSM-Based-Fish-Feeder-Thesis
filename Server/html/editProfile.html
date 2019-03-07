@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta charset="UTF-8">
+	
+	<link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="stylesheet" href="bootstrap/dist/css/bootstrap.css"/>
+  <script src="bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="jquery/dist/jquery.min.js"></script>
+	<title>Unit 1</title>
+</head>
+<body>
+	<h2 id="username">Welcome, <span id="user">[USER]</span></h2>
+	<nav class="navbar justify-content-between" id="navbar">
+		<ul class="form-inline">
+			<li><a href='#' onClick='$(this).backToProfile()'>Back to Profile</a></li>
+			<li><a href='#' onClick='$(this).logout()'>Logout</a></li>
+		</ul>
+	</nav>
+	<div class="contentBox container">
+		<h2><span id="name">[USER]</span>'s Account Details</h2>
+		<hr>
+		<h6>Name:</h6>
+		<input id="nameForm" type="text" placeholder="User Name"/>
+		<h6>Cellphone Number:</h6>
+		<input id="numForm" type="text" placeholder="+639xxxxxxxxx"/>
+		<button id="saveProfileChanges">Save Changes</button>
+	</div>
+	<script>
+	$(document).ready(function(){
+		$.fn.logout = function(){
+			$.post("/logout", function(result){
+				window.location.href = "/";
+			});
+		};
+
+		$.fn.backToProfile = function(){
+			let back = confirm("All changes will be lost. Go back?");
+			console.log(back);
+			if(back){
+				window.location.href = "/profile";
+			}
+		};
+
+		$.post("/getUserInfo", function(result){
+			// console.log("result is",result["user"]);
+			if(result["user"] === undefined){
+				window.location.href = "/";
+			}
+			$("#user").html(result["user"]);
+			$("#name").html(result["user"]);
+			$("#nameForm").val(result["user"]);
+			$("#numForm").val(result["user_phone"]);
+			uid = result["uid"];
+		});
+
+		$("#saveProfileChanges").click(function(){
+			console.log("CLICK");
+			let newName = $("#nameForm").val();
+			let newNumber = $("#numForm").val();
+
+			const phoneRegEx = /[+]639\d{9}$/
+
+			if(newName == "" || newNumber == ""){
+				alert("woi a field is missing");
+			}else if(!phoneRegEx.test(newNumber)){
+				alert("The fields highlighted in red contain invalid inputs. Please follow the proper formats.");
+			}else{
+				//do query
+				console.log("Im doing the query")
+				$.post("/updateUser", {uid:uid, name:newName, phoneno:newNumber}, function(response){
+					console.log(response);
+					alert("Successfully updated your account details!");
+					window.location.href = "/profile";
+				});
+			}
+		});
+	});</script>
+</body>
+</html>
