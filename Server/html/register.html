@@ -29,7 +29,7 @@
           </div>
           <div class="form-group">
             <label for="Userno">Cellphone Number</label>
-            <input id="Userno" type="text" class="form-control" placeholder="+639xxxxxxxxx" pattern="[+]639\d{9}$" name="Userno">
+            <input id="Userno" type="text" class="form-control" placeholder="+639xxxxxxxxx" value="+639" pattern="[+]639\d{9}$" name="Userno">
           </div>
         </form>
 	</div>
@@ -45,7 +45,7 @@
 					</tr>
 					<tr>
 						<th>Field Unit Phone Number</th>
-						<td><input id="fieldNumber" type="text" placeholder="Phone Number of Field Unit" placeholder="+639xxxxxxxxx" pattern="[+]639\d{9}$"/></td>
+						<td><input id="fieldNumber" type="text" placeholder="Phone Number of Field Unit" placeholder="+639xxxxxxxxx" value="+639" pattern="[+]639\d{9}$"/></td>
 					</tr>
 					<tr>
 						<th>Species</th>
@@ -111,7 +111,7 @@
 				alert("A field has been left blank. Please fill in all forms completely.");
 			}else if(label.includes(" ")){
 				alert("Field unit labels must not have spaces.");
-			}else if(!phoneRegEx.test(userno) || !phoneRegEx.test(phoneno)){
+			}else if(!phoneRegEx.test(userno) || !phoneRegEx.test(number)){
 				alert("The fields highlighted in red contain invalid inputs. Please follow the proper formats.");
 			}else{
 				//do user query
