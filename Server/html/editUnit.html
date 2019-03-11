@@ -69,6 +69,18 @@
 		</div>
 		<button id="saveUnitChanges">Save Changes</button>
 	</div>
+
+	<div class="contentBox container">
+		<h2>Delete <span class="fieldLabel">Current Unit</span></h2>
+		<hr>
+		<h3 class="alert">-= W A R N I N G =-</h3>
+		<p class="alert">Deleting a field unit is permanent. This will cut its connection to the server. All its recorded data wll be lost with no chance of recovery. Enter your password and click the delete button if you are completely sure you want to delete this field unit.</p>
+		<div class="centerThis">
+			<input type="password" name="verifyPass" id="verifyPass" placeholder="Enter password here to delete" />
+			<button id="deleteUnitBtn" class="col-2">Delete Current Unit</button>
+		</div>
+	</div>
+
 	<script>
 	$(document).ready(function(){
 		$.fn.logout = function(){
@@ -156,6 +168,32 @@
 					// console.log(response);
 					alert("Successfully updated the new field unit details!");
 					window.location.href = "/FishFeedIndex";
+				});
+			}
+		});
+
+		$("#deleteUnitBtn").click(function(event){
+			console.log("deletdis")
+			let pass = $("#verifyPass").val();
+			if (pass == ""){
+				console.log("empty pass")
+				alert("Your password is needed to delete this unit. This is to prevent accidetal deletions.")
+			}else{
+				console.log("now verifying")
+				$.post("/verifyPassword", {pass:pass}, function(checkResult){
+					//console.log(checkResult)
+					if(checkResult){
+						console.log("get yote")
+						$.post("/getFID", function(result){
+							$.post("/deleteUnit", {fid:result}, function(result){
+								alert("This field has now been deleted.");
+								window.location.href = "/FishFeedIndex"
+							});
+						});
+					}else{
+						alert("Incorrect password.")
+						$("#verifyPass").val("")
+					}
 				});
 			}
 		});

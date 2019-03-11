@@ -37,12 +37,20 @@ app.get("/addFieldUnit", (request, response) => {
   response.sendFile('addUnit.html', {"root": "html/"})
 });
 
+app.get("/editFieldUnit", (request, response) => {
+  response.sendFile('editUnit.html', {"root": "html/"})
+});
+
 app.get("/register", (request, response) => {
   response.sendFile('register.html', {"root": "html/"})
 });
 
 app.get("/profile", (request, response) => {
   response.sendFile('profile.html', {"root": "html/"})
+});
+
+app.get("/editProfile", (request, response) => {
+  response.sendFile('editProfile.html', {"root": "html/"})
 });
 
 /*********************
@@ -197,6 +205,47 @@ app.post('/updateUser', (request, response) => {
   userdata["user_phone"] = phoneno
 });
 
+app.post('/deleteUnit', (request, response) => {
+  console.log("B O I")
+  let fid = request.body.fid
+
+  let sql = "DELETE FROM `feedhistory` WHERE fid="+fid
+  con.query(sql, function(err,result){
+    if(err){
+      console.log(err)
+    }
+    console.log("feed history purged")
+  });
+
+  sql = "DELETE FROM `samples` WHERE fid="+fid
+  con.query(sql, function(err,result){
+    if(err){
+      console.log(err)
+    }
+    console.log("samples purged")
+  });
+
+  sql = "DELETE FROM `schedule` WHERE fid="+fid
+  con.query(sql, function(err,result){
+    if(err){
+      console.log(err)
+    }
+    console.log("schedule purged")
+  });
+
+  sql = "DELETE FROM `units` WHERE fid="+fid
+  con.query(sql, function(err,result){
+    if(err){
+      console.log(err)
+    }
+    let sql2 = "SELECT * FROM `units` WHERE uid="+userdata["uid"]+" LIMIT 1"
+    con.query(sql2, function(err, res){
+      currentFID = res[0].fid
+    })
+    response.json(result)
+  });
+});
+
 app.post('/logout', (request, response) => {
   userdata = {}
   currentFID = null
@@ -291,6 +340,25 @@ app.post('/userLogin', (request, response) => { //Ajax Request for Login
     })
     response.json(data)
   })
+});
+
+
+app.post('/verifyPassword', (request, response) => {
+  let pass = sha256(request.body.pass)
+
+  let sql = "SELECT `password` FROM `users` WHERE uid="+userdata["uid"]
+  con.query(sql, function(err, result){
+    if(err){
+      console.log(err)
+    }
+    var check = result[0].password;
+    var verification = false;
+
+    if(check == pass){
+      verification = true;
+    }
+    response.json(verification)
+  });
 });
 
 /***************************************

@@ -18,21 +18,21 @@ Server: (note: * = optional)
 Website:
 =======================================
 >> FIX REGISTRATION PAGE
->> implement profile tab
-  - add edit profile option
->> implement delete unit option
-  - are you sure? input password to delete
+>> implement profile tab (done)
+  - add edit profile option (done)
+>> implement delete unit option (done)
 >> implement add fish sample button on unit page
 >> implement deeper statistical analysis of fish sampling
-  - ave size, weight, population, etc 
+  - ave size, weight, population (estimate), etc 
 >> implement harvest function
   - tallies costs and, with user input on estimated sales (price of fish per kilo x kilos harvested), provides net profit/income
+  - merge with revamped fish sampling stats page?
 >> implement feed financial data tab
-  - feed name
+  - feed name*
   - cost per kilo
   - total amount on hand
     - total used every (timespan)
-  - which field units/fish pens use this feed
+  - which field units/fish pens use this feed*
 >> make unit state whether it is currently online or offline
   - every n minutes, server will call the units. if the call is not answered, switch unit status to offline and text a warning to the user.
     - https://www.arduino.cc/en/Tutorial/GSMExamplesMakeVoiceCall
