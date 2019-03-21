@@ -21,9 +21,6 @@
 	<div class="contentBox container">
 		<h2>Details of <span class="fieldLabel">Current Unit</span></h2>
 		<hr>
-		<div id="mainContainer">
-
-		</div>
 		<div class="row" id="statsContent">
 			<div class="col-5" id="unitDetails">
 				<table>
@@ -122,16 +119,6 @@
 				window.location.href = "/";
 			}
 			$("#user").html(result["user"]);
-			$.post("/getFieldUnits", {uid:result["uid"]},function(res){
-				let insert = "";
-				for(let i = 0; i < res.length; i++){
-					insert += "<li class='nav-item'><a href='#' onClick='$(this).changeFeeder("
-							+ res[i].fid +")'>"
-							+ res[i].label
-							+ "</a></li>";
-				}
-				$("#fieldUnits").html(insert);
-			});
 			uid = result["uid"];
 		});
 

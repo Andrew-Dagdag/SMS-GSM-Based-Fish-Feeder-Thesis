@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta charset="UTF-8">
+	
+	<link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="stylesheet" href="bootstrap/dist/css/bootstrap.css"/>
+  <script src="bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="jquery/dist/jquery.min.js"></script>
+	<title>Unit 1</title>
+</head>
+<body>
+	<h2 id="username">Welcome, <span id="user">[USER]</span></h2>
+	<nav class="navbar justify-content-between" id="navbar">
+		<ul class="form-inline">
+			<li><a href='#' onClick='$(this).backToUnits()'>Back to Units</a></li>
+			<li><a href='#' onClick='$(this).logout()'>Logout</a></li>
+		</ul>
+	</nav>
+	<div class="contentBox container">
+		<h2>Add New Sample for <span class="fieldLabel">Current Unit</span></h2>
+		<hr>
+		<h6>Size: (unit to be added)</h6>
+		<input id="sizeForm" type="number" min="0" value="0" />
+		<h6>Weight: (unit to be added)</h6>
+		<input id="weightForm" type="number" min="0" value="0" />
+		<button id="saveSampleBtn">Submit Record</button>
+	</div>
+
+	<div class="contentBox container">
+		<h2>Sample History of <span class="fieldLabel">Current Unit</span></h2>
+		<hr>
+		<div id="sample">
+		</div>
+	</div>
+
+	<script>
+	$(document).ready(function(){
+		var readableTime = (dateTime) =>{
+			var res = new Date(dateTime);
+			console.log(res.getTime());
+			// console.log(res.toLocaleString());
+			// console.log(res.getTimezoneOffset());
+
+			return res.toLocaleString();
+		}
+
+		$.fn.logout = function(){
+			$.post("/logout", function(result){
+				window.location.href = "/";
+			});
+		};
+
+		$.fn.backToUnits = function(){
+			let back = confirm("Data will not be recorded. Go back?");
+			console.log(back);
+			if(back){
+				window.location.href = "/FishFeedIndex";
+			}
+		};
+
+		$.fn.getFeederDetails = function(fid){
+			$.post("/getFieldUnit", {fid:fid}, function(result){
+				// console.log(result);
+				$(".fieldLabel").html(result[0].label);
+			});
+		};
+
+		$.post("/getSampleStats", function(result){
+			let insert = "<table><tr><th>size</th><th>weight</th><th>timestamp</th></tr>";
+			for(let i = 0; i < result.length; i++){
+				time = readableTime(result[i].timestamp);
+				insert	+= 	"<tr>"
+						+	"<td>" + result[i].size + "</td>"
+						+	"<td>" + result[i].weight + "</td>"
+						+	"<td>" + time + "</td>"
+			}
+			insert += "</table>";
+			$("#sample").html(insert);
+		});
+
+		$.post("/getUserInfo", function(result){
+			// console.log("result is",result["user"]);
+			if(result["user"] === undefined){
+				window.location.href = "/";
+			}
+			$("#user").html(result["user"]);
+			uid = result["uid"];
+		});
+
+		$.post("/getFID", function(result){
+			$(this).getFeederDetails(result);
+			let fid = result[0];
+			console.log(fid)
+		});
+
+		$("#saveSampleBtn").click(function(){	
+			let size = $("#sizeForm").val();
+			let weight = $("#weightForm").val();
+			let save = confirm("WARNING: Recording is permanent. Double check the data you entered:\n\nSize: "+size+" (unit)\nWeight: "+weight+" (unit)\n\nPress OK to record the data if it is correct.")
+			if(save){
+				$.post("/addSampleStats", {size:size, weight:weight}, function(response){
+					console.log(response);
+					alert("Sample data successfully recorded!")
+					window.location.href = "/FishFeedIndex"	
+				});
+			}
+		});
+	});</script>
+</body>
+</html>

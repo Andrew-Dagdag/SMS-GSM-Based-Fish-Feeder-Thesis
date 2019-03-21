@@ -53,6 +53,10 @@ app.get("/editProfile", (request, response) => {
   response.sendFile('editProfile.html', {"root": "html/"})
 });
 
+app.get("/addSample", (request, response) => {
+  response.sendFile('addSample.html', {"root": "html/"})
+});
+
 /*********************
 **AJAX POST REQUESTS**
 *********************/
@@ -89,6 +93,23 @@ app.post('/getSampleStats', (request, response) => {
     }
     response.json(result)    
   })
+});
+
+app.post('/addSampleStats', (request, response) => {
+  let size = request.body.size
+  let weight = request.body.weight
+  
+  let timestamp = new Date().toISOString().slice(0, 19).replace('T', ' ')
+  let addSampleQuery = "INSERT INTO `sample` (`fid`, `size`, `weight`, `timestamp`) VALUES ('"
+                  + currentFID + "', '" + size + "', '" + weight + "', '" + timestamp + "')"
+  //console.log(addSampleQuery)
+  con.query(addSampleQuery, function(err, result){
+    if(err){
+      console.log(err)
+    }
+    console.log("sample recorded")
+    response.json(result)
+  });
 });
 
 app.post('/getFeedHist', (request, response) => {

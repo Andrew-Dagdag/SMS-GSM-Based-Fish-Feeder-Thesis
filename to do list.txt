@@ -20,7 +20,7 @@ Website:
 >> implement profile tab (done)
   - add edit profile option (done)
 >> implement delete unit option (done)
->> implement add fish sample button on unit page
+>> implement add fish sample button on unit page (done)
 >> implement deeper statistical analysis of fish sampling
   - ave size, weight, population (estimate), etc 
 >> implement harvest function

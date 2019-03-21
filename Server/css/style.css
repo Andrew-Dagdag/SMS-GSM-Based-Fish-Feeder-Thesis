@@ -23,7 +23,7 @@ body
 	float: left;
 }
 
-.navbar a, #editUnitBtn, #editProfileBtn
+.navbar a, #editUnitBtn, #editProfileBtn, #addSampleBtn
 {
 	display: block;
 	text-decoration: none;	
@@ -36,7 +36,7 @@ body
 	border-radius: 5px;
 }
 
-#editUnitBtn, #editProfileBtn, #deleteUnitBtn
+#editUnitBtn, #editProfileBtn, #deleteUnitBtn, #addSampleBtn
 {
 	margin: auto;
 	margin-top: 20px;
@@ -47,7 +47,7 @@ body
 	margin-right: 5px;	
 }
 
-.navbar a:hover:not(.active), #editUnitBtn:hover, #editProfileBtn:hover
+.navbar a:hover:not(.active), #editUnitBtn:hover, #editProfileBtn:hover, #addSampleBtn:hover
 {
 	background-color: #333;
 	text-decoration: none;
@@ -126,7 +126,7 @@ label
 	font-weight: bold;
 }
 
-#userUnitList, #nameForm, #numForm
+#userUnitList, #nameForm, #numForm, #sizeForm, #weightForm
 {
 	margin: auto;
 }
