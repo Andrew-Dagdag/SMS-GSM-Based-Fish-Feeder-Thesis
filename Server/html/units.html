@@ -73,32 +73,6 @@
 			<a id="addSampleBtn" href="/addSample">Record Fish Sample Data</a>
 		</div>
 	</div>
-	<div class="contentBox container">
-		<h2>Options</h2>
-		<hr>
-		<div id="optionsContent">
-			<form action="#" class="row">
-				<h3 class="col-12">Schedule</h3>
-				<div class="schedForm col-4">
-					<h4>Start Time</h4>
-					<input type="time" name="startTime" id="startTime"/>
-				</div>
-				<div class="schedForm col-4">
-					<h4>Interval</h4>
-					<input type="number" name="intervalHr" min="0" max="23" step="1" id="interval"> hr/s
-				</div>
-				<div class="schedForm col-4">
-					<h4>End Time</h4>
-					<input type="time" name="endTime" id="endTime">
-				</div>
-				<div class="schedForm col-12">
-					<h4>Feed Amount</h4>
-					<input type="number" name="feedAmt" id="feedAmt"> grams
-				</div>
-				<button type="button" class="col-4" id="changeSettings">Save Changes</button>
-			</form>
-		</div>
-	</div>
 	<script>
 	$(document).ready(function(){
 		var readableTime = (dateTime) =>{
@@ -135,6 +109,9 @@
 			$.post("/getSampleStats", function(result){
 				let insert = "<table><tr><th>size</th><th>weight</th><th>timestamp</th></tr>";
 				for(let i = 0; i < result.length; i++){
+					if(i > 10){
+						break; //limits the output to 10 results
+					}
 					time = readableTime(result[i].timestamp);
 					insert	+= 	"<tr>"
 							+	"<td>" + result[i].size + "</td>"
@@ -148,6 +125,9 @@
 				let insert = "<table><tr><th>Feed Type</th><th>amount (g)</th><th>timestamp</th></tr>";
 				// console.log(result);
 				for(let i = 0; i < result.length; i++){
+					if(i > 10){
+						break; //limits the output to 10 results
+					}
 					time = readableTime(result[i].timestamp);
 					insert	+= 	"<tr>"
 							+	"<td>" + result[i].type + "</td>"
@@ -177,24 +157,6 @@
 
 		$("#estimateOption").change(function(event){
 			$(this).changeEstimate($("#estimateOption").children("option:selected").val());
-		});
-
-		$("#changeSettings").click(function(event){
-			event.preventDefault();
-			// console.log("hellooo");
-			let start = $("#startTime").val();
-			let end = $("#endTime").val();
-			let interval = $("#interval").val();
-			let fullSched = start + "," + interval + "," + end;
-			let feedAmt = $("#feedAmt").val();
-			console.log(fullSched, feedAmt);
-			if(start > end || start == "" || end == "" || interval == "" || feedAmt == 0){
-				console.log("Error");
-			}else{
-				$.post("/updateSched", {fullSched: fullSched, amount:feedAmt}, function(result){
-					alert(result.message.replace("(", ""));
-				});
-			}
 		});
 
 		$.post("/getUserInfo", function(result){

@@ -86,7 +86,7 @@ app.post('/getDailyScheduleLength', (request, response) => {
 });
 
 app.post('/getSampleStats', (request, response) => {
-  let sql = "SELECT * FROM `sample` WHERE `fid`="+currentFID+" ORDER BY `sample`.`timestamp` ASC"
+  let sql = "SELECT * FROM `sample` WHERE `fid`="+currentFID+" ORDER BY `sample`.`timestamp` DESC"
   con.query(sql, function(err, result){
     if (err){
       console.log(err)
@@ -100,8 +100,8 @@ app.post('/addSampleStats', (request, response) => {
   let weight = request.body.weight
   
   let timestamp = new Date().toISOString().slice(0, 19).replace('T', ' ')
-  let addSampleQuery = "INSERT INTO `sample` (`fid`, `size`, `weight`, `timestamp`) VALUES ('"
-                  + currentFID + "', '" + size + "', '" + weight + "', '" + timestamp + "')"
+  let addSampleQuery = "INSERT INTO `sample` (`fid`, `size`, `weight`, `timestamp`, `index`) VALUES ('"
+                  + currentFID + "', '" + size + "', '" + weight + "', '" + timestamp + "', NULL)"
   //console.log(addSampleQuery)
   con.query(addSampleQuery, function(err, result){
     if(err){
@@ -113,7 +113,7 @@ app.post('/addSampleStats', (request, response) => {
 });
 
 app.post('/getFeedHist', (request, response) => {
-  let sql = "SELECT * FROM `feedhistory` WHERE `fid`="+currentFID+" ORDER BY `feedhistory`.`timestamp` ASC"
+  let sql = "SELECT * FROM `feedhistory` WHERE `fid`="+currentFID+" ORDER BY `feedhistory`.`index` DESC"
   con.query(sql, function(err, result){
     if(err){
       console.log(err)
