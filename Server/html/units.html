@@ -26,7 +26,7 @@
 		</ul>
 	</nav>
 	<div class="contentBox container">
-		<h2>Statistics</h2>
+		<h2>Field Overview</h2>
 		<hr>
 		<div class="row" id="statsContent">
 			<div class="col-4" id="unitDetails">
@@ -71,12 +71,13 @@
 			</div>
 			<a id="editUnitBtn" href="/editFieldUnit">Edit/Delete Current Unit</a>
 			<a id="addSampleBtn" href="/addSample">Record Fish Sample Data</a>
-			<a id="statisticsBtn" href="/statistics">Statistics</a>
+			<a id="statisticsBtn" href="/fishSampleStatistics">Fish Sample Statistics</a>
 			<a id="financialBtn" href="/financial">Financial Report</a>
 		</div>
 	</div>
 	<script>
 	$(document).ready(function(){
+		var feedAmt;
 		var readableTime = (dateTime) =>{
 			var res = new Date(dateTime);
 			console.log(res.getTime());
@@ -103,10 +104,7 @@
 			});
 			$.post("/getSched", {fid:fid}, function(result){
 				let sched = result[0].sched.split(",");
-				$("#startTime").val(sched[0]);
-				$("#interval").val(sched[1]);
-				$("#endTime").val(sched[2]);
-				$("#feedAmt").val(result[0].amount);
+				feedAmt = result[0].amount;
 			});
 			$.post("/getSampleStats", function(result){
 				let insert = "<table><tr><th>size</th><th>weight</th><th>timestamp</th></tr>";
@@ -139,12 +137,12 @@
 				insert += "</table>";
 				$("#feedhist").html(insert);
 			});
-			changeEstimate($("#estimateOption").children("option:selected").val());
+			$(this).changeEstimate($("#estimateOption").children("option:selected").val());
 		};
 
 		$.fn.changeEstimate = function(days){
-			let feedamt = parseInt($("#feedAmt").val());
-			let estimate = feedamt*parseInt(days);
+			let feedamount = parseInt(feedAmt);
+			let estimate = feedamount*parseInt(days);
 			$.post("/getDailyScheduleLength", function(result){
 				estimate = estimate * parseInt(result);
 				let feedremaining = parseInt($("#fieldLoad").html().split(" ")[0]);

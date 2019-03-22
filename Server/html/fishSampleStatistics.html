@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta charset="UTF-8">
+	
+	<link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="stylesheet" href="bootstrap/dist/css/bootstrap.css"/>
+  <script src="bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="jquery/dist/jquery.min.js"></script>
+	<title>Unit 1</title>
+</head>
+<body>
+	<h2 id="username">Welcome, <span id="user">[USER]</span></h2>
+	<nav class="navbar justify-content-between" id="navbar">
+		<ul class="form-inline">
+			<li><a href='#' onClick='$(this).backToUnits()'>Back to Units</a></li>
+			<li><a href='#' onClick='$(this).logout()'>Logout</a></li>
+		</ul>
+	</nav>
+	<div class="contentBox container">
+		<h2>Statistics</h2>
+		<hr>
+		<div class="row" id="statsContent">
+			<div class="col-4" id="unitDetails">
+				<table>
+					<tr>
+						<th>Field Unit Label</th>
+						<td id="fieldLabel">Tilapia1</td>
+					</tr>
+					<tr>
+						<th>Field Unit Number</th>
+						<td id="fieldNumber">+639xxxxxxxxx</td>
+					</tr>
+					<tr>
+						<th>Species</th>
+						<td id="fieldSpecies">aaa</td>
+					</tr>
+					<tr>
+						<th>Feeder Load</th>
+						<td id="fieldLoad">1000 grams</td>
+					</tr>
+					<tr>
+						<th>Est. feed amt needed for:
+							<select id="estimateOption">
+								<option value="1">1 Day</option>
+								<option value="7">1 Week</option>
+								<option value="14">2 Weeks</option>
+								<option value="30">1 Month (30 Days)</option>
+							</select>
+						</th>
+						<td><span id="estimateResult">nan</span> grams</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<span id="estimateWarning">No Warning</span>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="col-4" id="feedhist">
+			</div>
+			<div class="col-4" id="sample">
+			</div>
+		</div>
+	</div>
+	<script>
+	$(document).ready(function(){
+		$.fn.logout = function(){
+			$.post("/logout", function(result){
+				window.location.href = "/";
+			});
+		};
+
+		$.fn.backToUnits = function(){
+			window.location.href = "/FishFeedIndex";
+		};
+	});</script>
+</body>
+</html>
