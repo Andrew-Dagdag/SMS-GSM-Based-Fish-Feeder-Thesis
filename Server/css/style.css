@@ -23,7 +23,7 @@ body
 	float: left;
 }
 
-.navbar a, #editUnitBtn, #editProfileBtn, #addSampleBtn
+.navbar a, #editUnitBtn, #editProfileBtn, #addSampleBtn, #statisticsBtn, #financialBtn
 {
 	display: block;
 	text-decoration: none;	
@@ -36,7 +36,7 @@ body
 	border-radius: 5px;
 }
 
-#editUnitBtn, #editProfileBtn, #deleteUnitBtn, #addSampleBtn
+#editUnitBtn, #editProfileBtn, #deleteUnitBtn, #addSampleBtn, #statisticsBtn, #financialBtn
 {
 	margin: auto;
 	margin-top: 20px;

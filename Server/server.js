@@ -57,6 +57,10 @@ app.get("/addSample", (request, response) => {
   response.sendFile('addSample.html', {"root": "html/"})
 });
 
+app.get("/statistics", (request, response) => {
+  response.sendFile('statistics.html', {"root": "html/"})
+});
+
 /*********************
 **AJAX POST REQUESTS**
 *********************/
