@@ -1,9 +1,9 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.3
+-- version 4.7.4
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 22, 2019 at 10:23 PM
+-- Generation Time: Mar 22, 2019 at 11:01 PM
 -- Server version: 10.1.30-MariaDB
 -- PHP Version: 7.1.13
 
@@ -106,20 +106,21 @@ CREATE TABLE `sample` (
   `size` float NOT NULL,
   `weight` float NOT NULL,
   `estpop` int(5) NOT NULL,
-  `timestamp` datetime NOT NULL
+  `timestamp` datetime NOT NULL,
+  `index` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `sample`
 --
 
-INSERT INTO `sample` (`fid`, `size`, `weight`, `estpop`, `timestamp`) VALUES
-(3, 450, 18, 0, '2018-10-04 00:00:00'),
-(3, 500, 20, 0, '2018-10-11 00:00:00'),
-(3, 520, 21, 0, '2018-10-18 00:00:00'),
-(6, 15, 20, 0, '2019-03-21 05:38:04'),
-(6, 16, 21, 0, '2019-03-21 05:43:39'),
-(6, 16, 25, 0, '2019-03-21 06:38:04');
+INSERT INTO `sample` (`fid`, `size`, `weight`, `estpop`, `timestamp`, `index`) VALUES
+(3, 450, 18, 0, '2018-10-04 00:00:00', 1),
+(3, 500, 20, 0, '2018-10-11 00:00:00', 2),
+(3, 520, 21, 0, '2018-10-18 00:00:00', 3),
+(6, 15, 20, 0, '2019-03-21 05:38:04', 4),
+(6, 16, 21, 0, '2019-03-21 05:43:39', 5),
+(6, 16, 25, 0, '2019-03-21 06:38:04', 6);
 
 -- --------------------------------------------------------
 
@@ -219,6 +220,7 @@ ALTER TABLE `feedhistory`
 -- Indexes for table `sample`
 --
 ALTER TABLE `sample`
+  ADD PRIMARY KEY (`index`),
   ADD KEY `fid` (`fid`);
 
 --
@@ -257,6 +259,12 @@ ALTER TABLE `feed`
 --
 ALTER TABLE `feedhistory`
   MODIFY `index` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+
+--
+-- AUTO_INCREMENT for table `sample`
+--
+ALTER TABLE `sample`
+  MODIFY `index` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `units`
