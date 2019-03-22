@@ -4,6 +4,12 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta charset="UTF-8">
 	
+<<<<<<< HEAD
+	<link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="stylesheet" href="bootstrap/dist/css/bootstrap.css"/>
+  <script src="bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="jquery/dist/jquery.min.js"></script>
+=======
 	<link rel="stylesheet" href="style.css"/>
 	<link rel="stylesheet" href="MDBootstrap/css/bootstrap.min.css"/>
 	<link rel="stylesheet" href="MDBootstrap/css/mdb.css"/>
@@ -11,6 +17,7 @@
 	<script src="MDBootstrap/js/bootstrap.min.js"></script>
 	<script src="MDBootstrap/js/mdb.min.js"></script>
 	<script src="MDBootstrap/js/jquery-3.3.1.min.js"></script>
+>>>>>>> 3b7f61eff4137d7b2dcf55410d4b116aa91bbc95
 	<title>Unit 1</title>
 </head>
 <body>
@@ -78,6 +85,8 @@
 		$.fn.backToUnits = function(){
 			window.location.href = "/FishFeedIndex";
 		};
+<<<<<<< HEAD
+=======
 		$.post("/getUserInfo", function(result){
 			// console.log("result is",result["user"]);
 			if(result["user"] === undefined){
@@ -95,6 +104,7 @@
 				$("#fieldUnits").html(insert);
 			});
 		});
+>>>>>>> 3b7f61eff4137d7b2dcf55410d4b116aa91bbc95
 	});</script>
 </body>
 </html>
