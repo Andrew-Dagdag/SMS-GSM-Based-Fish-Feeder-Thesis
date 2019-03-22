@@ -57,7 +57,7 @@ app.get("/addSample", (request, response) => {
   response.sendFile('addSample.html', {"root": "html/"})
 });
 
-app.get("/statistics", (request, response) => {
+app.get("/fishSampleStatistics", (request, response) => {
   response.sendFile('fishSampleStatistics.html', {"root": "html/"})
 });
 

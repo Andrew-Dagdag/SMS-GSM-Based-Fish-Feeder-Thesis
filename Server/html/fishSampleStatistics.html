@@ -78,6 +78,23 @@
 		$.fn.backToUnits = function(){
 			window.location.href = "/FishFeedIndex";
 		};
+		$.post("/getUserInfo", function(result){
+			// console.log("result is",result["user"]);
+			if(result["user"] === undefined){
+				window.location.href = "/";
+			}
+			$("#user").html(result["user"]);
+			$.post("/getFieldUnits", {uid:result["uid"]},function(res){
+				let insert = "";
+				for(let i = 0; i < res.length; i++){
+					insert += "<li class='nav-item'><a href='#' onClick='$(this).changeFeeder("
+							+ res[i].fid +")'>"
+							+ res[i].label
+							+ "</a></li>";
+				}
+				$("#fieldUnits").html(insert);
+			});
+		});
 	});</script>
 </body>
 </html>
