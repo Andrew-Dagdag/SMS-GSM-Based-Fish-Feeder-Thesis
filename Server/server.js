@@ -153,9 +153,13 @@ app.post('/addUnit', (request, response) => {
   let phoneno = request.body.phoneno
   let species = request.body.species
   let feederload = request.body.feederload
+  let startingPop = request.body.startingPop
+  let capital = request.body.capital
+  let feedId = request.body.feedId
   let sql = "INSERT INTO `units` "
-          + "(`fid`, `uid`, `label`, `phoneno`, `species`, `feederload`) "
-          + "VALUES (NULL, '"+uid+"', '"+label+"', '"+phoneno+"', '"+species+"', '"+feederload+"')";
+          + "(`fid`, `uid`, `label`, `phoneno`, `species`, `feederload`, `startingPop`, `capital`, `feedId`) "
+          + "VALUES (NULL, '"+uid+"', '"+label+"', '"+phoneno+"', '"
+          + species+"', '"+feederload+"', '"+startingPop+"', '"+capital+"','"+feedId+"')";
   console.log(sql)
   con.query(sql, function(err, result){
     if(err){
@@ -366,7 +370,6 @@ app.post('/userLogin', (request, response) => { //Ajax Request for Login
     response.json(data)
   })
 });
-
 
 app.post('/verifyPassword', (request, response) => {
   let pass = sha256(request.body.pass)
