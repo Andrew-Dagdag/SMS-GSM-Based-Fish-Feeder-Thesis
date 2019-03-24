@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 22, 2019 at 11:01 PM
+-- Generation Time: Mar 24, 2019 at 07:59 AM
 -- Server version: 10.1.30-MariaDB
 -- PHP Version: 7.1.13
 
@@ -51,7 +51,7 @@ INSERT INTO `feed` (`feedId`, `feedname`, `cost`) VALUES
 CREATE TABLE `feedhistory` (
   `fid` int(5) NOT NULL,
   `feedamt` float NOT NULL,
-  `timestamp` datetime NOT NULL,
+  `timestamp` bigint(15) NOT NULL,
   `type` varchar(10) NOT NULL,
   `index` int(11) NOT NULL,
   `feedId` int(5) NOT NULL
@@ -62,38 +62,33 @@ CREATE TABLE `feedhistory` (
 --
 
 INSERT INTO `feedhistory` (`fid`, `feedamt`, `timestamp`, `type`, `index`, `feedId`) VALUES
-(3, 500, '2019-02-28 12:41:26', 'Manual', 1, 1),
-(3, 500, '2019-02-28 12:42:05', 'Manual', 2, 1),
-(3, 500, '2019-02-28 12:44:07', 'Manual', 3, 1),
-(4, 100, '2019-02-28 06:30:48', 'Manual', 8, 1),
-(4, 100, '2019-02-28 07:48:48', 'Manual', 9, 1),
-(4, 300, '2019-03-07 03:48:58', 'Scheduled', 10, 1),
-(2, 700, '2019-03-07 04:40:58', 'Scheduled', 11, 2),
-(4, 300, '2019-03-07 04:48:58', 'Scheduled', 12, 1),
-(1, 400, '2019-03-07 04:50:58', 'Scheduled', 13, 1),
-(2, 700, '2019-03-07 06:40:36', 'Scheduled', 14, 2),
-(4, 300, '2019-03-07 06:48:35', 'Scheduled', 15, 1),
-(5, 800, '2019-03-07 07:20:21', 'Scheduled', 16, 2),
-(3, 1000, '2019-03-07 08:30:16', 'Scheduled', 18, 1),
-(2, 700, '2019-03-07 08:40:16', 'Scheduled', 19, 2),
-(4, 300, '2019-03-07 08:48:16', 'Scheduled', 20, 1),
-(1, 400, '2019-03-07 08:50:16', 'Scheduled', 21, 1),
-(4, 300, '2019-03-07 09:48:16', 'Scheduled', 22, 1),
-(2, 700, '2019-03-07 10:40:16', 'Scheduled', 23, 2),
-(4, 300, '2019-03-07 10:48:16', 'Scheduled', 24, 1),
-(5, 800, '2019-03-07 11:20:16', 'Scheduled', 25, 2),
-(3, 1000, '2019-03-07 11:30:16', 'Scheduled', 26, 1),
-(3, 1000, '2019-03-11 02:30:10', 'Scheduled', 27, 1),
-(2, 700, '2019-03-11 04:40:42', 'Scheduled', 28, 2),
-(4, 300, '2019-03-11 04:48:42', 'Scheduled', 29, 1),
-(1, 400, '2019-03-11 04:50:42', 'Scheduled', 30, 1),
-(3, 1000, '2019-03-11 05:30:42', 'Scheduled', 31, 0),
-(4, 300, '2019-03-11 05:48:30', 'Scheduled', 32, 0),
-(3, 1000, '2019-03-21 05:30:13', 'Scheduled', 33, 0),
-(2, 700, '2019-03-21 06:40:44', 'Scheduled', 34, 0),
-(4, 300, '2019-03-21 06:48:44', 'Scheduled', 35, 0),
-(5, 800, '2019-03-21 07:20:44', 'Scheduled', 36, 0),
-(11, 100, '2019-03-21 08:00:21', 'Scheduled', 37, 0);
+(3, 500, 20190228124126, 'Manual', 1, 1),
+(3, 500, 20190228124205, 'Manual', 2, 1),
+(3, 500, 20190228124407, 'Manual', 3, 1),
+(4, 100, 20190228063048, 'Manual', 8, 1),
+(4, 100, 20190228074848, 'Manual', 9, 1),
+(4, 300, 20190307034858, 'Scheduled', 10, 1),
+(2, 700, 20190307044058, 'Scheduled', 11, 2),
+(4, 300, 20190307044858, 'Scheduled', 12, 1),
+(1, 400, 20190307045058, 'Scheduled', 13, 1),
+(2, 700, 20190307064036, 'Scheduled', 14, 2),
+(4, 300, 20190307064835, 'Scheduled', 15, 1),
+(5, 800, 20190307072021, 'Scheduled', 16, 2),
+(3, 1000, 20190307083016, 'Scheduled', 18, 1),
+(2, 700, 20190307084016, 'Scheduled', 19, 2),
+(4, 300, 20190307084816, 'Scheduled', 20, 1),
+(1, 400, 20190307085016, 'Scheduled', 21, 1),
+(4, 300, 20190307094816, 'Scheduled', 22, 1),
+(2, 700, 20190307104016, 'Scheduled', 23, 2),
+(4, 300, 20190307104816, 'Scheduled', 24, 1),
+(5, 800, 20190307112016, 'Scheduled', 25, 2),
+(3, 1000, 20190307113016, 'Scheduled', 26, 1),
+(3, 1000, 20190311023010, 'Scheduled', 27, 1),
+(2, 700, 20190311044042, 'Scheduled', 28, 2),
+(4, 300, 20190311044842, 'Scheduled', 29, 1),
+(1, 400, 20190311045042, 'Scheduled', 30, 1),
+(3, 300, 1553410561473, 'Manual', 41, 1),
+(3, 300, 1553410681481, 'Manual', 42, 1);
 
 -- --------------------------------------------------------
 
@@ -106,7 +101,7 @@ CREATE TABLE `sample` (
   `size` float NOT NULL,
   `weight` float NOT NULL,
   `estpop` int(5) NOT NULL,
-  `timestamp` datetime NOT NULL,
+  `timestamp` bigint(15) NOT NULL,
   `index` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -115,12 +110,15 @@ CREATE TABLE `sample` (
 --
 
 INSERT INTO `sample` (`fid`, `size`, `weight`, `estpop`, `timestamp`, `index`) VALUES
-(3, 450, 18, 0, '2018-10-04 00:00:00', 1),
-(3, 500, 20, 0, '2018-10-11 00:00:00', 2),
-(3, 520, 21, 0, '2018-10-18 00:00:00', 3),
-(6, 15, 20, 0, '2019-03-21 05:38:04', 4),
-(6, 16, 21, 0, '2019-03-21 05:43:39', 5),
-(6, 16, 25, 0, '2019-03-21 06:38:04', 6);
+(3, 450, 18, 0, 2147483647, 1),
+(3, 500, 20, 0, 2147483647, 2),
+(3, 520, 21, 0, 2147483647, 3),
+(6, 15, 20, 0, 2147483647, 4),
+(6, 16, 21, 0, 2147483647, 5),
+(6, 16, 25, 0, 2147483647, 6),
+(3, 5, 55, 0, 2147483647, 7),
+(3, 5, 55, 0, 2147483647, 8),
+(3, 3, 555, 0, 1553409897511, 9);
 
 -- --------------------------------------------------------
 
@@ -169,8 +167,8 @@ CREATE TABLE `units` (
 
 INSERT INTO `units` (`fid`, `uid`, `label`, `phoneno`, `species`, `feederload`, `startingPop`, `capital`, `feedId`) VALUES
 (1, 1, 'Dagdag, Unit 1', '+639486479304', 'Tilapia', 7800, 5000, 8000, 1),
-(2, 1, 'Dagdag, Unit 2', '+639486479304', 'Koi', 5800, 2000, 4000, 2),
-(3, 2, 'Articuno', '+639486479304', 'Tilapia', 8800, 4000, 5000, 1),
+(2, 1, 'Dagdag, Unit 2', '+639486479304', 'Koi', 5100, 2000, 4000, 2),
+(3, 2, 'Articuno', '+639486479304', 'Tilapia', 7200, 4000, 5000, 1),
 (4, 2, 'Zapdos', '+639486479304', 'Bangus', 12100, 3000, 6000, 1),
 (5, 2, 'Moltres', '+639486479304', 'Lionfish', 17600, 800, 1100, 2),
 (6, 2, 'Borb', '+639486479304', 'Rock', 9000, 200, 600, 2),
@@ -258,13 +256,13 @@ ALTER TABLE `feed`
 -- AUTO_INCREMENT for table `feedhistory`
 --
 ALTER TABLE `feedhistory`
-  MODIFY `index` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `index` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
 
 --
 -- AUTO_INCREMENT for table `sample`
 --
 ALTER TABLE `sample`
-  MODIFY `index` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `index` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `units`

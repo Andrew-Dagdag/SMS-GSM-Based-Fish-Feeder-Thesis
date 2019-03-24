@@ -65,6 +65,16 @@ app.get("/fishSampleStatistics", (request, response) => {
 **AJAX POST REQUESTS**
 *********************/
 
+app.post('/getFeedNames', (request, response) => {
+  let sql = "SELECT * FROM `feed`"
+  con.query(sql, function(err, result){
+    if(err){
+      console.log(err)
+    }
+    response.json(result)
+  })
+});
+
 app.post('/getDailyScheduleLength', (request, response) => {
   con.query("SELECT * FROM `schedule` WHERE fid=" + currentFID, function(err, result){
     let fieldUnits = []
@@ -102,10 +112,12 @@ app.post('/getSampleStats', (request, response) => {
 app.post('/addSampleStats', (request, response) => {
   let size = request.body.size
   let weight = request.body.weight
-  
-  let timestamp = new Date().toISOString().slice(0, 19).replace('T', ' ')
-  let addSampleQuery = "INSERT INTO `sample` (`fid`, `size`, `weight`, `timestamp`, `index`) VALUES ('"
-                  + currentFID + "', '" + size + "', '" + weight + "', '" + timestamp + "', NULL)"
+  let estpop = request.body.estpop
+
+  let timestamp = (new Date()).getTime()
+  console.log(timestamp)
+  let addSampleQuery = "INSERT INTO `sample` (`fid`, `size`, `weight`, `estpop`, `timestamp`, `index`) VALUES ('"
+                  + currentFID + "', '" + size + "', '" + weight + "', '" + estpop + "','" + timestamp + "', NULL)"
   //console.log(addSampleQuery)
   con.query(addSampleQuery, function(err, result){
     if(err){
@@ -184,13 +196,12 @@ app.post('/addUnit', (request, response) => {
 });
 
 app.post('/updateUnit', (request, response) => {
-  console.log("B O I")
   let label = request.body.label
   let phoneno = request.body.phoneno
-  let species = request.body.species
   let feederload = request.body.feederload
+  let feedId = request.body.feedId
   let sql = "UPDATE `units` "
-          + "SET `label` = '"+label+"', `phoneno` = '"+phoneno+"', `species` = '"+species+"', `feederload` = '"+feederload+"' "
+          + "SET `label` = '"+label+"', `phoneno` = '"+phoneno+"', `feederload` = '"+feederload+"', "+"`feedId` = '"+feedId+"' "
           + "WHERE `fid` = '"+currentFID+"'"
   console.log(sql)
   con.query(sql, function(err, result){
@@ -425,16 +436,21 @@ const feedNow = (fid, amount, userphone, text) => {
       })
     }
 
-    // let currentTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
-    let currentTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
-    console.log(currentTime)
-    let feedHist  = "INSERT INTO `feedhistory` "
-                  + "(`fid`, `feedamt`, `timestamp`, `type`, `index`) VALUES ('"
-                  + fid + "', '" + amount + "', '" + currentTime + "', '" + (userphone==undefined?"Scheduled":"Manual") + "', NULL)"
-    con.query(feedHist, function(err, res){
+    let currentTime = (new Date()).getTime()
+    let getfeedId = "SELECT * FROM `units` WHERE `fid`="+fid
+    con.query(getfeedId, function(err, res){
       if(err){
-        throw err
+        throw er
       }
+      let feedId = res[0].feedId
+      let feedHist  = "INSERT INTO `feedhistory` "
+                    + "(`fid`, `feedamt`, `timestamp`, `type`, `index`, `feedId`) VALUES ('"
+                    + fid + "', '" + amount + "', '" + currentTime + "', '" + (userphone==undefined?"Scheduled":"Manual") + "', NULL, "+feedId+")"
+      con.query(feedHist, function(err, res){
+        if(err){
+          throw err
+        }
+      })
     })
     console.log(feederload)
     if(userphone !== undefined && text !== undefined){
@@ -638,12 +654,13 @@ app.listen(2018, function(){
             // 2018-10-31 00:00:00
               let size = text[2]
               let weight = text[3]
+              let estpop = text[4]
               let fid = result2[0].fid
               let timestamp = new Date().toISOString().slice(0, 19).replace('T', ' ')
-              let addSampleQuery = "INSERT INTO `sample` (`fid`, `size`, `weight`, `timestamp`) VALUES ('"
-                              + fid + "', '" + size + "', '" + weight + "', '" + timestamp + "')"
+              let addSampleQuery = "INSERT INTO `sample` (`fid`, `size`, `weight`, `estpop`, `timestamp`, `index`) VALUES ('"
+                              + currentFID + "', '" + size + "', '" + weight + "', '" + estpop + "','" + timestamp + "', NULL)"
               console.log(addSampleQuery)
-              // con.query(addSampleQuery, function(err, res){ if(err) throw err})
+              con.query(addSampleQuery, function(err, res){ if(err) throw err})
             }else{
               let message = "Command unknown"
               sendTextMessage(message, phoneno)

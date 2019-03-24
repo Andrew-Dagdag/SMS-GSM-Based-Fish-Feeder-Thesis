@@ -47,6 +47,10 @@
 						<td id="fieldSpecies">aaa</td>
 					</tr>
 					<tr>
+						<th>Starting Population</th>
+						<td id="fieldPop">aaa</td>
+					</tr>
+					<tr>
 						<th>Feeder Load</th>
 						<td id="fieldLoad">1000 grams</td>
 					</tr>
@@ -82,8 +86,7 @@
 		var feedAmt;
 		var readableTime = (dateTime) =>{
 			var res = new Date(dateTime);
-			console.log(res.getTime());
-			// console.log(res.toLocaleString());
+			console.log(res.toLocaleString());
 			// console.log(res.getTimezoneOffset());
 
 			return res.toLocaleString();
@@ -102,6 +105,7 @@
 				$("#fieldLabel").html(result[0].label);
 				$("#fieldNumber").html(result[0].phoneno);
 				$("#fieldSpecies").html(result[0].species);
+				$("#fieldPop").html(result[0].startingPop);
 				$("#fieldLoad").html(String(result[0].feederload) + " grams");
 			});
 			$.post("/getSched", {fid:fid}, function(result){
@@ -109,35 +113,54 @@
 				feedAmt = result[0].amount;
 			});
 			$.post("/getSampleStats", function(result){
-				let insert = "<table><tr><th>size</th><th>weight</th><th>timestamp</th></tr>";
+				let insert = "<table><tr><th>Size</th><th>Weight</th><th>Timestamp</th><th>Est Pop</th></tr>";
+				console.log(result.length);
 				for(let i = 0; i < result.length; i++){
 					if(i > 10){
 						break; //limits the output to 10 results
 					}
-					time = readableTime(result[i].timestamp);
+					let time = readableTime(result[i].timestamp);
+					console.log(time + " aa " + i);
+
 					insert	+= 	"<tr>"
 							+	"<td>" + result[i].size + "</td>"
 							+	"<td>" + result[i].weight + "</td>"
 							+	"<td>" + time + "</td>"
+							+	"<td>" + result[i].estpop + "</td></tr>"
 				}
 				insert += "</table>";
 				$("#sample").html(insert);
 			});
 			$.post("/getFeedHist", function(result){
-				let insert = "<table><tr><th>Feed Type</th><th>amount (g)</th><th>timestamp</th></tr>";
+				let insert = "<table><tr><th>Feed Type</th><th>Feed Used</th><th>amount (g)</th><th>timestamp</th></tr>";
 				// console.log(result);
-				for(let i = 0; i < result.length; i++){
-					if(i > 10){
-						break; //limits the output to 10 results
+				$.post("/getFeedNames", function(feedNames){
+					for(let i = 0; i < result.length; i++){
+						if(i > 10){
+							break; //limits the output to 10 results
+						}
+						insert	+= 	"<tr>"
+								+	"<td>" + result[i].type + "</td>"
+						for(let j = 0; j < feedNames.length; j++){
+							if(feedNames[j].feedId == result[i].feedId){
+								insert += "<td>"+feedNames[j].feedname+"</td>"
+							}
+						}
+
+						for(name in feedNames){
+							// console.log(name)
+							if(name.feedId == result[i].feedId){
+								insert += "<td>"+name.feedname+"</td>"
+								break
+							}
+						}
+						time = readableTime(result[i].timestamp);
+						insert	+=	"<td>" + result[i].feedamt + "</td>"
+								+	"<td>" + time + "</td></tr>"
 					}
-					time = readableTime(result[i].timestamp);
-					insert	+= 	"<tr>"
-							+	"<td>" + result[i].type + "</td>"
-							+	"<td>" + result[i].feedamt + "</td>"
-							+	"<td>" + time + "</td>"
-				}
-				insert += "</table>";
-				$("#feedhist").html(insert);
+					insert += "</table>";
+					$("#feedhist").html(insert);
+				});
 			});
 			$(this).changeEstimate($("#estimateOption").children("option:selected").val());
 		};
