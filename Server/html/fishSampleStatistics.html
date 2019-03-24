@@ -8,9 +8,11 @@
 	<link rel="stylesheet" href="MDBootstrap/css/bootstrap.min.css"/>
 	<link rel="stylesheet" href="MDBootstrap/css/mdb.css"/>
 	<link rel="stylesheet" href="MDBootstrap/css/style.css"/>
-	<script src="MDBootstrap/js/bootstrap.min.js"></script>
-	<script src="MDBootstrap/js/mdb.min.js"></script>
-	<script src="MDBootstrap/js/jquery-3.3.1.min.js"></script>
+
+	<script type="text/javascript" src="MDBootstrap/js/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript" src="MDBootstrap/js/popper.min.js"></script>
+	<script type="text/javascript" src="MDBootstrap/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="MDBootstrap/js/mdb.min.js"></script>
 	<title>Unit 1</title>
 </head>
 <body>
@@ -28,6 +30,9 @@
 			<div class="col-4" id="unitDetails">
 				<table>
 					<tr>
+						<th colspan="2">BASIC DATA</th>
+					</tr>
+					<tr>
 						<th>Field Unit Label</th>
 						<td id="fieldLabel">Tilapia1</td>
 					</tr>
@@ -40,41 +45,65 @@
 						<td id="fieldSpecies">aaa</td>
 					</tr>
 					<tr>
+						<th>Starting Population</th>
+						<td id="fieldPop">aaa</td>
+					</tr>
+					<tr>
+						<th>Capital</th>
+						<td id="fieldCapital">aaa</td>
+					</tr>
+					<tr>
 						<th>Feeder Load</th>
 						<td id="fieldLoad">1000 grams</td>
 					</tr>
-					<tr>
-						<th>Est. feed amt needed for:
-							<select id="estimateOption">
-								<option value="1">1 Day</option>
-								<option value="7">1 Week</option>
-								<option value="14">2 Weeks</option>
-								<option value="30">1 Month (30 Days)</option>
-							</select>
-						</th>
-						<td><span id="estimateResult">nan</span> grams</td>
-					</tr>
-					<tr>
-						<td colspan="2">
-							<span id="estimateWarning">No Warning</span>
-						</td>
-					</tr>
 				</table>
 			</div>
-			<div class="col-4" id="feedhist">
+			<div class="col-4">
+				<h1>Fish Size/Weight Over Time</h1>
+				<canvas id="sizeChart"></canvas>
 			</div>
-			<div class="col-4" id="sample">
+			<div class="col-4">
+				<h1>Fish Population Over Time</h1>
+				<canvas id="popChart"></canvas>
 			</div>
+		</div>
+	</div>
+	<div class="contentBox container">
+		<div class="row">
+			HARVEST PREDICTION
+		</div>
+		<div class="row">
+			Input market price for <span id="species"></span>: <input type="number" id="estPrice"/>
+		</div>
+		<div class="row">
+			Income: <span id="fishweight">N</span> kg x <span id="fishpop"> N </span> fishes x <span id="marketPrice"></span> php/kg = <span id="estIncome"></span>
+		</div>
+		<div class="row">
+			Expenses: <span id="fishcapital">N</span> + <span id="feedcost"> N </span> = <span id="estExpenses"></span>
+		</div>
+		<div class="row">
+			Net Profit: <span id="income">Income</span> - <span id="expenses">Expenses</span> = <span id="profit">Profit</span>
 		</div>
 	</div>
 	<script>
 	$(document).ready(function(){
+		let fishweight;
+		let fishpop;
+		let fishcapital;
+		let fishfeedcost;
+		let fishfeedname;
+
 		$.fn.logout = function(){
 			$.post("/logout", function(result){
 				window.location.href = "/";
 			});
 		};
+		var readableTime = (dateTime) =>{
+			var res = new Date(dateTime);
+			// console.log(res.getTimezoneOffset());
 
+			return res.toLocaleDateString();
+		}
 		$.fn.backToUnits = function(){
 			window.location.href = "/FishFeedIndex";
 		};
@@ -93,6 +122,126 @@
 							+ "</a></li>";
 				}
 				$("#fieldUnits").html(insert);
+			});
+		});
+		$.post("/getFID", function(result){
+			let fid = result;
+			$.post("/getFieldUnit", {fid:fid}, function(result){
+				$("#fieldLabel").html(result[0].label);
+				$("#fieldNumber").html(result[0].phoneno);
+				$("#fieldSpecies").html(result[0].species);
+				$("#species").html(result[0].species);
+				$("#fieldPop").html(result[0].startingPop);
+				fishcapital = result[0].capital;
+				$("#fieldCapital").html(fishcapital);
+				$("#fishcapital").html("₱" + fishcapital);
+				$("#fieldLoad").html(String(result[0].feederload) + " grams");
+				let feedId = result[0].feedId;
+				$.post("/getFeedNames", function(result){
+					for(let i = 0; i < result.length; i++){
+						if(result[i].feedId == feedId){
+							fishfeedcost = result[i].cost;
+							fishfeedname = result[i].feedname;
+							break;
+						}
+					}
+				});
+			});
+		});
+		$.post("/getSampleStats", function(result){
+			let sizeChart = document.getElementById("sizeChart").getContext('2d');
+			let popChart = document.getElementById("popChart").getContext('2d');
+			let size = []
+			let weight = []
+			let labels = []
+			let estpop = []
+			for(let i = 0; i < result.length; i++){
+				if(i > 10){
+					break; //limits the output to 10 results
+				}
+				let time = readableTime(result[i].timestamp);
+				size.push(result[i].size)
+				weight.push(result[i].weight)
+				labels.push(time)
+				estpop.push(result[i].estpop)
+			}
+			fishpop = estpop[0];
+			fishweight = weight[0]/1000;
+			$("#fishweight").html(fishweight);
+			$("#fishpop").html(fishpop);
+
+			let chart1 = new Chart(sizeChart, {
+				type: 'line',
+			    data: {
+			      labels: labels,
+			      datasets: [{
+			          label: "Average Size",
+			          data: size,
+			          backgroundColor: [
+			            'rgba(105, 0, 132, .2)',
+			          ],
+			          borderColor: [
+			            'rgba(200, 99, 132, .7)',
+			          ],
+			          borderWidth: 2
+			        },
+			        {
+			          label: "Average Weight",
+			          data: weight,
+			          backgroundColor: [
+			            'rgba(0, 137, 132, .2)',
+			          ],
+			          borderColor: [
+			            'rgba(0, 10, 130, .7)',
+			          ],
+			          borderWidth: 2
+			        }
+			      ]
+			    },
+			    options: {
+			      responsive: true
+			    }
+		  	});	
+			let chart2 = new Chart(popChart, {
+				type: 'line',
+			    data: {
+			      labels: labels,
+			      datasets: [{
+			          label: "Estimated Population",
+			          data: estpop,
+			          backgroundColor: [
+			            'rgba(0, 137, 132, .2)',
+			          ],
+			          borderColor: [
+			            'rgba(0, 10, 130, .7)',
+			          ],
+			          borderWidth: 2
+			        }
+			      ]
+			    },
+			    options: {
+			      responsive: true
+			    }
+		  	});	
+		});
+
+		$("#estPrice").change(function(){
+			$.post("/getFeedHist", function(result){
+				let weight = 0;
+				for(let i = 0; i < result.length; i++){
+					weight += result[i].feedamt;
+				}
+				let price = $("#estPrice").val();
+				$("#marketPrice").html("₱" + price);
+				let estIncome = price * fishweight * fishpop;
+				$("#estIncome").html("₱" + ~~estIncome);
+				let estfeedcost = (weight/1000) * fishfeedcost;
+				$("#feedcost").html("₱" + ~~estfeedcost);
+				let estExpenses = estfeedcost + fishcapital;
+				$("#estExpenses").html("₱" + ~~estExpenses);
+				$("#income").html("₱" + ~~estIncome);
+				$("#expenses").html("₱" + ~~estExpenses);
+				$("#profit").html("₱" + ~~(estIncome-estExpenses));
 			});
 		});
 	});</script>

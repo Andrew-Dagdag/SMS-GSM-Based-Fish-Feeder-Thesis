@@ -51,6 +51,10 @@
 						<td id="fieldPop">aaa</td>
 					</tr>
 					<tr>
+						<th>Capital</th>
+						<td id="fieldCapital">aaa</td>
+					</tr>
+					<tr>
 						<th>Feeder Load</th>
 						<td id="fieldLoad">1000 grams</td>
 					</tr>
@@ -106,6 +110,7 @@
 				$("#fieldNumber").html(result[0].phoneno);
 				$("#fieldSpecies").html(result[0].species);
 				$("#fieldPop").html(result[0].startingPop);
+				$("#fieldCapital").html(result[0].capital);
 				$("#fieldLoad").html(String(result[0].feederload) + " grams");
 			});
 			$.post("/getSched", {fid:fid}, function(result){
@@ -120,7 +125,6 @@
 						break; //limits the output to 10 results
 					}
 					let time = readableTime(result[i].timestamp);
-					console.log(time + " aa " + i);
 
 					insert	+= 	"<tr>"
 							+	"<td>" + result[i].size + "</td>"
