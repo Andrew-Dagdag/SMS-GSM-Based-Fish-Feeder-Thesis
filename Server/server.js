@@ -77,10 +77,10 @@ app.post('/getFeedNames', (request, response) => {
 
 app.post('/getDailyScheduleLength', (request, response) => {
   con.query("SELECT * FROM `schedule` WHERE fid=" + currentFID, function(err, result){
-    let fieldUnits = []
-    for(let i = 0; i < result.length; i++){
-      let sched = result[i].sched.split(",")
-      let fid = result[i].fid
+    let len;
+    if(result[0].type == "interval"){
+      let sched = result[0].sched.split(",")
+      let fid = result[0].fid
       let start = sched[0].split(":")
       let endTime = sched[2].split(":")
       let interval = sched[1]
@@ -88,14 +88,11 @@ app.post('/getDailyScheduleLength', (request, response) => {
       for(let i = parseInt(start[0]); i < parseInt(endTime[0]); i += parseInt(interval)){
         intervals.push(i)
       }
-      response.send(String(intervals.length))
-
-      // let load = result[i].amount
-      // fieldUnits.push({fid:fid, start:start, intervals:intervals, endTime:endTime, load:load})
-
+      len = String(intervals.length)
+    }else if(result[0].type == "schedule"){
+      len = String(result[0].sched.split(",").length)
     }
-    // response.send(Object.keys(fieldUnits).length)
-    // response.send(fieldUnits.length)
+    response.send(len)
   })
 });
 
@@ -184,9 +181,10 @@ app.post('/addUnit', (request, response) => {
     let fid = result[0].fid
     let amount = request.body.amount
     let sched = request.body.schedule
+    let type = request.body.type
     let schedSQL  = "INSERT INTO `schedule` "
-                  + "(`fid` ,    `sched`    ,     `amount`) VALUES ('"
-                  + fid + "','" + sched + "', '" + amount + "')"
+                  + "(`fid` ,    `sched`    ,     `amount`,        `type`) VALUES ('"
+                  + fid + "','" + sched + "', '" + amount + "', '"+ type +"')"
     con.query(schedSQL, function(err, res){
       if(err){
         throw err
@@ -236,19 +234,20 @@ app.post('/updateUnit', (request, response) => {
     response.json(result)
   })
 
-  con.query("SELECT `fid` FROM `units` ORDER BY `units`.`fid` DESC LIMIT 1", function(err, result){
-    let fid = result[0].fid
-    let amount = request.body.amount
-    let sched = request.body.schedule
-    let schedSQL  = "UPDATE `schedule` "
-                  + "SET `sched` = '" + sched + "', `amount` = '" + amount + "' "
-                  + "WHERE `fid` = '"+fid+"'"
-    con.query(schedSQL, function(err, res){
-      if(err){
-        throw err
-      }
-    })
+  // con.query("SELECT `fid` FROM `units` ORDER BY `units`.`fid` DESC LIMIT 1", function(err, result){
+  //   let fid = result[0].fid
+  let amount = request.body.amount
+  let sched = request.body.schedule
+  let type = request.body.type
+  let schedSQL  = "UPDATE `schedule` "
+                + "SET `sched` = '" + sched + "', `amount` = '" + amount + "' "
+                + "WHERE `fid` = '"+currentFID+"'"
+  con.query(schedSQL, function(err, res){
+    if(err){
+      throw err
+    }
   })
+  // })
 });
 
 app.post('/updateUser', (request, response) => {
@@ -321,7 +320,8 @@ app.post('/updateSched', (request, response) => {
   let fid = currentFID
   let sched = request.body.fullSched
   let amount = request.body.amount
-  let sql = "UPDATE `schedule` SET `amount`="+amount+", `sched`='"+sched+"' WHERE `schedule`.`fid`="+fid
+  let type = request.body.type
+  let sql = "UPDATE `schedule` SET `amount`="+amount+", `sched`='"+sched+"', `type`='"+type+"' WHERE `schedule`.`fid`="+fid
   // console.log(sql)
   con.query(sql, function(err, result){
     if(err){
@@ -491,17 +491,19 @@ app.listen(2018, function(){
     let fieldUnits = []
     con.query("SELECT * FROM `schedule`", function(err, result){
       for(let i = 0; i < result.length; i++){
-        let sched = result[i].sched.split(",")
-        let fid = result[i].fid
-        let start = sched[0].split(":")
-        let endTime = sched[2].split(":")
-        let interval = sched[1]
-        let intervals = []
-        for(let i = parseInt(start[0]); i < parseInt(endTime[0]); i += parseInt(interval)){
-          intervals.push(i)
+        if(result[i].type == "interval"){
+          let sched = result[i].sched.split(",")
+          let fid = result[i].fid
+          let start = sched[0].split(":")
+          let endTime = sched[2].split(":")
+          let interval = sched[1]
+          let intervals = []
+          for(let i = parseInt(start[0]); i < parseInt(endTime[0]); i += parseInt(interval)){
+            intervals.push(i)
+          }
+          let load = result[i].amount
+          fieldUnits.push({fid:fid, start:start, intervals:intervals, endTime:endTime, load:load})
         }
-        let load = result[i].amount
-        fieldUnits.push({fid:fid, start:start, intervals:intervals, endTime:endTime, load:load})
       }
       let x = new Date()
       fieldUnits.forEach(unit => {
@@ -526,6 +528,38 @@ app.listen(2018, function(){
           }
         }
       });
+
+      fieldUnits = []
+      for(let i = 0; i < result.length; i++){
+        if(result[i].type == "schedule"){
+          let eachTime = result[i].sched.replace(/ /g, "").split(",")
+          console.log(eachTime)
+          let fid = result[i].fid
+          let load = result[i].amount
+          fieldUnits.push({fid:fid, time:eachTime, load:load})
+        }
+      }
+
+      fieldUnits.forEach(unit => {
+        let currentHour = x.getHours()
+        let currentMinute = x.getMinutes()
+
+        unit.time.forEach(eachTime => {
+          let splitTime = eachTime.split(":")
+          let hour = splitTime[0]
+          let minute = splitTime[1]
+
+          if(currentHour==hour && currentMinute==minute){
+            let feederSQL = "SELECT `phoneno` FROM `units` WHERE `fid`="+unit.fid
+            feedNow(unit.fid, unit.load)
+            con.query(feederSQL, function(err, result){
+              let phoneno = result[0].phoneno
+              let message = "feed," + unit.load
+              sendTextMessage(message, phoneno)
+            })
+          }
+        })
+      })
     })
   }, 60000)
 
@@ -633,7 +667,12 @@ app.listen(2018, function(){
                 if(err)
                   throw err
                 let sched = res[0].sched.split(",")
-                let message = "Schedule for unit: " + text[1] + " is START TIME: " + sched[0] + ", END TIME: " + sched[2] + ", INTERVAL: Every " + sched[1] + " hours"
+                let message;
+                if(res[0].type == "interval"){
+                  message = "Schedule for unit: " + text[1] + " is START TIME: " + sched[0] + ", END TIME: " + sched[2] + ", INTERVAL: Every " + sched[1] + " hours"                  
+                }else if(res[0].type == "schedule"){
+                  message = "Schedule for unit: " + text[1] + " is: " + res[0].sched
+                }
                 sendTextMessage(message, phoneno)
               })
             }else if(type == "AMOUNT"){
@@ -668,7 +707,12 @@ app.listen(2018, function(){
               let getSched = "SELECT sched FROM `schedule` WHERE `schedule`.`fid`="+result2[0].fid
               con.query(getSched, function(err, res){
                 let sched = res[0].sched.split(",")
-                let schedMessage = "Schedule for unit: " + text[1] + " is START TIME: " + sched[0] + ", END TIME: " + sched[2] + ", INTERVAL: Every " + sched[1] + " hours"
+                let schedMessage;
+                if(res[0].type == "interval"){
+                  schedMessage = "Schedule for unit: " + text[1] + " is START TIME: " + sched[0] + ", END TIME: " + sched[2] + ", INTERVAL: Every " + sched[1] + " hours"                  
+                }else if(res[0].type == "schedule"){
+                  schedMessage = "Schedule for unit: " + text[1] + " is: " + res[0].sched
+                }
                 let message = "Field Unit: " + text[1] + "\r\n"
                 message += "Feed Amount (Estimate): " + amount + " g\r\n"
                 message += "Species: " + species + "\r\n"

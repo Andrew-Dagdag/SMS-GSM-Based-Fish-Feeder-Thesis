@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 24, 2019 at 11:57 PM
+-- Generation Time: Mar 25, 2019 at 06:27 AM
 -- Server version: 10.1.30-MariaDB
 -- PHP Version: 7.1.13
 
@@ -96,19 +96,20 @@ INSERT INTO `sample` (`fid`, `size`, `weight`, `estpop`, `timestamp`, `index`) V
 CREATE TABLE `schedule` (
   `fid` int(5) NOT NULL,
   `sched` varchar(30) NOT NULL,
-  `amount` int(9) NOT NULL
+  `amount` int(9) NOT NULL,
+  `type` varchar(8) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `schedule`
 --
 
-INSERT INTO `schedule` (`fid`, `sched`, `amount`) VALUES
-(1, '00:50,4,20:00', 400),
-(2, '08:40,2,23:00', 700),
-(3, '10:30,3,23:00', 1000),
-(4, '07:48,1,23:00', 300),
-(5, '07:20,4,23:00', 800);
+INSERT INTO `schedule` (`fid`, `sched`, `amount`, `type`) VALUES
+(1, '00:50,4,20:00', 400, 'interval'),
+(2, '08:40,2,23:00', 700, 'interval'),
+(3, '10:30,3,23:00', 1000, 'interval'),
+(4, '07:48,1,23:00', 300, 'interval'),
+(5, '07:20,4,23:00', 800, 'interval');
 
 -- --------------------------------------------------------
 
@@ -137,9 +138,7 @@ INSERT INTO `units` (`fid`, `uid`, `label`, `phoneno`, `species`, `feederload`, 
 (2, 1, 'Dagdag, Unit 2', '+639486479304', 'Koi', 5100, 2000, 4000, 2),
 (3, 2, 'Articuno', '+639486479304', 'Tilapia', 7200, 4000, 5000, 1),
 (4, 2, 'Zapdos', '+639486479304', 'Bangus', 12100, 3000, 6000, 1),
-(5, 2, 'Moltres', '+639486479304', 'Lionfish', 17600, 800, 1100, 2),
-(6, 2, 'Borb', '+639486479304', 'Rock', 9000, 200, 600, 2),
-(11, 3, 'label1', '+639464073444', 'memelord', 300, 1000, 1500, 1);
+(5, 2, 'Moltres', '+639486479304', 'Lionfish', 17600, 800, 1100, 2);
 
 -- --------------------------------------------------------
 
