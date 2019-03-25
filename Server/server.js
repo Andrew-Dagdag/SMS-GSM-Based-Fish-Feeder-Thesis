@@ -195,6 +195,31 @@ app.post('/addUnit', (request, response) => {
   })
 });
 
+app.post('/addFeed', (request, response) => {
+  let feedname = request.body.feedName
+  let feedcost = request.body.feedCost
+  console.log(feedname + ", P" + feedcost + " aaaaaaa")
+  let sql = "INSERT INTO `feed` "
+          + "(`feedId`, `feedname`, `cost`) "
+          + "VALUES (NULL, '"+feedname+"', '"+feedcost+"')";
+  console.log(sql)
+  con.query(sql, function(err, result){
+    if(err){
+      console.log(err)
+    }
+  })
+
+  let returnsql = 'SELECT `feedId` FROM `feed` ORDER BY `feedId` DESC LIMIT 1'
+  console.log(returnsql)
+  con.query(returnsql, function(err, result2){
+    if(err){
+      console.log(err)
+    }
+    console.log(result2[0])
+    response.json(result2[0])
+  })
+});
+
 app.post('/updateUnit', (request, response) => {
   let label = request.body.label
   let phoneno = request.body.phoneno
