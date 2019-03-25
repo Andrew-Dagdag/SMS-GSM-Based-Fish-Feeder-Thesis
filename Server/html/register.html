@@ -16,7 +16,7 @@
 <body>
 	<h2 id="username">Welcome, new user</h2>
 	<nav class="navbar justify-content-between" id="navbar">
-		<a href='/'>Go Back to Login</a>
+		<a href='#' onClick='$(this).backToIndex()'>Go Back to Login</a>
 	</nav>
 	<div class="contentBox container">
 		<h2>Username and Password</h2>
@@ -55,8 +55,25 @@
 						<td><input id="fieldSpecies" type="text" placeholder="Species"/></td>
 					</tr>
 					<tr>
+						<th>Feed Name</th>
+						<td>
+							<select name="feedname" id="feedname">
+								<option value="1">feed1</option>
+								<option value="other">Other (specify on submission)</option> <!-- note: all other options should have feedids as values-->
+							</select>
+						</td>
+					</tr>
+					<tr>
 						<th>Feeder Load</th>
 						<td><input id="fieldLoad" type="number" placeholder="Initial Feeder Weight (grams)"/></td>
+					</tr>
+					<tr>
+						<th>Starting Population</th>
+						<td><input id="startpop" type="number" min="1" value="1" /></td>
+					</tr>
+					<tr>
+						<th>Capital</th>
+						<td><input id="capital" type="number" placeholder="Cost of fingerlings" min="0" /></td>
 					</tr>
 				</table>
 			</div>
@@ -88,10 +105,12 @@
 	$(document).ready(function(){
 		let uid = null;
 		
-		$.fn.back = function(){
-			$.post("/back", function(result){
+		$.fn.backToIndex = function(){
+			let back = confirm("All unsaved data will be lost. Go back?");
+			console.log(back);
+			if(back){
 				window.location.href = "/";
-			});
+			}
 		};
 
 		$("#finalRegister").click(function(){
@@ -103,22 +122,92 @@
 			let number = $("#fieldNumber").val();
 			let species = $("#fieldSpecies").val();
 			let load = $("#fieldLoad").val();
+			let feedid = $("#feedname").val();
+			let startingpop = $("#startpop").val();
+			let capital = $("#capital").val();
 			let startTime= $("#startTime").val();
 			let endTime= $("#endTime").val();
 			let interval= $("#interval").val();
 			let amount= $("#feedAmt").val();
 
+			var newfeedflag = false;
+			var newFeedDataCheck = false;
+			var newfeedname;
+			var newfeedcost;
+
+			if(feedid == "other"){
+				newfeedflag = true;
+				do{
+					newfeedname = prompt("It seems our database does not yet have the feed you want to use for this field unit. Help us by recording its data. If you wish to use an existing feed instead, press cancel \n\nEnter the name of the feed here:");
+					if(newfeedname == ""){
+						alert("The new feed must have a name. If you wish to use an existing feed instead, press cancel.");
+					}
+				}while(newfeedname == "");
+
+				if(newfeedname != null){
+					do{
+						newfeedcost = prompt("If you wish to use an existing feed instead, \n\nHow much does " + newfeedname + " cost per kilogram?"); // restrict this to float
+						if(newfeedcost == ""){
+							alert("You must specify a cost for " + newfeedname + ". If you wish to use an existing feed instead, press cancel.");
+						}
+					}while(newfeedcost == "");
+				}
+
+				if(newfeedcost != null){
+					/*$.post("/addFeed", {feedName:newfeedname, feedCost:newfeedcost}, function(response){
+						console.log(newfeedname + ", P" + newfeedcost)
+						console.log(response)
+						feedid = response.feedId;
+						console.log(feedid)
+					});
+					console.log("wewlads")*/
+
+					newFeedDataCheck = true;
+				}
+				console.log("check2 " + newfeedflag + " " + newFeedDataCheck)
+			}
+
 			const phoneRegEx = /[+]639\d{9}$/
 
-			if(username == "" || password == "" || userno == "" || label == "" || number == "" || species == "" || load == ""){
+			if(username == "" || password == "" || userno == "" || label == "" || number == "" || species == "" || load == "" || startingpop == "" || capital == ""){
 				alert("A field has been left blank. Please fill in all forms completely.");
 			}else if(label.includes(" ")){
 				alert("Field unit labels must not have spaces.");
 			}else if(!phoneRegEx.test(userno) || !phoneRegEx.test(number)){
 				alert("The fields highlighted in red contain invalid inputs. Please follow the proper formats.");
 			}else{
+				var startmainsql = false;
+				console.log("main part begun")
+				console.log("check2 " + newfeedflag + " " + newFeedDataCheck)
+
+				if(newfeedflag){
+					console.log("newfeedflag is true")
+					if(newFeedDataCheck){
+						$.post("/addFeed", {feedName:newfeedname, feedCost:newfeedcost}, function(response){
+							console.log(newfeedname + ", P" + newfeedcost)
+							console.log(response)
+							feedid = response.feedId;
+							console.log(feedid)
+						});
+						console.log("wewlads")
+
+						startmainsql = true;
+					}else{
+						console.log("newfeeddata is incomplete")
+						alert("By choosing 'other' as your feed choice, you chose to use a new feed that is not yet recorded in the database. Please press the submit button and enter the required data for your new feed so its data can be tracked. You may also select an existing feed instead.");
+					}
+				}else{
+					console.log("feedid has been provided")
+					startmainsql = true;
+				}
+
+				if(startmainsql){
+					console.log(feedid)
+					console.log("shiggy")
+				}
+				
 				//do user query
-				$.post("/addUser", {username:username, password:password, userno:userno}, function(response){
+				/*$.post("/addUser", {username:username, password:password, userno:userno}, function(response){
 					console.log(response);
 					alert("Successfully registered the user!");
 					let uid = response["uid"];
@@ -127,7 +216,7 @@
 					//do unit query
 					let schedule = startTime + "," + interval + "," + endTime;
 					console.log("Im doing the query");
-					$.post("/addUnit", {uid:uid, label:label, phoneno:number, species:species, feederload:load, schedule:schedule, amount:amount}, function(response2){
+					$.post("/addUnit", {uid:uid, label:label, phoneno:number, species:species, feederload:load, startingPop:startingpop, capital:capital, feedid:feedid, schedule:schedule, amount:amount}, function(response2){
 						console.log(response2["insertId"]);
 						alert("Successfully added the new field unit details!");
 
@@ -142,7 +231,7 @@
 					        }
 					      });
 					});
-				});
+				});*/
 			}
 		});
 	});</script>
