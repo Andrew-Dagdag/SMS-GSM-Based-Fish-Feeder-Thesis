@@ -36,18 +36,32 @@
 						<td><input id="fieldNumber" type="text" placeholder="Phone Number of Field Unit" value="+639"/></td>
 					</tr>
 					<tr>
-						<th>Species</th>
-						<td><input id="fieldSpecies" type="text" placeholder="Species"/></td>
+						<th>Feed Used</th>
+						<td>
+							<select name="feedname" id="feedname">
+								<option value="1">feed1</option>
+								<option value='other'>Other (specify on submission)</option> <!-- note: all other options should have feedids as values-->
+							</select>
+						</td>
 					</tr>
 					<tr>
-						<th>Feeder Load</th>
-						<td><input id="fieldLoad" type="number" value="200"/></td>
+						<th colspan="2">This feeder currently has <span id="currentFeedLoad">n</span> grams.</th>
+					<tr>
+						<th>Refill</th>
+						<td><input id="fieldLoad" type="number" value="0"/> grams</td>
 					</tr>
 				</table>
 			</div>
 			<div class="col-6" id="unitOptions">
-				<form action="#" class="row">
-					<h3 class="col-12">Schedule</h3>
+				<h3 class="col-12">Schedule</h3>
+				<div style="display: inline-flex;">
+					<h6 style="margin-right: 10px;">Please specify schedule type:</h5>
+					<select name="schedtype" id="schedtype">
+						<option value="interval">Interval</option>
+						<option value="schedule">Schedule</option>
+					</select>
+				</div>
+				<form action="#" class="row" id=intervalform>
 					<div class="schedForm col-4">
 						<h4>Start Time</h4>
 						<input type="time" name="startTime" id="startTime" value="00:00" required="required" />
@@ -60,11 +74,15 @@
 						<h4>End Time</h4>
 						<input type="time" name="endTime" id="endTime" value="23:59" required="required" />
 					</div>
-					<div class="schedForm col-12">
-						<h4>Feed Amount</h4>
-						<input type="number" name="feedAmt" id="feedAmt" value="100" min="100" required="required" /> grams
-					</div>
 				</form>
+				<div class="row" id="scheduleform">
+					<p>Input the times when you want to feed, separated by comma. Please use military time (24:00 clock).<br />Example: <span style="font-style: italic;">7:30, 11:00, 16:00, 20:00</span></p>
+					<input type="text" id="schedulefeed" />
+				</div>
+				<div class="schedForm col-12">
+					<h4>Feed Amount</h4>
+					<input type="number" name="feedAmt" id="feedAmt" value="100" min="100" required="required" /> grams
+				</div>
 			</div>
 		</div>
 		<button id="saveUnitChanges">Save Changes</button>
@@ -97,6 +115,18 @@
 			}
 		};
 
+		$.post("/getFeeds", function(result2){
+			console.log(result2)
+			let insert = "";
+			for(let i = 0; i < result2.length; i++){
+				insert += "<option value = '"
+						+ result2[i].feedId + "''>"
+						+ result2[i].feedname + "</option>"
+			}
+			insert += "<option value='other'>Other (specify on submission)</option>"
+			$("#feedname").html(insert);
+		});
+
 		$.fn.getFeederDetails = function(fid){
 			// console.log("Hey u wanted to change feeder views?",fid);
 			$.post("/getFieldUnit", {fid:fid}, function(result){
@@ -105,7 +135,8 @@
 				$("#fieldLabel").val(result[0].label);
 				$("#fieldNumber").val(result[0].phoneno);
 				$("#fieldSpecies").val(result[0].species);
-				$("#fieldLoad").val(result[0].feederload);
+				$("#currentFeedLoad").html(result[0].feederload);
+				document.getElementById("feedname").value = result[0].feedId;
 			});
 			$.post("/getSched", {fid:fid}, function(result){
 				let sched = result[0].sched.split(",");
@@ -131,34 +162,115 @@
 			console.log(fid)
 		});
 
+		$("#schedtype").change(function(event){
+			let schedtype = $("#schedtype").val();
+			if (schedtype == "schedule"){
+				document.getElementById("intervalform").style.display = "none";
+				document.getElementById("scheduleform").style.display = "block";
+			}else{
+				document.getElementById("intervalform").style.display = "inline-flex";
+				document.getElementById("scheduleform").style.display = "none";
+			}
+		});
+
+		function mainSql(label, number, feedid, currentload){
+			let schedtype = $("#schedtype").val();
+			let schedule = "";
+
+			if(schedtype == "interval"){
+				let startTime= $("#startTime").val();
+				let endTime= $("#endTime").val();
+				let interval= $("#interval").val();
+				schedule = startTime + "," + interval + "," + endTime;
+			}else{
+				schedule = $("#schedulefeed").val();
+			}
+			//console.log("schedtype: " + schedtype + "\nschedule: " + schedule)
+				
+			//do user query
+			console.log("Im doing the query");
+			$.post("/updateUnit", {uid:uid, label:label, phoneno:number, feederload:currentload, schedule:schedule, amount:amount}, function(response){
+				// console.log(response);
+				alert("Successfully updated the new field unit details!");
+				window.location.href = "/FishFeedIndex";
+			});
+		}
+
 		$("#saveUnitChanges").click(function(){
 			console.log("CLICK");
 			let label = $("#fieldLabel").val();
 			let number = $("#fieldNumber").val();
-			let species = $("#fieldSpecies").val();
-			let load = $("#fieldLoad").val();
-			let startTime= $("#startTime").val();
-			let endTime= $("#endTime").val();
-			let interval= $("#interval").val();
+			let feedid = $("#feedname").val();
+			let refill = $("#fieldLoad").val();
 			let amount= $("#feedAmt").val();
+
+			let currentload = parseInt($("#currentFeedLoad").html());
+			console.log(currentload)
+			currentload += parseInt(refill);
+			console.log(currentload)
+
+			var newfeedflag = false;
+			var newFeedDataCheck = false;
+			var newfeedname;
+			var newfeedcost;
+
+			if(feedid == "other"){
+				newfeedflag = true;
+				do{
+					newfeedname = prompt("It seems our database does not yet have the feed you want to use for this field unit. Help us by recording its data. If you wish to use an existing feed instead, press cancel \n\nEnter the name of the feed here:");
+					if(newfeedname == ""){
+						alert("The new feed must have a name. If you wish to use an existing feed instead, press cancel.");
+					}
+				}while(newfeedname == "");
+
+				if(newfeedname != null){
+					do{
+						newfeedcost = prompt("If you wish to use an existing feed instead, \n\nHow much does " + newfeedname + " cost per kilogram?"); // restrict this to float
+						if(newfeedcost == ""){
+							alert("You must specify a cost for " + newfeedname + ". If you wish to use an existing feed instead, press cancel.");
+						}
+					}while(newfeedcost == "");
+				}
+
+				if(newfeedcost != null){
+					newFeedDataCheck = true;
+				}
+				console.log("check2 " + newfeedflag + " " + newFeedDataCheck)
+			}
 
 			const phoneRegEx = /[+]639\d{9}$/
 
-			if(label == "" || number == "" || species == "" || load == ""){
+			if(label == "" || number == ""){
 				alert("woi a field is missing");
 			}else if(label.includes(" ")){
 				alert("label contains a space");
 			}else if(!phoneRegEx.test(number)){
 				alert("The fields highlighted in red contain invalid inputs. Please follow the proper formats.");
+			}else if(schedtype == "schedule" && $("#schedulefeed").val() == ""){
+				alert("Please enter a schedule.")
 			}else{
-				//do query
-				let schedule = startTime + "," + interval + "," + endTime;
-				console.log("Im doing the query")
-				$.post("/updateUnit", {uid:uid, label:label, phoneno:number, species:species, feederload:load, schedule:schedule, amount:amount}, function(response){
-					// console.log(response);
-					alert("Successfully updated the new field unit details!");
-					window.location.href = "/FishFeedIndex";
-				});
+				console.log("main part begun")
+				console.log("check2 " + newfeedflag + " " + newFeedDataCheck)
+
+				if(newfeedflag){
+					console.log("newfeedflag is true")
+					if(newFeedDataCheck){
+						$.post("/addFeed", {feedName:newfeedname, feedCost:newfeedcost}, function(response){
+							console.log(newfeedname + ", P" + newfeedcost)
+							console.log(response)
+							feedid = response.feedId;
+							console.log(feedid)
+							alert("The new feed has been successfully been added to the database.")
+							mainSql(label, number, feedid, currentload)
+						});
+					}else{
+						console.log("newfeeddata is incomplete")
+						alert("By choosing 'other' as your feed choice, you chose to use a new feed that is not yet recorded in the database. Please press the submit button and enter the required data for your new feed so its data can be tracked. You may also select an existing feed instead.");
+					}
+				}else{
+					console.log("feedid has been provided: " + feedid)
+					mainSql(label, number, feedid, currentload);
+				}
 			}
 		});
 

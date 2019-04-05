@@ -106,6 +106,27 @@ app.post('/getSampleStats', (request, response) => {
   })
 });
 
+app.post('/getFeeds', (request, response) => {
+  let sql = "SELECT * FROM `feed`"
+  con.query(sql, function(err, result){
+    if (err){
+      console.log(err)
+    }
+    response.json(result)    
+  })
+});
+
+app.post('/getFeedName', (request, response) => {
+  let feedid = request.body.feedid
+  let sql = "SELECT feedname FROM `feed` WHERE feedID=" + feedid
+  con.query(sql, function(err, result){
+    if (err){
+      console.log(err)
+    }
+    response.json(result)    
+  })
+});
+
 app.post('/addSampleStats', (request, response) => {
   let size = request.body.size
   let weight = request.body.weight
@@ -164,7 +185,7 @@ app.post('/addUnit', (request, response) => {
   let feederload = request.body.feederload
   let startingPop = request.body.startingPop
   let capital = request.body.capital
-  let feedId = request.body.feedId
+  let feedId = request.body.feedid
   let sql = "INSERT INTO `units` "
           + "(`fid`, `uid`, `label`, `phoneno`, `species`, `feederload`, `startingPop`, `capital`, `feedId`) "
           + "VALUES (NULL, '"+uid+"', '"+label+"', '"+phoneno+"', '"
@@ -213,7 +234,6 @@ app.post('/addFeed', (request, response) => {
     if(err){
       console.log(err)
     }
-    console.log(result2[0])
     response.json(result2[0])
   })
 });

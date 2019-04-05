@@ -55,6 +55,10 @@
 						<td id="fieldCapital">aaa</td>
 					</tr>
 					<tr>
+						<th>Feed Used</th>
+						<td id="feedname">thisfeed</td>
+					</tr>
+					<tr>
 						<th>Feeder Load</th>
 						<td id="fieldLoad">1000 grams</td>
 					</tr>
@@ -112,6 +116,11 @@
 				$("#fieldPop").html(result[0].startingPop);
 				$("#fieldCapital").html(result[0].capital);
 				$("#fieldLoad").html(String(result[0].feederload) + " grams");
+
+				let feedid = result[0].feedId
+				$.post("/getFeedName", {feedid:feedid}, function(result2){
+					$("#feedname").html(result2[0].feedname);
+				});
 			});
 			$.post("/getSched", {fid:fid}, function(result){
 				let sched = result[0].sched.split(",");

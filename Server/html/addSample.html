@@ -28,6 +28,8 @@
 		<input id="sizeForm" type="number" min="0" value="0" />
 		<h6>Weight: (unit to be added)</h6>
 		<input id="weightForm" type="number" min="0" value="0" />
+		<h6>Current Estimated Population:</h6>
+		<input id="estPopForm" type="number" min="0" value="0" />
 		<button id="saveSampleBtn">Submit Record</button>
 	</div>
 
@@ -101,9 +103,10 @@
 		$("#saveSampleBtn").click(function(){	
 			let size = $("#sizeForm").val();
 			let weight = $("#weightForm").val();
-			let save = confirm("WARNING: Recording is permanent. Double check the data you entered:\n\nSize: "+size+" (unit)\nWeight: "+weight+" (unit)\n\nPress OK to record the data if it is correct.")
+			let estpop = $("#estPopForm").val();
+			let save = confirm("WARNING: Recording is permanent. Double check the data you entered:\n\nSize: "+size+" (unit)\nWeight: "+weight+" (unit)\nCurrent Estimated Population: " + estpop + "\n\nPress OK to record the data if it is correct.")
 			if(save){
-				$.post("/addSampleStats", {size:size, weight:weight}, function(response){
+				$.post("/addSampleStats", {size:size, weight:weight, estpop:estpop}, function(response){
 					console.log(response);
 					alert("Sample data successfully recorded!")
 					window.location.href = "/FishFeedIndex"	

@@ -11,28 +11,30 @@
   <title>Automated Fish Feeder</title>
 </head>
 <body>
-  <h1 class="d-flex justify-content-center">Welcome! Please log in!</h1>
-  <h5 class="d-flex justify-content-center"> - or register if you're a new user! -</h5>
-  <div class="container">
-    <div class="row">
-      <div class="col-sm"></div>
-      <div class="col-sm">
-        <form>
-          <div class="form-group">
-            <label for="Username">Username</label>
-            <input id="Username" type="text" class="form-control" placeholder="Username" name="Username"/>
-          </div>
-          <div class="form-group">
-            <label for="Password">Password</label>
-            <input id="Password" type="password" class="form-control" placeholder="Password" name="Password">
-          </div>
-          <button id="submit" type="submit" class="btn">Login</button>
-          <span id="regButton" class="linkbtn btn"><a href="register.html">Register</a></span>
-        </form>
-      </div>
-      <div class="col-sm" id="res"></div>
-    </div>
-  </div>
+  	<div class="contentBox container">
+	  <h1 class="d-flex justify-content-center" id="indextitle">Welcome! Please log in!</h1>
+	  <h5 class="d-flex justify-content-center"> - or register if you're a new user! -</h5>
+	  <div class="container">
+	    <div class="row">
+	      <div class="col-sm"></div>
+	      <div class="col-sm">
+	        <form>
+	          <div class="form-group">
+	            <label for="Username">Username</label>
+	            <input id="Username" type="text" class="form-control" placeholder="Username" name="Username"/>
+	          </div>
+	          <div class="form-group">
+	            <label for="Password">Password</label>
+	            <input id="Password" type="password" class="form-control" placeholder="Password" name="Password">
+	          </div>
+	          <button id="submit" type="submit" class="btn btn-primary">Login</button>
+	          <span id="regButton" class="btn btn-light" id="regtbn"><a href="register.html">Register</a></span>
+	        </form>
+	      </div>
+	      <div class="col-sm" id="res"></div>
+	    </div>
+	  </div>
+	</div>
   <script>
   $(document).ready(function(){
     $("#submit").click(function(event){

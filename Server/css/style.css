@@ -154,3 +154,37 @@ label
 {
 	width: 230px;
 }
+
+#submitdiv
+{
+	margin: auto;
+	margin-top: 20px;
+	margin-bottom: 20px;
+	width: 117px;
+}
+
+#finalRegister
+{
+	border-radius: 5px;
+	margin: auto;
+}
+
+#intervalform
+{
+	margin-top: 20px;
+}
+
+#scheduleform
+{
+	display: none;
+	margin: auto;
+	margin-top: 20px;
+	margin-bottom: 20px;
+	width: 90%;
+}
+
+#scheduleform > *
+{
+	margin: auto;
+	margin-top: 10px;
+}

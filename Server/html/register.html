@@ -78,8 +78,15 @@
 				</table>
 			</div>
 			<div class="col-6" id="unitOptions">
-				<form action="#" class="row">
-					<h3 class="col-12">Schedule</h3>
+				<h3 class="col-12">Schedule</h3>
+				<div style="display: inline-flex;">
+					<h6 style="margin-right: 10px;">Please specify schedule type:</h5>
+					<select name="schedtype" id="schedtype">
+						<option value="interval">Interval</option>
+						<option value="schedule">Schedule</option>
+					</select>
+				</div>
+				<form action="#" class="row" id=intervalform>
 					<div class="schedForm col-4">
 						<h4>Start Time</h4>
 						<input type="time" name="startTime" id="startTime" value="00:00" required="required" />
@@ -92,15 +99,21 @@
 						<h4>End Time</h4>
 						<input type="time" name="endTime" id="endTime" value="23:59" required="required" />
 					</div>
-					<div class="schedForm col-12">
-						<h4>Feed Amount</h4>
-						<input type="number" name="feedAmt" id="feedAmt" value="100" min="100" required="required" /> grams
-					</div>
 				</form>
+				<div class="row" id="scheduleform">
+					<p>Input the times when you want to feed, separated by comma. Please use military time (24:00 clock).<br />Example: <span style="font-style: italic;">7:30, 11:00, 16:00, 20:00</span></p>
+					<input type="text" id="schedulefeed" />
+				</div>
+				<div class="schedForm col-12">
+					<h4>Feed Amount</h4>
+					<input type="number" name="feedAmt" id="feedAmt" value="100" min="100" required="required" /> grams
+				</div>
 			</div>
 		</div>
 	</div>
-	<button id="finalRegister">Submit</button>
+	<div id="submitdiv">
+		<button class="btn btn-dark" id="finalRegister">Submit</button>
+	</div>
 	<script>
 	$(document).ready(function(){
 		let uid = null;
@@ -112,6 +125,70 @@
 				window.location.href = "/";
 			}
 		};
+
+		$.post("/getFeeds", function(result2){
+			//console.log(result2)
+			let insert = "";
+			for(let i = 0; i < result2.length; i++){
+				insert += "<option value = '"
+						+ result2[i].feedId + "''>"
+						+ result2[i].feedname + "</option>"
+			}
+			insert += "<option value='other'>Other (specify on submission)</option>"
+			$("#feedname").html(insert);
+		});
+
+		$("#schedtype").change(function(event){
+			let schedtype = $("#schedtype").val();
+			if (schedtype == "schedule"){
+				document.getElementById("intervalform").style.display = "none";
+				document.getElementById("scheduleform").style.display = "block";
+			}else{
+				document.getElementById("intervalform").style.display = "inline-flex";
+				document.getElementById("scheduleform").style.display = "none";
+			}
+		});
+
+		function mainSql(username, password, userno, label, number, species, load, feedid, startingpop, capital, amount){
+			//do user query
+			$.post("/addUser", {username:username, password:password, userno:userno}, function(response){
+				console.log(response);
+				alert("Successfully registered the user!");
+				let uid = response["uid"];
+				console.log(uid);
+
+				let schedtype = $("#schedtype").val();
+				let schedule = "";
+
+				if(schedtype == "interval"){
+					let startTime= $("#startTime").val();
+					let endTime= $("#endTime").val();
+					let interval= $("#interval").val();
+					schedule = startTime + "," + interval + "," + endTime;
+				}else{
+					schedule = $("#schedulefeed").val();
+				}
+				//console.log("schedtype: " + schedtype + "\nschedule: " + schedule)
+				
+				//do unit query
+				console.log("Im doing the query");
+				$.post("/addUnit", {uid:uid, label:label, phoneno:number, species:species, feederload:load, startingPop:startingpop, capital:capital, feedid:feedid, schedule:schedule, amount:amount, type:schedtype}, function(response2){
+					console.log(response2["insertId"]);
+					alert("Successfully added the new field unit details!");
+
+					// login user after registering
+					$.post("/userLogin", {User:username, Pass:password}, function(result3){
+				        console.log("Ayoooo", result3["success"]);
+				        if(result3["success"]){
+				          // $("#res").html("I will redirect you to the feeder list");
+				          window.location.href = "/FishFeedIndex";
+				        }else{
+				          console.log("Incorrect password or username, try again mofo");
+				        }
+				      });
+				});
+			});
+		}
 
 		$("#finalRegister").click(function(){
 			console.log("CLICK");
@@ -125,10 +202,8 @@
 			let feedid = $("#feedname").val();
 			let startingpop = $("#startpop").val();
 			let capital = $("#capital").val();
-			let startTime= $("#startTime").val();
-			let endTime= $("#endTime").val();
-			let interval= $("#interval").val();
 			let amount= $("#feedAmt").val();
+			let schedtype = $("#schedtype").val();
 
 			var newfeedflag = false;
 			var newFeedDataCheck = false;
@@ -154,14 +229,6 @@
 				}
 
 				if(newfeedcost != null){
-					/*$.post("/addFeed", {feedName:newfeedname, feedCost:newfeedcost}, function(response){
-						console.log(newfeedname + ", P" + newfeedcost)
-						console.log(response)
-						feedid = response.feedId;
-						console.log(feedid)
-					});
-					console.log("wewlads")*/
-
 					newFeedDataCheck = true;
 				}
 				console.log("check2 " + newfeedflag + " " + newFeedDataCheck)
@@ -172,11 +239,12 @@
 			if(username == "" || password == "" || userno == "" || label == "" || number == "" || species == "" || load == "" || startingpop == "" || capital == ""){
 				alert("A field has been left blank. Please fill in all forms completely.");
 			}else if(label.includes(" ")){
-				alert("Field unit labels must not have spaces.");
+				alert("Field unit labels must not contain spaces.");
 			}else if(!phoneRegEx.test(userno) || !phoneRegEx.test(number)){
 				alert("The fields highlighted in red contain invalid inputs. Please follow the proper formats.");
+			}else if(schedtype == "schedule" && $("#schedulefeed").val() == ""){
+				alert("Please enter a schedule.")
 			}else{
-				var startmainsql = false;
 				console.log("main part begun")
 				console.log("check2 " + newfeedflag + " " + newFeedDataCheck)
 
@@ -188,50 +256,17 @@
 							console.log(response)
 							feedid = response.feedId;
 							console.log(feedid)
+							alert("The new feed has been successfully been added to the database.")
+							mainSql(username, password, userno, label, number, species, load, feedid, startingpop, capital, amount);
 						});
-						console.log("wewlads")
-
-						startmainsql = true;
 					}else{
 						console.log("newfeeddata is incomplete")
 						alert("By choosing 'other' as your feed choice, you chose to use a new feed that is not yet recorded in the database. Please press the submit button and enter the required data for your new feed so its data can be tracked. You may also select an existing feed instead.");
 					}
 				}else{
-					console.log("feedid has been provided")
-					startmainsql = true;
+					console.log("feedid has been provided: " + feedid)
+					mainSql(username, password, userno, label, number, species, load, feedid, startingpop, capital, amount);
 				}
-
-				if(startmainsql){
-					console.log(feedid)
-					console.log("shiggy")
-				}
-				
-				//do user query
-				/*$.post("/addUser", {username:username, password:password, userno:userno}, function(response){
-					console.log(response);
-					alert("Successfully registered the user!");
-					let uid = response["uid"];
-					console.log(uid);
-
-					//do unit query
-					let schedule = startTime + "," + interval + "," + endTime;
-					console.log("Im doing the query");
-					$.post("/addUnit", {uid:uid, label:label, phoneno:number, species:species, feederload:load, startingPop:startingpop, capital:capital, feedid:feedid, schedule:schedule, amount:amount}, function(response2){
-						console.log(response2["insertId"]);
-						alert("Successfully added the new field unit details!");
-
-						// login user after registering
-						$.post("/userLogin", {User:username, Pass:password}, function(result3){
-					        console.log("Ayoooo", result3["success"]);
-					        if(result3["success"]){
-					          // $("#res").html("I will redirect you to the feeder list");
-					          window.location.href = "/FishFeedIndex";
-					        }else{
-					          console.log("Incorrect password or username, try again mofo");
-					        }
-					      });
-					});
-				});*/
 			}
 		});
 	});</script>
