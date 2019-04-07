@@ -173,7 +173,7 @@
 			}
 		});
 
-		function mainSql(label, number, feedid, currentload){
+		function mainSql(label, number, feedid, currentload, amount){
 			let schedtype = $("#schedtype").val();
 			let schedule = "";
 
@@ -189,7 +189,7 @@
 				
 			//do user query
 			console.log("Im doing the query");
-			$.post("/updateUnit", {uid:uid, label:label, phoneno:number, feederload:currentload, schedule:schedule, amount:amount}, function(response){
+			$.post("/updateUnit", {uid:uid, label:label, phoneno:number, feedId:feedid, feederload:currentload, schedule:schedule, amount:amount, type:schedtype}, function(response){
 				// console.log(response);
 				alert("Successfully updated the new field unit details!");
 				window.location.href = "/FishFeedIndex";
@@ -202,7 +202,7 @@
 			let number = $("#fieldNumber").val();
 			let feedid = $("#feedname").val();
 			let refill = $("#fieldLoad").val();
-			let amount= $("#feedAmt").val();
+			let amount = $("#feedAmt").val();
 
 			let currentload = parseInt($("#currentFeedLoad").html());
 			console.log(currentload)
@@ -261,7 +261,7 @@
 							feedid = response.feedId;
 							console.log(feedid)
 							alert("The new feed has been successfully been added to the database.")
-							mainSql(label, number, feedid, currentload)
+							mainSql(label, number, feedid, currentload, amount)
 						});
 					}else{
 						console.log("newfeeddata is incomplete")
@@ -269,7 +269,7 @@
 					}
 				}else{
 					console.log("feedid has been provided: " + feedid)
-					mainSql(label, number, feedid, currentload);
+					mainSql(label, number, feedid, currentload, amount);
 				}
 			}
 		});
