@@ -58,32 +58,31 @@
 					</tr>
 				</table>
 			</div>
-			<div class="col-4">
-				<h1>Fish Size/Weight Over Time</h1>
+			<div class="col-4" id="sizeChartDiv">
+				<h3>Fish Size/Weight Over Time</h3>
 				<canvas id="sizeChart"></canvas>
 			</div>
-			<div class="col-4">
-				<h1>Fish Population Over Time</h1>
+			<div class="col-4" id="popChartDiv">
+				<h3>Fish Population Over Time</h3>
 				<canvas id="popChart"></canvas>
 			</div>
 		</div>
 	</div>
-	<div class="contentBox container">
-		<div class="row">
-			HARVEST PREDICTION
-		</div>
-		<div class="row">
+	<div class="contentBox container" id="predictionDiv">
+		<h2>HARVEST PREDICTION</h2>
+		<hr />
+		<p>
 			Input market price for <span id="species"></span>: <input type="number" id="estPrice"/>
-		</div>
-		<div class="row">
+			<br />
+			<br />
 			Income: <span id="fishweight">N</span> kg x <span id="fishpop"> N </span> fishes x <span id="marketPrice"></span> php/kg = <span id="estIncome"></span>
-		</div>
-		<div class="row">
-			Expenses: <span id="fishcapital">N</span> + <span id="feedcost"> N </span> = <span id="estExpenses"></span>
-		</div>
-		<div class="row">
+			<br />
+			<br />
+			Expenses: <span id="fishcapital">N</span> capital + <span id="feedcost"> N </span>/kg for feed = <span id="estExpenses"></span>
+			<br />
+			<br />
 			Net Profit: <span id="income">Income</span> - <span id="expenses">Expenses</span> = <span id="profit">Profit</span>
-		</div>
+		</p>
 	</div>
 	<script>
 	$(document).ready(function(){

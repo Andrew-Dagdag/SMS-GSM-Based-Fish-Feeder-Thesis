@@ -29,7 +29,7 @@
 		</ul>
 	</nav>
 	<div class="contentBox container">
-		<h2>Field Overview</h2>
+		<h2>Field Overview of <span id="unitlabel">[UNIT]</span></h2>
 		<hr>
 		<div class="row" id="statsContent">
 			<div class="col-4" id="unitDetails">
@@ -111,6 +111,7 @@
 			$.post("/getFieldUnit", {fid:fid}, function(result){
 				// console.log(result);
 				$("#fieldLabel").html(result[0].label);
+				$("#unitlabel").html(result[0].label);
 				$("#fieldNumber").html(result[0].phoneno);
 				$("#fieldSpecies").html(result[0].species);
 				$("#fieldPop").html(result[0].startingPop);

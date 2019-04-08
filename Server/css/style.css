@@ -47,7 +47,7 @@ body
 	margin-right: 5px;	
 }
 
-.navbar a:hover:not(.active), #editUnitBtn:hover, #editProfileBtn:hover, #addSampleBtn:hover
+.navbar a:hover:not(.active), #editUnitBtn:hover, #editProfileBtn:hover, #addSampleBtn:hover, #statisticsBtn:hover
 {
 	background-color: #333;
 	text-decoration: none;
@@ -65,11 +65,14 @@ body
 	margin-top: 30px;
 	padding: 15px 35px 35px 35px;
 	border: 1px solid #111;
+	margin-bottom: 30px;
 }
 
 #username
 {
 	margin-top: 10px;
+	margin-left: 20px;
+	font-weight: bold;
 }
 
 h2:not(#username), #optionsContent, h3, h4, h5, h6
@@ -131,12 +134,6 @@ label
 	margin: auto;
 }
 
-#deleteUnitBtn
-{
-	padding: 5px;
-	margin-left: 30px;
-}
-
 .alert
 {
 	color: red;
@@ -163,10 +160,23 @@ label
 	width: 117px;
 }
 
-#finalRegister
+#finalRegister, #saveProfileChanges, #submit, #regButton, #saveProfileChanges, #addUnit, #saveSampleBtn, #deleteUnitBtn, #saveUnitChanges
 {
 	border-radius: 5px;
 	margin: auto;
+}
+
+#saveProfileChanges, #addUnit, #saveSampleBtn, #saveUnitChanges
+{
+	display: flex;
+	justify-content: center;
+	margin-top: 20px;
+}
+
+#deleteUnitBtn
+{
+	padding: 10px;
+	margin-left: 30px;
 }
 
 #intervalform
@@ -187,4 +197,83 @@ label
 {
 	margin: auto;
 	margin-top: 10px;
+}
+
+#unitDetails > table 
+{
+	height: 400px;
+}
+
+#feedhist, #sample
+{
+	height: 400px;
+	overflow: auto;
+}
+
+#feedhist > table, #sample > table
+{
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.inputform
+{
+	margin: auto;
+	text-align: center;
+}
+
+.inputform > h6
+{
+	margin-top: 15px;
+}
+
+#sample > table
+{
+	margin: auto;
+	width: 100%;
+}
+
+#sizeChartDiv > h3, #popChartDiv > h3
+{
+	margin-top: 40px;
+}
+
+
+#sizeChart, #popChart
+{
+	margin-top: 10px;
+	border: 1px solid black;
+}
+
+#predictionDiv > p
+{
+	margin: auto;
+	width: 500px;
+}
+
+
+/* =============================================================================
+	Responsive
+========================================================================== */
+
+/* Large devices (large desktops, 1200px and Down) */
+@media (max-width: 1200px) {
+
+}
+
+
+/* Medium devices (desktops, 992px and Donw) */
+@media (max-width: 992px) {
+
+}
+
+
+/* Small devices (tablets, 768px and Down) */
+@media (max-width: 768px) {
+
+}
+
+/* Extra Small devices (tablets, 480px and Down) */
+@media (max-width: 480px) {
+	
 }
