@@ -219,7 +219,9 @@
 
 		$.post("/getFID", function(result){
 			$(this).changeFeeder(result);
-			$(this).changeEstimate(1);
+			setTimeout(function(){
+				$(this).changeEstimate(1);
+			}, 1000);
 		});
 	});</script>
 </body>
