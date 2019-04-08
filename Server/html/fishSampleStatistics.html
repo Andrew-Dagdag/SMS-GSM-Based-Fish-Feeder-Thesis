@@ -147,82 +147,96 @@
 				});
 			});
 		});
-		$.post("/getSampleStats", function(result){
-			let sizeChart = document.getElementById("sizeChart").getContext('2d');
-			let popChart = document.getElementById("popChart").getContext('2d');
-			let size = []
-			let weight = []
-			let labels = []
-			let estpop = []
-			for(let i = 0; i < result.length; i++){
-				if(i > 10){
-					break; //limits the output to 10 results
+		setTimeout(function(){
+			$.post("/getSampleStats", function(result){
+				let sizeChart = document.getElementById("sizeChart").getContext('2d');
+				let popChart = document.getElementById("popChart").getContext('2d');
+				let initPop = $("#fieldPop").html();
+				let size = []
+				let weight = []
+				let labels = []
+				let estpop = []
+				for(let i = 0; i < result.length; i++){
+					if(i > 10){
+						break; //limits the output to 10 results
+					}
+					let time = readableTime(result[i].timestamp);
+					size.push(result[i].size)
+					weight.push(result[i].weight)
+					labels.push(time)
+					estpop.push(result[i].estpop)
 				}
-				let time = readableTime(result[i].timestamp);
-				size.push(result[i].size)
-				weight.push(result[i].weight)
-				labels.push(time)
-				estpop.push(result[i].estpop)
-			}
-			fishpop = estpop[0];
-			fishweight = weight[0]/1000;
-			$("#fishweight").html(fishweight);
-			$("#fishpop").html(fishpop);
+				fishpop = estpop[0];
+				// console.log(initPop);
+				estpop.push(initPop);
+				fishweight = weight[0]/1000;
+				$("#fishweight").html(fishweight);
+				$("#fishpop").html(fishpop);
 
-			let chart1 = new Chart(sizeChart, {
-				type: 'line',
-			    data: {
-			      labels: labels,
-			      datasets: [{
-			          label: "Average Size",
-			          data: size,
-			          backgroundColor: [
-			            'rgba(105, 0, 132, .2)',
-			          ],
-			          borderColor: [
-			            'rgba(200, 99, 132, .7)',
-			          ],
-			          borderWidth: 2
-			        },
-			        {
-			          label: "Average Weight",
-			          data: weight,
-			          backgroundColor: [
-			            'rgba(0, 137, 132, .2)',
-			          ],
-			          borderColor: [
-			            'rgba(0, 10, 130, .7)',
-			          ],
-			          borderWidth: 2
-			        }
-			      ]
-			    },
-			    options: {
-			      responsive: true
-			    }
-		  	});	
-			let chart2 = new Chart(popChart, {
-				type: 'line',
-			    data: {
-			      labels: labels,
-			      datasets: [{
-			          label: "Estimated Population",
-			          data: estpop,
-			          backgroundColor: [
-			            'rgba(0, 137, 132, .2)',
-			          ],
-			          borderColor: [
-			            'rgba(0, 10, 130, .7)',
-			          ],
-			          borderWidth: 2
-			        }
-			      ]
-			    },
-			    options: {
-			      responsive: true
-			    }
-		  	});	
-		});
+				size = size.reverse();
+				weight = weight.reverse();
+				chart1Label = labels.reverse();
+				estpop = estpop.reverse();
+
+				let chart1 = new Chart(sizeChart, {
+					type: 'line',
+				    data: {
+				      labels: chart1Label,
+				      datasets: [{
+				          label: "Average Size",
+				          data: size,
+				          backgroundColor: [
+				            'rgba(105, 0, 132, .2)',
+				          ],
+				          borderColor: [
+				            'rgba(200, 99, 132, .7)',
+				          ],
+				          borderWidth: 2
+				        },
+				        {
+				          label: "Average Weight",
+				          data: weight,
+				          backgroundColor: [
+				            'rgba(0, 137, 132, .2)',
+				          ],
+				          borderColor: [
+				            'rgba(0, 10, 130, .7)',
+				          ],
+				          borderWidth: 2
+				        }
+				      ]
+				    },
+				    options: {
+				      responsive: true
+				    }
+			  	});
+
+			  	labels.push("Start");
+			  	labels = labels.reverse();
+			  	let chart2 = new Chart(popChart, {
+					type: 'line',
+				    data: {
+				      labels: labels,
+				      datasets: [{
+				          label: "Estimated Population",
+				          data: estpop,
+				          backgroundColor: [
+				            'rgba(0, 137, 132, .2)',
+				          ],
+				          borderColor: [
+				            'rgba(0, 10, 130, .7)',
+				          ],
+				          borderWidth: 2
+				        }
+				      ]
+				    },
+				    options: {
+				      responsive: true
+				    }
+			  	});	
+			});
+
+		}, 1000);
 
 		$("#estPrice").change(function(){
 			$.post("/getFeedHist", function(result){
