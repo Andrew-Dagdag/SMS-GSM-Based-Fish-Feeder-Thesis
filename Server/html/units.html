@@ -11,7 +11,7 @@
 	<script src="MDBootstrap/js/bootstrap.min.js"></script>
 	<script src="MDBootstrap/js/mdb.min.js"></script>
 	<script src="MDBootstrap/js/jquery-3.3.1.min.js"></script>
-	<title>Unit 1</title>
+	<title><span class="unitlabel">Unit 1</span></title>
 </head>
 <body>
 	<h2 id="username">Welcome, <span id="user">[USER]</span></h2>
@@ -29,14 +29,14 @@
 		</ul>
 	</nav>
 	<div class="contentBox container">
-		<h2>Field Overview of <span id="unitlabel">[UNIT]</span></h2>
+		<h2>Field Overview of <span class="unitlabel">[UNIT]</span></h2>
 		<hr>
 		<div class="row" id="statsContent">
-			<div class="col-4" id="unitDetails">
+			<div class="col-lg-4" id="unitDetails">
 				<table>
 					<tr>
 						<th>Field Unit Label</th>
-						<td id="fieldLabel">Tilapia1</td>
+						<td class="unitlabel" id="fieldLabel">Tilapia1</td>
 					</tr>
 					<tr>
 						<th>Field Unit Number</th>
@@ -80,9 +80,9 @@
 					</tr>
 				</table>
 			</div>
-			<div class="col-4" id="feedhist">
+			<div class="col-lg-4" id="feedhist">
 			</div>
-			<div class="col-4" id="sample">
+			<div class="col-lg-4" id="sample">
 			</div>
 			<a id="editUnitBtn" href="/editFieldUnit">Edit/Delete Current Unit</a>
 			<a id="addSampleBtn" href="/addSample">Record Fish Sample Data</a>
@@ -110,8 +110,7 @@
 			// console.log("Hey u wanted to change feeder views?",fid);
 			$.post("/getFieldUnit", {fid:fid}, function(result){
 				// console.log(result);
-				$("#fieldLabel").html(result[0].label);
-				$("#unitlabel").html(result[0].label);
+				$(".unitlabel").html(result[0].label);
 				$("#fieldNumber").html(result[0].phoneno);
 				$("#fieldSpecies").html(result[0].species);
 				$("#fieldPop").html(result[0].startingPop);

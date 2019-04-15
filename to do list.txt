@@ -23,7 +23,7 @@ Website:
 >> implement add fish sample button on unit page (done)
 >> implement deeper statistical analysis of fish sampling
   - ave size, weight, population (estimate), etc 
->> implement harvest function
+>> implement harvest function (done)
   - tallies costs and, with user input on estimated sales (price of fish per kilo x kilos harvested), provides net profit/income
   - merge with revamped fish sampling stats page?
 >> implement feed financial data tab

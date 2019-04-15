@@ -115,7 +115,6 @@ h3
 {
 	border: 1px solid black;
 	text-align: center;
-	margin-left: 3%;
 }
 
 #changeSettings
@@ -173,6 +172,11 @@ label
 	margin-top: 20px;
 }
 
+#regButton
+{
+	margin-left: 20px;
+}
+
 #deleteUnitBtn
 {
 	padding: 10px;
@@ -206,14 +210,8 @@ label
 
 #feedhist, #sample
 {
-	height: 400px;
+	max-height: 400px;
 	overflow: auto;
-}
-
-#feedhist > table, #sample > table
-{
-	margin-top: 5px;
-	margin-bottom: 5px;
 }
 
 .inputform
@@ -251,6 +249,28 @@ label
 	width: 500px;
 }
 
+#predictionBreak
+{
+	display: none;
+}
+
+#loginForm
+{
+	margin: auto;
+	width: 30%;
+}
+
+#loginForm p
+{
+	text-align: center;
+	margin-top: 15px;
+	display: none;
+}
+
+#startTime, #interval, #endTime
+{
+	width: 100%;
+}
 
 /* =============================================================================
 	Responsive
@@ -258,22 +278,119 @@ label
 
 /* Large devices (large desktops, 1200px and Down) */
 @media (max-width: 1200px) {
-
+	#feedhist > table
+	{
+		margin-left: -10px;
+	}
 }
 
 
 /* Medium devices (desktops, 992px and Donw) */
 @media (max-width: 992px) {
+	#loginForm
+	{
+		width: 50%;
+	}
 
+	#unitDetails > table
+	{
+		width: 100%;
+	}
+
+	#unitOptions
+	{
+		width: 96%;
+		margin: auto;
+		margin-top: 20px;
+	}
+
+	#feedhist, #sample
+	{
+		margin: auto;
+		margin-top: 30px;
+		width: 75%;
+	}
+
+	#feedhist > table
+	{
+		width: 100%;
+		margin-left: 0%;	
+	}
+
+	#sample
+	{
+		margin-bottom: 20px;
+	}
+
+	#deleteUnitBtn
+	{
+		width: 30%;
+	}
 }
 
 
 /* Small devices (tablets, 768px and Down) */
 @media (max-width: 768px) {
+	#loginForm
+	{
+		width: 80%;
+	}
 
+	#editUnitBtn, #addSampleBtn, #statisticsBtn
+	{
+		width: 80%;
+	}
+
+	#deleteUnitBtn
+	{
+		width: 40%;
+	}
 }
 
 /* Extra Small devices (tablets, 480px and Down) */
 @media (max-width: 480px) {
-	
+	#indextitle
+	{
+		font-size: 30px;
+	}
+
+	#username
+	{
+		font-size: 25px;
+	}
+
+	#loginForm
+	{
+		width: 100%;
+	}
+
+	#intervalform h4
+	{
+		font-size: 18px;
+	}
+
+	#startTime, #endTime
+	{
+		width: 125%;
+		margin-left: -13%;
+	}
+
+	#feedhist, #sample
+	{
+		width: 100%;
+	}
+
+	#deleteUnitBtn
+	{
+		width: 50%;
+		margin-left: 0px;
+		margin-top: 20px;
+	}
+
+	#predictionBreak
+	{
+		display: block;
+	}
 }
+
+/* Minimum functional size is 360px*/

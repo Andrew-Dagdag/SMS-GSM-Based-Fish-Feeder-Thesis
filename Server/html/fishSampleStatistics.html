@@ -27,7 +27,7 @@
 		<h2>Statistics</h2>
 		<hr>
 		<div class="row" id="statsContent">
-			<div class="col-4" id="unitDetails">
+			<div class="col-lg-4" id="unitDetails">
 				<table>
 					<tr>
 						<th colspan="2">BASIC DATA</th>
@@ -58,11 +58,11 @@
 					</tr>
 				</table>
 			</div>
-			<div class="col-4" id="sizeChartDiv">
+			<div class="col-lg-4" id="sizeChartDiv">
 				<h3>Fish Size/Weight Over Time</h3>
 				<canvas id="sizeChart"></canvas>
 			</div>
-			<div class="col-4" id="popChartDiv">
+			<div class="col-lg-4" id="popChartDiv">
 				<h3>Fish Population Over Time</h3>
 				<canvas id="popChart"></canvas>
 			</div>
@@ -72,7 +72,7 @@
 		<h2>HARVEST PREDICTION</h2>
 		<hr />
 		<p>
-			Input market price for <span id="species"></span>: <input type="number" id="estPrice"/>
+			Input market price for <span id="species"></span>: <br id="predictionBreak" /><input type="number" id="estPrice"/>
 			<br />
 			<br />
 			Income: <span id="fishweight">N</span> kg x <span id="fishpop"> N </span> fishes x <span id="marketPrice"></span> php/kg = <span id="estIncome"></span>
