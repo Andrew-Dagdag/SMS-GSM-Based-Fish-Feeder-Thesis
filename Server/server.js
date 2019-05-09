@@ -125,6 +125,16 @@ app.post('/getSampleStats', (request, response) => {
   })
 });
 
+app.post('/getFeedsOfOwner', (request, response) => {
+  let sql = "SELECT DISTINCT(feed.feedId), feed.feedname, feed.cost FROM `units` inner join feed ON units.feedId=feed.feedId WHERE units.uid=" + userdata["uid"]
+  con.query(sql, function(err, result){
+    if(err){
+      console.log(err)
+    }
+    response.json(result)
+  })
+})
+
 app.post('/getFeeds', (request, response) => {
   let sql = "SELECT * FROM `feed`"
   con.query(sql, function(err, result){

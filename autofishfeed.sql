@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.4
+-- version 4.8.3
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 25, 2019 at 06:27 AM
--- Server version: 10.1.30-MariaDB
--- PHP Version: 7.1.13
+-- Generation Time: May 09, 2019 at 09:18 AM
+-- Server version: 10.1.36-MariaDB
+-- PHP Version: 7.2.10
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -40,7 +40,8 @@ CREATE TABLE `feed` (
 
 INSERT INTO `feed` (`feedId`, `feedname`, `cost`) VALUES
 (1, 'feedA', 100),
-(2, 'feedB', 300);
+(2, 'feedB', 300),
+(3, 'corn', 40);
 
 -- --------------------------------------------------------
 
@@ -63,7 +64,15 @@ CREATE TABLE `feedhistory` (
 
 INSERT INTO `feedhistory` (`fid`, `feedamt`, `timestamp`, `type`, `index`, `feedId`) VALUES
 (3, 300, 1553410561473, 'Manual', 41, 1),
-(3, 300, 1553410681481, 'Manual', 42, 1);
+(3, 300, 1553410681481, 'Manual', 42, 1),
+(4, 300, 1557128885266, 'Scheduled', 43, 1),
+(12, 100, 1557129242054, 'Scheduled', 44, 1),
+(13, 100, 1557129422056, 'Scheduled', 45, 1),
+(14, 100, 1557129602058, 'Scheduled', 46, 3),
+(15, 100, 1557130022061, 'Scheduled', 47, 1),
+(4, 300, 1557384489123, 'Scheduled', 48, 1),
+(12, 100, 1557385252517, 'Scheduled', 49, 1),
+(12, 100, 1557385852600, 'Scheduled', 50, 1);
 
 -- --------------------------------------------------------
 
@@ -109,7 +118,11 @@ INSERT INTO `schedule` (`fid`, `sched`, `amount`, `type`) VALUES
 (2, '08:40,2,23:00', 700, 'interval'),
 (3, '10:30,3,23:00', 1000, 'interval'),
 (4, '07:48,1,23:00', 300, 'interval'),
-(5, '07:20,4,23:00', 800, 'interval');
+(5, '07:20,4,23:00', 800, 'interval'),
+(12, '15:00,15:10,15:20', 100, 'schedule'),
+(13, '15:57', 100, 'schedule'),
+(14, '00:00,4,23:59', 100, 'interval'),
+(15, '16:07', 100, 'schedule');
 
 -- --------------------------------------------------------
 
@@ -137,8 +150,12 @@ INSERT INTO `units` (`fid`, `uid`, `label`, `phoneno`, `species`, `feederload`, 
 (1, 1, 'Dagdag, Unit 1', '+639486479304', 'Tilapia', 7800, 5000, 8000, 1),
 (2, 1, 'Dagdag, Unit 2', '+639486479304', 'Koi', 5100, 2000, 4000, 2),
 (3, 2, 'Articuno', '+639486479304', 'Tilapia', 7200, 4000, 5000, 1),
-(4, 2, 'Zapdos', '+639486479304', 'Bangus', 12100, 3000, 6000, 1),
-(5, 2, 'Moltres', '+639486479304', 'Lionfish', 17600, 800, 1100, 2);
+(4, 2, 'Zapdos', '+639486479304', 'Bangus', 11500, 3000, 6000, 1),
+(5, 2, 'Moltres', '+639486479304', 'Lionfish', 17600, 800, 1100, 2),
+(12, 2, 'wew', '+639464073462', 'koi', 200, 500, 500, 1),
+(13, 4, 'koi', '+639123456777', 'koi', 400, 500, 500, 1),
+(14, 4, 'bangus', '+639464073948', 'bangus', 500, 300, 400, 3),
+(15, 5, 'fish1', '+639123456777', 'bangus', 400, 500, 500, 1);
 
 -- --------------------------------------------------------
 
@@ -160,7 +177,9 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`uid`, `name`, `password`, `phoneno`) VALUES
 (1, 'Andrew Dagdag', '07123e1f482356c415f684407a3b8723e10b2cbbc0b8fcd6282c49d37c9c1abc', '+639773518918'),
 (2, 'Donn Mathew Cruz', 'd74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1', '+639467605054'),
-(3, 'newname', '253c2e786c2414dcaec8dbf11df515b5075371454b93a5687d24d96ddbf3b939', '+639101010101');
+(3, 'newname', '253c2e786c2414dcaec8dbf11df515b5075371454b93a5687d24d96ddbf3b939', '+639101010101'),
+(4, 'newguy', '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8', '+639464073444'),
+(5, 'new user', '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8', '+639123456778');
 
 --
 -- Indexes for dumped tables
@@ -216,13 +235,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `feed`
 --
 ALTER TABLE `feed`
-  MODIFY `feedId` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `feedId` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `feedhistory`
 --
 ALTER TABLE `feedhistory`
-  MODIFY `index` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+  MODIFY `index` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
 
 --
 -- AUTO_INCREMENT for table `sample`
@@ -234,13 +253,13 @@ ALTER TABLE `sample`
 -- AUTO_INCREMENT for table `units`
 --
 ALTER TABLE `units`
-  MODIFY `fid` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `fid` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `uid` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `uid` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Constraints for dumped tables

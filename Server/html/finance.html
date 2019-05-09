@@ -70,7 +70,7 @@
 				$("#fieldUnits").html(insert);
 
 				$.post("/getFeedHistoryOfGroup", {fids:fids}, function(feedHists){
-					console.log(feedHists);
+					// console.log(feedHists);
 					function getTotalCost(feedId, feedCost){
 						let total = 0;
 						for(let i = 0; i < res.length; i++){
@@ -100,11 +100,10 @@
 						string = string.join(", ");
 						return string;
 					}
-					$.post("/getFeeds", function(feeds){
+					$.post("/getFeedsOfOwner", function(feeds){
 						let insert = "<table><tr><th>Feed Name</th><th>Cost per Kilo</th><th>Feeders using the feed</th><th>Costs so far</th></tr>";
-
+						console.log(feeds);
 						for(let i = 0; i < feeds.length; i++){
-							console.log(feeds[i]);
 							insert += "<tr>" +
 								"<td>" + feeds[i].feedname + "</td>" +
 								"<td>" + feeds[i].cost + "</td>" +
