@@ -24,7 +24,7 @@
 		</ul>
 	</nav>
 	<div class="contentBox container">
-		<h2>Statistics</h2>
+		<h2>Fish Sample Statistics of <span class="fieldLabel">[UNIT]</span></h2>
 		<hr>
 		<div class="row" id="statsContent">
 			<div class="col-lg-4" id="unitDetails">
@@ -34,7 +34,7 @@
 					</tr>
 					<tr>
 						<th>Field Unit Label</th>
-						<td id="fieldLabel">Tilapia1</td>
+						<td class="fieldLabel">Tilapia1</td>
 					</tr>
 					<tr>
 						<th>Field Unit Number</th>
@@ -126,7 +126,7 @@
 		$.post("/getFID", function(result){
 			let fid = result;
 			$.post("/getFieldUnit", {fid:fid}, function(result){
-				$("#fieldLabel").html(result[0].label);
+				$(".fieldLabel").html(result[0].label);
 				$("#fieldNumber").html(result[0].phoneno);
 				$("#fieldSpecies").html(result[0].species);
 				$("#species").html(result[0].species);
@@ -135,6 +135,8 @@
 				$("#fieldCapital").html(fishcapital);
 				$("#fishcapital").html("₱" + fishcapital);
 				$("#fieldLoad").html(String(result[0].feederload) + " grams");
+				document.title = "Statistics & Predictions for " + result[0].label;
+
 				let feedId = result[0].feedId;
 				$.post("/getFeedNames", function(result){
 					for(let i = 0; i < result.length; i++){

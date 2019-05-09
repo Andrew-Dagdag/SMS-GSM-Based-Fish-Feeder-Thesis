@@ -137,13 +137,22 @@
 				$("#fieldSpecies").val(result[0].species);
 				$("#currentFeedLoad").html(result[0].feederload);
 				document.getElementById("feedname").value = result[0].feedId;
+				document.title = "Edit/Delete " + result[0].label;
 			});
 			$.post("/getSched", {fid:fid}, function(result){
-				let sched = result[0].sched.split(",");
-				$("#startTime").val(sched[0]);
-				$("#interval").val(sched[1]);
-				$("#endTime").val(sched[2]);
+				console.log(result[0].type)
 				$("#feedAmt").val(result[0].amount);
+				if(result[0].type == "interval"){
+					let sched = result[0].sched.split(",");
+					$("#startTime").val(sched[0]);
+					$("#interval").val(sched[1]);
+					$("#endTime").val(sched[2]);
+				}else{
+					$("#schedulefeed").val(result[0].sched);
+					document.getElementById("schedtype").value = "schedule";
+					document.getElementById("intervalform").style.display = "none";
+					document.getElementById("scheduleform").style.display = "block";
+				}
 			});
 		};
 

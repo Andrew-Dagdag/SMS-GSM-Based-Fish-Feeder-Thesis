@@ -22,7 +22,7 @@
 		</ul>
 	</nav>
 	<div class="contentBox container">
-		<h2>Add New Sample for <span class="fieldLabel">Current Unit</span></h2>
+		<h2>Add New Fish Sample for <span class="fieldLabel">Current Unit</span></h2>
 		<hr>
 		<div class="inputform">
 			<h6>Size: (unit to be added)</h6>
@@ -71,6 +71,7 @@
 			$.post("/getFieldUnit", {fid:fid}, function(result){
 				// console.log(result);
 				$(".fieldLabel").html(result[0].label);
+				document.title = "New Sample for " + result[0].label;
 			});
 		};
 

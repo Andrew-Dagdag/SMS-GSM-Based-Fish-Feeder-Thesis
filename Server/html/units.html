@@ -11,7 +11,7 @@
 	<script src="MDBootstrap/js/bootstrap.min.js"></script>
 	<script src="MDBootstrap/js/mdb.min.js"></script>
 	<script src="MDBootstrap/js/jquery-3.3.1.min.js"></script>
-	<title><span class="unitlabel">Unit 1</span></title>
+	<title>Unit 1</title>
 </head>
 <body>
 	<h2 id="username">Welcome, <span id="user">[USER]</span></h2>
@@ -23,7 +23,7 @@
 			<li><a href="#">Placeholder3</a></li>
 		</ul>
 		<ul class="form-inline">
-			<li><a href='/finance'>Finance (unsure)</a></li>
+			<li><a href='/finance'>Feed Finances</a></li>
 			<li><a href='/profile'>Your Profile</a></li>
 			<li><a href='/addFieldUnit'>Add Field Unit</a></li>
 			<li><a href='#' onClick='$(this).logout()'>Logout</a></li>
@@ -117,6 +117,7 @@
 				$("#fieldPop").html(result[0].startingPop);
 				$("#fieldCapital").html(result[0].capital);
 				$("#fieldLoad").html(String(result[0].feederload) + " grams");
+				document.title = "Overview of " + result[0].label;
 
 				let feedid = result[0].feedId
 				$.post("/getFeedName", {feedid:feedid}, function(result2){
