@@ -61,6 +61,10 @@ app.get("/fishSampleStatistics", (request, response) => {
   response.sendFile('fishSampleStatistics.html', {"root": "html/"})
 });
 
+app.get("/finance", (request, response) => {
+  response.sendFile('finance.html', {"root": "html/"})
+});
+
 /*********************
 **AJAX POST REQUESTS**
 *********************/
