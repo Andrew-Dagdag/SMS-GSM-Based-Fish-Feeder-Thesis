@@ -69,6 +69,21 @@ app.get("/finance", (request, response) => {
 **AJAX POST REQUESTS**
 *********************/
 
+app.post('/getFeedHistoryOfGroup', (request, response) => {
+  let fids = request.body.fids
+  for(let i = 0; i < fids.length; i++){
+    fids[i] = "feedhistory.fid="+fids[i]
+  }
+  addendum = fids.join(" OR ")
+  let sql = "SELECT fid, feedamt FROM `feedhistory` WHERE " + addendum
+  con.query(sql, function(err, result){
+    if(err){
+      console.log(err)
+    }
+    response.json(result)
+  })
+});
+
 app.post('/getFeedNames', (request, response) => {
   let sql = "SELECT * FROM `feed`"
   con.query(sql, function(err, result){

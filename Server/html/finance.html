@@ -59,36 +59,61 @@
 			$("#fuser").html(result["user"]);
 			$.post("/getFieldUnits", {uid:result["uid"]},function(res){
 				let insert = "";
+				let fids = [];
 				for(let i = 0; i < res.length; i++){
 					insert += "<li class='nav-item'><a href='#' onClick='$(this).changeFeeder("
 							+ res[i].fid +")'>"
 							+ res[i].label
 							+ "</a></li>";
+					fids.push(res[i].fid);
 				}
 				$("#fieldUnits").html(insert);
 
-				function getFeederNames(feedId){
-					let string = []
-					for(let i = 0; i < res.length; i++){
-						if(res[i].feedId == feedId){
-							string.push(res[i].label);
+				$.post("/getFeedHistoryOfGroup", {fids:fids}, function(feedHists){
+					console.log(feedHists);
+					function getTotalCost(feedId, feedCost){
+						let total = 0;
+						for(let i = 0; i < res.length; i++){
+							if(feedId == res[i].feedId){
+								feedId = res[i].fid;
+								break;
+							}
 						}
+						for(let i = 0; i < feedHists.length; i++){
+							if(feedHists[i].fid == feedId){
+								console.log("aaaa");
+								total += feedHists[i].feedamt;
+							}
+						}
+						total = (total/1000)*feedCost
+						console.log(total);
+						return String(total);
 					}
-					string = string.join(", ");
-					return string;
-				}
-				$.post("/getFeeds", function(feeds){
-					let insert = "<table><tr><th>Feed Name</th><th>Cost per Kilo</th><th>Feeders using the feed</th></tr>";
 
-					for(let i = 0; i < feeds.length; i++){
-						console.log(feeds[i]);
-						insert += "<tr>" +
-							"<td>" + feeds[i].feedname + "</td>" +
-							"<td>" + feeds[i].cost + "</td>" +
-							"<td>" + getFeederNames(feeds[i].feedId) + "</td>"
+					function getFeederNames(feedId){
+						let string = []
+						for(let i = 0; i < res.length; i++){
+							if(res[i].feedId == feedId){
+								string.push(res[i].label);
+							}
+						}
+						string = string.join(", ");
+						return string;
 					}
-					insert += "</table>"
-					$("#feeds").html(insert);
+					$.post("/getFeeds", function(feeds){
+						let insert = "<table><tr><th>Feed Name</th><th>Cost per Kilo</th><th>Feeders using the feed</th><th>Costs so far</th></tr>";
+
+						for(let i = 0; i < feeds.length; i++){
+							console.log(feeds[i]);
+							insert += "<tr>" +
+								"<td>" + feeds[i].feedname + "</td>" +
+								"<td>" + feeds[i].cost + "</td>" +
+								"<td>" + getFeederNames(feeds[i].feedId) + "</td>" + 
+								"<td>" + getTotalCost(feeds[i].feedId, feeds[i].cost)
+						}
+						insert += "</table>"
+						$("#feeds").html(insert);
+					});
 				});
 			});
 		});
