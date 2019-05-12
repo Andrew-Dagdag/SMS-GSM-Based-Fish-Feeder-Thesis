@@ -132,9 +132,6 @@
 				let insert = "<table><tr><th>Size</th><th>Weight</th><th>Timestamp</th><th>Est Pop</th></tr>";
 				console.log(result.length);
 				for(let i = 0; i < result.length; i++){
-					if(i > 10){
-						break; //limits the output to 10 results
-					}
 					let time = readableTime(result[i].timestamp);
 
 					insert	+= 	"<tr>"
@@ -151,9 +148,6 @@
 				// console.log(result);
 				$.post("/getFeedNames", function(feedNames){
 					for(let i = 0; i < result.length; i++){
-						if(i > 10){
-							break; //limits the output to 10 results
-						}
 						insert	+= 	"<tr>"
 								+	"<td>" + result[i].type + "</td>"
 						for(let j = 0; j < feedNames.length; j++){

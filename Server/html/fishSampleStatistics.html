@@ -71,18 +71,16 @@
 	<div class="contentBox container" id="predictionDiv">
 		<h2>HARVEST PREDICTION</h2>
 		<hr />
-		<p>
-			Input market price for <span id="species"></span>: <br id="predictionBreak" /><input type="number" id="estPrice"/>
-			<br />
-			<br />
-			Income: <span id="fishweight">N</span> kg x <span id="fishpop"> N </span> fishes x <span id="marketPrice"></span> php/kg = <span id="estIncome"></span>
-			<br />
-			<br />
-			Expenses: <span id="fishcapital">N</span> capital + <span id="feedcost"> N </span>/kg for feed = <span id="estExpenses"></span>
-			<br />
-			<br />
-			Net Profit: <span id="income">Income</span> - <span id="expenses">Expenses</span> = <span id="profit">Profit</span>
-		</p>
+		<div class="row">
+			<div class="col-10">
+				<div>Input market price for <span id="species"></span>: <br id="predictionBreak" /><input type="number" id="estPrice"/></div>
+				<div>Income: <span id="fishweight">N</span> kg x <span id="fishpop"> N </span> fishes x <span id="marketPrice"></span> php/kg = <span id="estIncome"></span></div>
+				<div>Expenses: <span id="fishcapital">N</span> capital + <span id="feedcost"> N </span>/kg for feed = <span id="estExpenses"></span></div>
+				<div>Net Profit: <span id="income">Income</span> - <span id="expenses">Expenses</span> = <span id="profit">Profit</span></div>
+			</div>
+			<div class="col-2"><button class="btn btn-default" id="harvest">HARVEST MEEEE</button></div>
+		</div>
+			
 	</div>
 	<script>
 	$(document).ready(function(){
@@ -91,6 +89,9 @@
 		let fishcapital;
 		let fishfeedcost;
 		let fishfeedname;
+		let fishsize;
+		let finalweight;
+		let estimateFunc = false;
 
 		$.fn.logout = function(){
 			$.post("/logout", function(result){
@@ -169,6 +170,8 @@
 					estpop.push(result[i].estpop)
 				}
 				fishpop = estpop[0];
+				fishsize = size[0];
+				finalweight = weight[0];
 				// console.log(initPop);
 				estpop.push(initPop);
 				fishweight = weight[0]/1000;
@@ -237,10 +240,9 @@
 				    }
 			  	});	
 			});
-
-		}, 1000);
-
+		}, 500);
 		$("#estPrice").change(function(){
+			estimateFunc = true;
 			$.post("/getFeedHist", function(result){
 				let weight = 0;
 				for(let i = 0; i < result.length; i++){
@@ -249,15 +251,73 @@
 				let price = $("#estPrice").val();
 				$("#marketPrice").html("₱" + price);
 				let estIncome = price * fishweight * fishpop;
-				$("#estIncome").html("₱" + ~~estIncome);
+				$("#estIncome").html("₱" + estIncome.toFixed(2));
 				let estfeedcost = (weight/1000) * fishfeedcost;
-				$("#feedcost").html("₱" + ~~estfeedcost);
+				$("#feedcost").html("₱" + estfeedcost.toFixed(2));
 				let estExpenses = estfeedcost + fishcapital;
-				$("#estExpenses").html("₱" + ~~estExpenses);
-				$("#income").html("₱" + ~~estIncome);
-				$("#expenses").html("₱" + ~~estExpenses);
-				$("#profit").html("₱" + ~~(estIncome-estExpenses));
+				$("#estExpenses").html("₱" + estExpenses.toFixed(2));
+				$("#income").html("₱" + estIncome.toFixed(2));
+				$("#expenses").html("₱" + estExpenses.toFixed(2));
+				$("#profit").html("₱" + (estIncome-estExpenses).toFixed(2));
 			});
+		});
+
+		$("#harvest").click(function(){
+			//Check if profit is null
+			if(estimateFunc){
+				//set stuff, query to archive
+				alert("Once new fishpond has been prepped, please reregister the field unit.");
+				//SPECIFIC STEPS!!!
+				//1. Prepare Data
+				$.post("/getFID", function(fid){
+					$.post("/getFieldUnit", {fid:fid}, function(fieldUnit){
+						let species = fieldUnit[0].species;
+						let startingPop = fieldUnit[0].startingPop;
+						let endPop = fishpop;
+						let survivalRate = parseFloat((startingPop/endPop).toFixed(2));
+						$.post("/getFeedHist", function(feedHistory){
+							let startDay = feedHistory[0].timestamp;
+							let endDay = feedHistory[feedHistory.length-1].timestamp;
+							let profit = parseFloat(($("#profit").html()).slice(1));
+							let size = fishsize;
+							let weight = finalweight;
+
+							//2. Query into archives
+							$.post("/archive", {species: species, 
+												startingPop: startingPop,
+												endPop:endPop,
+												survivalRate:survivalRate,
+												startDay:startDay,
+												endDay:endDay,
+												profit:profit,
+												size:size,
+												weight:weight}, function(result){
+								$.post("/getUserInfo", function(user){
+									$.post("/getFieldUnits", {uid:user["uid"]},function(fieldUnits){
+										for(let i = 0; i < fieldUnits.length; i++){
+											if(fieldUnits[i].fid == fid){
+												fieldUnits.splice(i, 1);
+												break;
+											}
+										}
+										//3. CHANGE CURRENTFID TO SOMETHING ELSE
+										let newfid = fieldUnits[0].fid;
+										$.post("/setFID", {fid:newfid}, function(result){
+											//4. Delete current fid (query for current fid, submit result for deletion)
+											$.post("/deleteUnit", {fid: fid}, function(result){
+												//5. Redirect to /FishFeedIndex
+												window.location.href = "/FishFeedIndex";
+											});
+										});
+									});
+								});
+							});
+						});
+					});
+				});
+			}else{
+				alert("Please Use The Prediction Function First!");
+			}
 		});
 	});</script>
 </body>

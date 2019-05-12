@@ -69,6 +69,31 @@ app.get("/finance", (request, response) => {
 **AJAX POST REQUESTS**
 *********************/
 
+app.post('/archive', (request, response) => {
+  let species = request.body.species 
+  let startingPop = request.body.startingPop
+  let endPop = request.body.endPop
+  let survivalRate = request.body.survivalRate
+  let startDay = request.body.startDay
+  let endDay = request.body.endDay
+  let profit = request.body.profit
+  let size = request.body.size
+  let weight = request.body.weight
+
+  let archive = "INSERT INTO `archives` (`index`, `species`, `startingPop`, `endPop`, `survivalRate`, `startDay`, `endDay`, `profit`, `size`, `weight`) VALUES (NULL, '" +
+              species + "', '" + startingPop + "', '" +
+              endPop + "', '" + survivalRate + "', '" +
+              startDay + "', '" + endDay + "', '" + 
+              profit + "', '" + size + "', '" + weight + "')"
+  con.query(archive, function(err, result){
+    if(err){
+      console.log(err)
+    }
+    console.log("Success")
+  });
+  response.send("Success");
+});
+
 app.post('/getFeedHistoryOfGroup', (request, response) => {
   let fids = request.body.fids
   for(let i = 0; i < fids.length; i++){

@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.3
+-- version 4.7.4
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 09, 2019 at 09:18 AM
--- Server version: 10.1.36-MariaDB
--- PHP Version: 7.2.10
+-- Generation Time: May 12, 2019 at 04:01 PM
+-- Server version: 10.1.30-MariaDB
+-- PHP Version: 7.1.13
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -21,6 +21,36 @@ SET time_zone = "+00:00";
 --
 -- Database: `autofishfeed`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `archives`
+--
+
+CREATE TABLE `archives` (
+  `index` int(11) NOT NULL,
+  `species` varchar(20) NOT NULL,
+  `startingPop` int(5) NOT NULL,
+  `endPop` int(5) NOT NULL,
+  `survivalRate` float NOT NULL,
+  `startDay` bigint(15) NOT NULL,
+  `endDay` bigint(15) NOT NULL,
+  `profit` float NOT NULL,
+  `size` float NOT NULL,
+  `weight` float NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `archives`
+--
+
+INSERT INTO `archives` (`index`, `species`, `startingPop`, `endPop`, `survivalRate`, `startDay`, `endDay`, `profit`, `size`, `weight`) VALUES
+(12, 'Tilapia', 4000, 350, 11.43, 1557660617969, 1553410561473, 5235, 0, 0),
+(13, 'Tilapia', 4000, 350, 11.43, 1557660617969, 1553410561473, 5235, 0, 0),
+(14, 'Tilapia', 4000, 350, 11.43, 1557660617969, 1553410561473, 5235, 400, 550),
+(15, 'Tilapia', 4000, 300, 13.33, 1557660617969, 1553410561473, 3750, 550, 900),
+(16, 'koi', 500, 999, 0.5, 1557386456635, 1557129242054, -417.12, 123, 41);
 
 -- --------------------------------------------------------
 
@@ -66,13 +96,21 @@ INSERT INTO `feedhistory` (`fid`, `feedamt`, `timestamp`, `type`, `index`, `feed
 (3, 300, 1553410561473, 'Manual', 41, 1),
 (3, 300, 1553410681481, 'Manual', 42, 1),
 (4, 300, 1557128885266, 'Scheduled', 43, 1),
-(12, 100, 1557129242054, 'Scheduled', 44, 1),
 (13, 100, 1557129422056, 'Scheduled', 45, 1),
 (14, 100, 1557129602058, 'Scheduled', 46, 3),
 (15, 100, 1557130022061, 'Scheduled', 47, 1),
 (4, 300, 1557384489123, 'Scheduled', 48, 1),
-(12, 100, 1557385252517, 'Scheduled', 49, 1),
-(12, 100, 1557385852600, 'Scheduled', 50, 1);
+(5, 800, 1557386456632, 'Scheduled', 51, 2),
+(4, 300, 1557654497945, 'Scheduled', 53, 1),
+(2, 700, 1557657617960, 'Scheduled', 54, 2),
+(4, 300, 1557658097960, 'Scheduled', 55, 1),
+(5, 800, 1557660017971, 'Scheduled', 56, 2),
+(3, 1000, 1557660617969, 'Scheduled', 57, 1),
+(4, 300, 1557661697975, 'Scheduled', 58, 1),
+(14, 100, 1557662417980, 'Scheduled', 59, 3),
+(2, 700, 1557664817986, 'Scheduled', 60, 2),
+(4, 300, 1557665297989, 'Scheduled', 61, 1),
+(4, 300, 1557668897513, 'Scheduled', 62, 1);
 
 -- --------------------------------------------------------
 
@@ -94,7 +132,8 @@ CREATE TABLE `sample` (
 --
 
 INSERT INTO `sample` (`fid`, `size`, `weight`, `estpop`, `timestamp`, `index`) VALUES
-(3, 400, 550, 350, 1553409897511, 9);
+(3, 400, 550, 350, 1553409897511, 9),
+(3, 550, 900, 300, 1557668845866, 10);
 
 -- --------------------------------------------------------
 
@@ -119,7 +158,6 @@ INSERT INTO `schedule` (`fid`, `sched`, `amount`, `type`) VALUES
 (3, '10:30,3,23:00', 1000, 'interval'),
 (4, '07:48,1,23:00', 300, 'interval'),
 (5, '07:20,4,23:00', 800, 'interval'),
-(12, '15:00,15:10,15:20', 100, 'schedule'),
 (13, '15:57', 100, 'schedule'),
 (14, '00:00,4,23:59', 100, 'interval'),
 (15, '16:07', 100, 'schedule');
@@ -148,13 +186,12 @@ CREATE TABLE `units` (
 
 INSERT INTO `units` (`fid`, `uid`, `label`, `phoneno`, `species`, `feederload`, `startingPop`, `capital`, `feedId`) VALUES
 (1, 1, 'Dagdag, Unit 1', '+639486479304', 'Tilapia', 7800, 5000, 8000, 1),
-(2, 1, 'Dagdag, Unit 2', '+639486479304', 'Koi', 5100, 2000, 4000, 2),
-(3, 2, 'Articuno', '+639486479304', 'Tilapia', 7200, 4000, 5000, 1),
-(4, 2, 'Zapdos', '+639486479304', 'Bangus', 11500, 3000, 6000, 1),
-(5, 2, 'Moltres', '+639486479304', 'Lionfish', 17600, 800, 1100, 2),
-(12, 2, 'wew', '+639464073462', 'koi', 200, 500, 500, 1),
+(2, 1, 'Dagdag, Unit 2', '+639486479304', 'Koi', 3700, 2000, 4000, 2),
+(3, 2, 'Articuno', '+639486479304', 'Tilapia', 6200, 4000, 5000, 1),
+(4, 2, 'Zapdos', '+639486479304', 'Bangus', 10000, 3000, 6000, 1),
+(5, 2, 'Moltres', '+639486479304', 'Lionfish', 16000, 800, 1100, 2),
 (13, 4, 'koi', '+639123456777', 'koi', 400, 500, 500, 1),
-(14, 4, 'bangus', '+639464073948', 'bangus', 500, 300, 400, 3),
+(14, 4, 'bangus', '+639464073948', 'bangus', 400, 300, 400, 3),
 (15, 5, 'fish1', '+639123456777', 'bangus', 400, 500, 500, 1);
 
 -- --------------------------------------------------------
@@ -184,6 +221,12 @@ INSERT INTO `users` (`uid`, `name`, `password`, `phoneno`) VALUES
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `archives`
+--
+ALTER TABLE `archives`
+  ADD PRIMARY KEY (`index`);
 
 --
 -- Indexes for table `feed`
@@ -232,6 +275,12 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT for table `archives`
+--
+ALTER TABLE `archives`
+  MODIFY `index` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+
+--
 -- AUTO_INCREMENT for table `feed`
 --
 ALTER TABLE `feed`
@@ -241,13 +290,13 @@ ALTER TABLE `feed`
 -- AUTO_INCREMENT for table `feedhistory`
 --
 ALTER TABLE `feedhistory`
-  MODIFY `index` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `index` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
 
 --
 -- AUTO_INCREMENT for table `sample`
 --
 ALTER TABLE `sample`
-  MODIFY `index` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `index` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `units`
