@@ -79,6 +79,10 @@
 							<span id="estimateWarning">No Warning</span>
 						</td>
 					</tr>
+					<tr>
+						<td colspan="2">
+							<span id="status">Online</span>
+						</td>
 				</table>
 			</div>
 			<div class="col-lg-4" id="feedhist">
@@ -117,6 +121,14 @@
 				$("#fieldPop").html(result[0].startingPop);
 				$("#fieldCapital").html(result[0].capital);
 				$("#fieldLoad").html(String(result[0].feederload) + " grams");
+				$("#status").html(result[0].status);
+
+				if(result[0].status == "Offline"){
+					document.getElementById("status").classList.add("warningtxt");
+				}else{
+					document.getElementById("status").classList.remove("warningtxt");
+				}
+
 				document.title = "Overview of " + result[0].label;
 
 				let feedid = result[0].feedId
@@ -181,12 +193,14 @@
 				estimate = estimate * parseInt(result);
 				let feedremaining = parseInt($("#fieldLoad").html().split(" ")[0]);
 				$("#estimateResult").html(estimate);
+				let warning = "No Warning"
 				if(estimate > feedremaining){
-					let warning = "You do not have enough feed to last " + days + " days!";
-					$("#estimateWarning").html(warning);
+					warning = "You do not have enough feed to last " + days + " days!";
+					document.getElementById("estimateWarning").classList.add("warningtxt");
 				}else{
-					$("#estimateWarning").html("No Warning");
+					document.getElementById("estimateWarning").classList.remove("warningtxt");
 				}
+				$("#estimateWarning").html(warning);
 			});
 		}
 

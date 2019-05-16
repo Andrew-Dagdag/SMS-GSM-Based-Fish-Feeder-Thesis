@@ -78,7 +78,7 @@
 				<div>Expenses: <span id="fishcapital">N</span> capital + <span id="feedcost"> N </span>/kg for feed = <span id="estExpenses"></span></div>
 				<div>Net Profit: <span id="income">Income</span> - <span id="expenses">Expenses</span> = <span id="profit">Profit</span></div>
 			</div>
-			<div class="col-2"><button class="btn btn-default" id="harvest">HARVEST MEEEE</button></div>
+			<div class="col-2"><button class="btn btn-default" id="harvest">HARVEST THIS UNIT</button></div>
 		</div>
 			
 	</div>
@@ -305,6 +305,7 @@
 										$.post("/setFID", {fid:newfid}, function(result){
 											//4. Delete current fid (query for current fid, submit result for deletion)
 											$.post("/deleteUnit", {fid: fid}, function(result){
+												console.log("you done did it");
 												//5. Redirect to /FishFeedIndex
 												window.location.href = "/FishFeedIndex";
 											});

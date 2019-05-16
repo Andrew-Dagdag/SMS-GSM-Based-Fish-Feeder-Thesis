@@ -79,12 +79,13 @@ app.post('/archive', (request, response) => {
   let profit = request.body.profit
   let size = request.body.size
   let weight = request.body.weight
+  let uid = userdata["uid"]
 
-  let archive = "INSERT INTO `archives` (`index`, `species`, `startingPop`, `endPop`, `survivalRate`, `startDay`, `endDay`, `profit`, `size`, `weight`) VALUES (NULL, '" +
+  let archive = "INSERT INTO `archives` (`index`, `species`, `startingPop`, `endPop`, `survivalRate`, `startDay`, `endDay`, `profit`, `size`, `weight`, `uid`) VALUES (NULL, '" +
               species + "', '" + startingPop + "', '" +
               endPop + "', '" + survivalRate + "', '" +
               startDay + "', '" + endDay + "', '" + 
-              profit + "', '" + size + "', '" + weight + "')"
+              profit + "', '" + size + "', '" + weight + "', '" + uid + "')"
   con.query(archive, function(err, result){
     if(err){
       console.log(err)
@@ -92,6 +93,16 @@ app.post('/archive', (request, response) => {
     console.log("Success")
   });
   response.send("Success");
+});
+
+app.post('/getArchives', (request, response) => {
+  let sql = "SELECT * FROM `archives` WHERE uid=" + userdata["uid"]
+  con.query(sql, function(err, result){
+    if(err){
+      console.log(err)
+    }
+    response.json(result)
+  });
 });
 
 app.post('/getFeedHistoryOfGroup', (request, response) => {
@@ -241,9 +252,9 @@ app.post('/addUnit', (request, response) => {
   let capital = request.body.capital
   let feedId = request.body.feedid
   let sql = "INSERT INTO `units` "
-          + "(`fid`, `uid`, `label`, `phoneno`, `species`, `feederload`, `startingPop`, `capital`, `feedId`) "
+          + "(`fid`, `uid`, `label`, `phoneno`, `species`, `feederload`, `startingPop`, `capital`, `feedId`, `status`) "
           + "VALUES (NULL, '"+uid+"', '"+label+"', '"+phoneno+"', '"
-          + species+"', '"+feederload+"', '"+startingPop+"', '"+capital+"','"+feedId+"')";
+          + species+"', '"+feederload+"', '"+startingPop+"', '"+capital+"','"+feedId+"', 'Online')";
   console.log(sql)
   con.query(sql, function(err, result){
     if(err){
@@ -355,7 +366,7 @@ app.post('/deleteUnit', (request, response) => {
     console.log("feed history purged")
   });
 
-  sql = "DELETE FROM `samples` WHERE fid="+fid
+  sql = "DELETE FROM `sample` WHERE fid="+fid
   con.query(sql, function(err,result){
     if(err){
       console.log(err)

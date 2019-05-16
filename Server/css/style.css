@@ -272,15 +272,26 @@ label
 	width: 100%;
 }
 
-#feeds
+#feeds, #archives
 {
 	width: 100%;
 }
 
-#feeds > table
+#feeds > table, #archives > table
 {
 	width: 90%;
 	margin: auto;
+}
+
+#status
+{
+	font-weight: bold;
+	margin: auto;
+}
+
+.warningtxt
+{
+	color: red;
 }
 
 /* =============================================================================
@@ -355,6 +366,14 @@ label
 	#deleteUnitBtn
 	{
 		width: 40%;
+	}
+
+	#archives, #feeds
+	{
+		border: 1px solid black;
+		margin: auto;
+		width: 98%;
+		overflow-x: scroll;
 	}
 }
 

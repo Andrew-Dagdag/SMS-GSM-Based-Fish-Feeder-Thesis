@@ -35,8 +35,61 @@
 		</div>
 		<a id="editProfileBtn" href="/editProfile">Edit Account Details</a>
 	</div>
+
+	<div class="contentBox container">
+		<h2>Archives</h2>
+		<hr>
+		<div class="row" id="statsContent">
+			<div id="archives">
+				<table>
+					<tr>
+						<th>Species</th>
+						<th>Starting Population</th>
+						<th>Final Population</th>
+						<th>Survival Rate</th>
+						<th>Start Date</th>
+						<th>End Date</th>
+						<th>Profit</th>
+						<th>Ave. Size</th>
+						<th>Ave. Weight</th>
+					</tr>
+					<tr>
+						<td>Tilapia</td>
+						<td>100</td>
+						<td>75</td>
+						<td>75%</td>
+						<td>1/1/2019</td>
+						<td>12/31/2019</td>
+						<td>P500</td>
+						<td>10 in</td>
+						<td>5 kg</td>
+					</tr>
+					<tr>
+						<td>Bangus</td>
+						<td>100</td>
+						<td>60</td>
+						<td>60%</td>
+						<td>1/1/2019</td>
+						<td>12/31/2019</td>
+						<td>P600</td>
+						<td>15 in</td>
+						<td>8 kg</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+
 	<script>
 	$(document).ready(function(){
+		var readableTime = (dateTime) =>{
+			var res = new Date(dateTime);
+			console.log(res.toLocaleString());
+			// console.log(res.getTimezoneOffset());
+
+			return res.toLocaleString();
+		}
+
 		$.fn.logout = function(){
 			$.post("/logout", function(result){
 				window.location.href = "/";
@@ -68,6 +121,30 @@
 
 		$.post("/getFID", function(result){
 			$(this).changeFeeder(result);
+		});
+
+		$.post("/getArchives", function(archive){
+			let insert = "<table><tr><th>Species</th><th>Starting Population</th><th>Final Population</th><th>Survival Rate</th><th>Start Date</th><th>End Date</th><th>Profit</th><th>Ave. Size</th><th>Ave. Weight</th></tr>"
+			console.log(archive);
+			for(let i = 0; i < archive.length;i++){
+				insert += "<tr>" +
+				"<td>" + archive[i].species + "</td>" +
+				"<td>" + archive[i].startingPop + "</td>" +
+				"<td>" + archive[i].endPop + "</td>" +
+				"<td>" + archive[i].survivalRate + "</td>"
+
+				startday = readableTime(archive[i].startDay);
+				endday = readableTime(archive[i].endDay);
+
+				insert += "<td>" + startday + "</td>" +
+				"<td>" + endday + "</td>" +
+				"<td>" + archive[i].profit + "</td>" +
+				"<td>" + archive[i].size + "</td>" +
+				"<td>" + archive[i].weight + "</td></tr>"
+			}
+			insert += "</table>"
+			console.log(insert)
+			$("#archives").html(insert);
 		});
 	});</script>
 </body>
