@@ -16,6 +16,7 @@ let textCon     = mysql.createConnection({
                   })
 let sha256      = require("sha256")
 let userdata = {}
+let timeCheck = {}
 let currentFID = null
 
 app.use(express.static(__dirname + "/html"));
@@ -516,7 +517,16 @@ app.post('/verifyPassword', (request, response) => {
 
 const sendTextMessage = (message, number) => {
   //set query for text message
-  console.log()
+  let keys = Object.keys(timeCheck)
+  for(let i = 0; i < keys.length; i++){
+    if(timeCheck[keys[i]][0] == number){
+      console.log(timeCheck[keys[i]][0] + " matches with ")
+      if(message.split(",")[0] == "feed"){
+        timeCheck[keys[i]][1] = (new Date()).getTime()
+        timeCheck[keys[i]][2] = true
+      }
+    }
+  }
   console.log("I'm sending the text '" + message + "' with the number =>" + number)
   let messageQuery = "INSERT INTO `messagesend` (`Id`, `MessageFrom`, `MessageTo`, `MessageText`) VALUES (NULL, NULL, '"+number+"', '"+message+"')"
   // console.log(messageQuery)
@@ -536,7 +546,7 @@ const feedNow = (fid, amount, userphone, text) => {
         throw err
       }
     })
-    if(feederload <= 300){ //less than 500 grams
+    if(feederload <= 1000){ //less than 1000 grams
       let sql = "SELECT `users`.`phoneno`, `units`.`label` FROM `units` INNER JOIN `users` ON `users`.`uid`=`units`.`uid` WHERE `units`.`fid`="+fid
       con.query(sql, function(err, res){
         let phoneno = res[0].phoneno
@@ -572,6 +582,7 @@ const feedNow = (fid, amount, userphone, text) => {
 
 app.listen(2018, function(){
   console.log("Ayooo I started the server at localhost:2018");
+  //Schedule reading
   setInterval(function(){
     let fieldUnits = []
     con.query("SELECT * FROM `schedule`", function(err, result){
@@ -647,7 +658,7 @@ app.listen(2018, function(){
       })
     })
   }, 60000)
-
+  //Message reading
   setInterval(function(){
     console.log("I'm checking for texts lol")
     let query = "SELECT * FROM `messagereceive`"
@@ -656,6 +667,15 @@ app.listen(2018, function(){
       for(let i = 0; i < result0.length; i++){
         // console.log("With the message:", result0[i].MessageText)
         let phoneno = result0[i].MessageFrom
+
+        //messageCheck Territory
+        let keys = Object.keys(timeCheck)
+        for(let i = 0; i < keys.length; i++){
+          if(timeCheck[keys[i]][3] == phoneno){
+            timeCheck[keys[i]][2] = false
+          }
+        }
+        //messageCheck Territory END
         let checkPhoneSQL = "SELECT * FROM `users` WHERE `users`.`phoneno`='"+phoneno+"'"
         let textID = result0[i].Id
         // let text = result0[i].MessageText.replace(/\r\n/g, "").replace(/ /g,"").split(",")
@@ -821,6 +841,36 @@ app.listen(2018, function(){
             }
           })
         })
+      }
+    })
+  }, 5000)
+  //timeCheck
+  setInterval(function(){
+    let unitSQL = "SELECT `units`.`fid`, `units`.`phoneno` AS unitPhone, `users`.`phoneno` AS userPhone, `units`.`label` FROM `units` JOIN `users` ON `units`.`uid`=`users`.`uid`"
+    con.query(unitSQL, function(err, units){
+      // console.log(timeCheck)
+      let keys = Object.keys(timeCheck)      
+      for(let i = 0; i < units.length; i++){
+        // console.log(keys.includes(String(units[i].fid)))
+        if (keys.includes(String(units[i].fid))){
+          continue
+        }else{                      //Legend: [unitPhone#, timestamp, flag, ownerPhone#]
+          timeCheck[units[i].fid] = [units[i].unitPhone, 0, false, units[i].userPhone, units[i].label]
+        }
+      }
+      console.log(timeCheck)
+    
+      keys = Object.keys(timeCheck)
+      for(let i = 0; i < keys.length; i++){
+        if(timeCheck[keys[i]][2]){
+          let currentTime = (new Date()).getTime()
+          let testTime = timeCheck[keys[i]][1]
+          if(currentTime - testTime >= 60000){ //10 minutes
+            let message = "Your field unit " + timeCheck[keys[i]][4] + " is unresponsive."
+            sendTextMessage(message, timeCheck[keys[i]][3])
+            timeCheck[keys[i]][2] = false
+          }
+        }
       }
     })
   }, 5000)
