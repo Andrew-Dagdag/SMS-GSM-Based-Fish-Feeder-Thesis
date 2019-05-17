@@ -326,7 +326,7 @@ app.post('/updateUnit', (request, response) => {
   let sched = request.body.schedule
   let type = request.body.type
   let schedSQL  = "UPDATE `schedule` "
-                + "SET `sched` = '" + sched + "', `amount` = '" + amount + "' "
+                + "SET `sched` = '" + sched + "', `amount` = '" + amount + "', `type` = '" + type + "'"
                 + "WHERE `fid` = '"+currentFID+"'"
   con.query(schedSQL, function(err, res){
     if(err){
@@ -520,7 +520,6 @@ const sendTextMessage = (message, number) => {
   let keys = Object.keys(timeCheck)
   for(let i = 0; i < keys.length; i++){
     if(timeCheck[keys[i]][0] == number){
-      console.log(timeCheck[keys[i]][0] + " matches with ")
       if(message.split(",")[0] == "feed"){
         timeCheck[keys[i]][1] = (new Date()).getTime()
         timeCheck[keys[i]][2] = true
@@ -671,8 +670,17 @@ app.listen(2018, function(){
         //messageCheck Territory
         let keys = Object.keys(timeCheck)
         for(let i = 0; i < keys.length; i++){
-          if(timeCheck[keys[i]][3] == phoneno){
+          if(timeCheck[keys[i]][0] == phoneno){
             timeCheck[keys[i]][2] = false
+            let statusCheck = "SELECT * FROM `units` WHERE fid=" + keys[i]
+            con.query(statusCheck, function(err, res){
+              if(res[0].status == "Offline"){
+                let update = "UPDATE `units` SET `status` = 'Online' WHERE `units`.`fid` = " + keys[i]
+                con.query(update, function(err, res){ if(err){ console.log(err)}})
+              }
+            })
+            let message = "Your unit " + timeCheck[keys[i]][4] + " has just been fed."
+            sendTextMessage(message, timeCheck[keys[i]][3])
           }
         }
         //messageCheck Territory END
@@ -854,11 +862,11 @@ app.listen(2018, function(){
         // console.log(keys.includes(String(units[i].fid)))
         if (keys.includes(String(units[i].fid))){
           continue
-        }else{                      //Legend: [unitPhone#, timestamp, flag, ownerPhone#]
+        }else{                      //Legend: [unitPhone#, timestamp, flag, ownerPhone#, label]
           timeCheck[units[i].fid] = [units[i].unitPhone, 0, false, units[i].userPhone, units[i].label]
         }
       }
-      console.log(timeCheck)
+      // console.log(timeCheck)
     
       keys = Object.keys(timeCheck)
       for(let i = 0; i < keys.length; i++){
@@ -868,6 +876,8 @@ app.listen(2018, function(){
           if(currentTime - testTime >= 60000){ //10 minutes
             let message = "Your field unit " + timeCheck[keys[i]][4] + " is unresponsive."
             sendTextMessage(message, timeCheck[keys[i]][3])
+            let update = "UPDATE `units` SET `status` = 'Offline' WHERE `units`.`fid` = " + keys[i]
+            con.query(update, function(err, res){ if(err){ console.log(err) }})
             timeCheck[keys[i]][2] = false
           }
         }
