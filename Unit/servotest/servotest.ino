@@ -2,25 +2,38 @@
 
 Servo servo;
 unsigned long mark = 0;
+int pos = 180;
 
 void setup() {
   Serial.begin(9600);
   servo.attach(6);
-  servo.write(180);
+  servo.write(pos);
   Serial.write("setup complete");
+  load();
 }
 
 void loop() {
+  
+}
+
+void load() {
   mark = millis();
-  servo.write(130);
+  for (pos;pos>130;pos--){
+    servo.write(pos);
+  }
   while (millis() - mark < 2500){
     Serial.println("wiggle");
-    servo.write(130);
-    delay(50);
-    servo.write(145);
-    delay(50);
+    for (pos;pos<160;pos++){
+      servo.write(pos);
+    }
+    delay(100);
+    for (pos;pos>130;pos--){
+      servo.write(pos);
+    }
+    delay(100);
   }
-  servo.write(180);
-  delay(5000);
+  for (pos;pos<180;pos++){
+    servo.write(pos);
+  }
 }
 

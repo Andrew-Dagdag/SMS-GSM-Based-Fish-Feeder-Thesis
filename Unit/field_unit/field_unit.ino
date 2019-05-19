@@ -4,11 +4,12 @@
 
 SoftwareSerial sim900a(4, 5);
 Servo loadDoor;
-String serverNo = "+639301316858";  // test number
-//String serverNo = "+639486479289"; // server number
+//String serverNo = "+639484240042";  // test number
+String serverNo = "+639486479289"; // server number
 unsigned long timer = 0;
 bool loaderOn = false;
 bool compOn = false;
+int pos = 180;
 
 void setup() {
   Serial.begin(9600); // set Serial baud rate
@@ -17,7 +18,7 @@ void setup() {
   digitalWrite(2,HIGH);
   digitalWrite(3,HIGH);
   loadDoor.attach(6); // attach loader servo to pin 6
-  loadDoor.write(180);
+  loadDoor.write(pos);
   Serial.println("  pins set\n  loader door set to closed\n  waiting for SIM900A to connect");
   sim900a.begin(9600);// set GSM module baud rate
   delay(3000);
@@ -42,16 +43,18 @@ void loop() {
       buffer.remove(buffer.length() - 2, 2); // remove \r\n at the end
   
       Serial.println("SMS: '" + buffer + "'");
-      String command = buffer.substring(0,4);
-      buffer = buffer.substring(5);
+      String command = buffer.substring(0,4); // 1st 5 chars = command
+      buffer = buffer.substring(5); // 6th char onwards is feed amount
       int amount = buffer.toInt();
-
-      for (amount; amount > 0; amount-100){   
+      respond(); // send response message to server
+      
+      while (amount > 0){   
         sequence();                           // begin firing sequence
+        amount -= 100;
         delay(200);
       }
       
-      sim900a.print("AT+CMGD=1,4");           // clear inbox so it never gets full
+      sim900a.print("AT+CMGD=1,4");           // clear inbox and outbox so it never gets full
     }else{
       Serial.println("Unauthorized number. Message ignored.\n");
     }
@@ -95,18 +98,26 @@ void prep() {
   loaderOn = true;        // set loader flag to true
   compOn = true;          // set compressor flag to true
 
-  loadDoor.write(130);
+  for (pos;pos>130;pos--){
+    loadDoor.write(pos);
+  }
   digitalWrite(2,LOW);  // turn on compressor for 25s; 60psi
   while (millis() - timer < 2500){
     //Serial.print("wiggle ");
-    loadDoor.write(130);
-    delay(50);
-    loadDoor.write(145);
-    delay(50);
+    for (pos;pos<160;pos++){
+      loadDoor.write(pos);
+    }
+    delay(100);
+    for (pos;pos>130;pos--){
+      loadDoor.write(pos);
+    }
+    delay(100);
   }
-  loadDoor.write(180);
+  for (pos;pos<180;pos++){
+    loadDoor.write(pos);
+  }
   
-  while (millis() - timer < 25000) {
+  while (millis() - timer < 25000) { // change 2000 back to 25000
     if ((millis() - timer)%1000 == 0){
       Serial.println(millis() - timer);
       //Serial.println("\n");
@@ -115,5 +126,18 @@ void prep() {
   digitalWrite(2,HIGH); // turn off compressor at 25s
   compOn = false;       // set compressor flag to false
   Serial.println(" > air tank ready. compressor off");
+}
+
+void respond() {
+  sim900a.println("AT + CMGS = \"+639486479289\"");
+  delay(200);
+  sim900a.println("unit response here");
+  delay(200);
+  sim900a.println((char)26);//the ASCII code of the ctrl+z is 26
+  delay(200);
+  sim900a.println();
+  Serial.println(" > response message has been sent\n");
+  delay(200);
+  sim900a.print("AT+CNMI=2,2,0,0,0\r\n"); // set SIM900A mode to receive
 }
 
