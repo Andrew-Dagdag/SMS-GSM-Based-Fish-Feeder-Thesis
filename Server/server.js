@@ -359,6 +359,14 @@ app.post('/deleteUnit', (request, response) => {
   console.log("B O I")
   let fid = request.body.fid
 
+  let keys = Object.keys(timeCheck)
+  for(let i = 0; i < keys.length; i++){
+    if(keys[i] == String(fid)){
+      delete timeCheck[keys[i]]
+      break
+    }
+  }
+
   let sql = "DELETE FROM `feedhistory` WHERE fid="+fid
   con.query(sql, function(err,result){
     if(err){
