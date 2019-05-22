@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 16, 2019 at 06:59 AM
+-- Generation Time: May 22, 2019 at 11:04 AM
 -- Server version: 10.1.36-MariaDB
 -- PHP Version: 7.2.10
 
@@ -137,7 +137,13 @@ INSERT INTO `feedhistory` (`fid`, `feedamt`, `timestamp`, `type`, `index`, `feed
 (14, 100, 1557979204760, 'Scheduled', 86, 3),
 (2, 700, 1557981619166, 'Scheduled', 90, 2),
 (4, 300, 1557982099240, 'Scheduled', 91, 1),
-(1, 400, 1557982219265, 'Scheduled', 92, 1);
+(1, 400, 1557982219265, 'Scheduled', 92, 1),
+(4, 300, 1558136910263, 'Scheduled', 93, 1),
+(14, 100, 1558137630383, 'Scheduled', 94, 3),
+(3, 1000, 1558513845812, 'Scheduled', 95, 1),
+(2, 700, 1558514445906, 'Scheduled', 96, 2),
+(4, 300, 1558514925964, 'Scheduled', 97, 1),
+(1, 400, 1558515045977, 'Scheduled', 98, 1);
 
 -- --------------------------------------------------------
 
@@ -213,13 +219,13 @@ CREATE TABLE `units` (
 --
 
 INSERT INTO `units` (`fid`, `uid`, `label`, `phoneno`, `species`, `feederload`, `startingPop`, `capital`, `feedId`, `status`) VALUES
-(1, 1, 'Dagdag, Unit 1', '+639486479304', 'Tilapia', 7000, 5000, 8000, 1, 'Offline'),
-(2, 1, 'Dagdag, Unit 2', '+639486479304', 'Koi', 900, 2000, 4000, 2, 'Offline'),
-(3, 2, 'Articuno', '+639486479304', 'Tilapia', 3200, 4000, 5000, 1, 'Offline'),
-(4, 2, 'Zapdos', '+639486479304', 'Bangus', 7300, 3000, 6000, 1, 'Offline'),
-(5, 2, 'Moltres', '+639486479304', 'Lionfish', 14400, 800, 1100, 2, 'Online'),
+(1, 1, 'Dagdag, Unit 1', '+639486479304', 'Tilapia', 6600, 5000, 8000, 1, 'Offline'),
+(2, 1, 'Dagdag, Unit 2', '+639486479304', 'Koi', 200, 2000, 4000, 2, 'Offline'),
+(3, 2, 'Articuno', '+639486479304', 'Tilapia', 2200, 4000, 5000, 1, 'Offline'),
+(4, 2, 'Zapdos', '+639486479304', 'Bangus', 6700, 3000, 6000, 1, 'Offline'),
+(5, 2, 'Moltres', '+639486479304', 'Lionfish', 14400, 800, 1100, 2, 'Offline'),
 (13, 4, 'koi', '+639123456777', 'koi', 300, 500, 500, 1, 'Offline'),
-(14, 4, 'bangus', '+639464073948', 'bangus', 100, 300, 400, 3, 'Offline'),
+(14, 4, 'bangus', '+639464073948', 'bangus', 0, 300, 400, 3, 'Offline'),
 (15, 5, 'fish1', '+639123456777', 'bangus', 300, 500, 500, 1, 'Offline');
 
 -- --------------------------------------------------------
@@ -318,19 +324,19 @@ ALTER TABLE `feed`
 -- AUTO_INCREMENT for table `feedhistory`
 --
 ALTER TABLE `feedhistory`
-  MODIFY `index` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=93;
+  MODIFY `index` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=99;
 
 --
 -- AUTO_INCREMENT for table `sample`
 --
 ALTER TABLE `sample`
-  MODIFY `index` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `index` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `units`
 --
 ALTER TABLE `units`
-  MODIFY `fid` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `fid` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `users`

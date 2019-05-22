@@ -151,43 +151,61 @@
 
 		function mainSql(username, password, userno, label, number, species, load, feedid, startingpop, capital, amount){
 			//do user query
-			$.post("/addUser", {username:username, password:password, userno:userno}, function(response){
-				console.log(response);
-				alert("Successfully registered the user!");
-				let uid = response["uid"];
-				console.log(uid);
+			if(userno == number){
+				alert("You can't have the same phone number for both your account and your field unit");
+			}else{
+				$.post("/checkNumber", {number:userno}, function(userPhoneResponse){
+					if(userPhoneResponse["response"] != "Success"){
+						let error = userPhoneResponse["response"];
+						alert(error);
+					}else{
+						$.post("/checkNumber", {number:number}, function(fieldPhoneResponse){
+							if(fieldPhoneResponse["response"] != "Success"){
+								let error = fieldPhoneResponse["response"];
+								alert(error);
+							}else{
+								$.post("/addUser", {username:username, password:password, userno:userno}, function(response){
+									console.log(response);
+									alert("Successfully registered the user!");
+									let uid = response["uid"];
+									console.log(uid);
 
-				let schedtype = $("#schedtype").val();
-				let schedule = "";
+									let schedtype = $("#schedtype").val();
+									let schedule = "";
 
-				if(schedtype == "interval"){
-					let startTime= $("#startTime").val();
-					let endTime= $("#endTime").val();
-					let interval= $("#interval").val();
-					schedule = startTime + "," + interval + "," + endTime;
-				}else{
-					schedule = $("#schedulefeed").val();
-				}
-				//console.log("schedtype: " + schedtype + "\nschedule: " + schedule)
-				
-				//do unit query
-				console.log("Im doing the query");
-				$.post("/addUnit", {uid:uid, label:label, phoneno:number, species:species, feederload:load, startingPop:startingpop, capital:capital, feedid:feedid, schedule:schedule, amount:amount, type:schedtype}, function(response2){
-					console.log(response2["insertId"]);
-					alert("Successfully added the new field unit details!");
+									if(schedtype == "interval"){
+										let startTime= $("#startTime").val();
+										let endTime= $("#endTime").val();
+										let interval= $("#interval").val();
+										schedule = startTime + "," + interval + "," + endTime;
+									}else{
+										schedule = $("#schedulefeed").val();
+									}
+									//console.log("schedtype: " + schedtype + "\nschedule: " + schedule)
+									
+									//do unit query
+									console.log("Im doing the query");
+									$.post("/addUnit", {uid:uid, label:label, phoneno:number, species:species, feederload:load, startingPop:startingpop, capital:capital, feedid:feedid, schedule:schedule, amount:amount, type:schedtype}, function(response2){
+										console.log(response2["insertId"]);
+										alert("Successfully added the new field unit details!");
 
-					// login user after registering
-					$.post("/userLogin", {User:username, Pass:password}, function(result3){
-				        console.log("Ayoooo", result3["success"]);
-				        if(result3["success"]){
-				          // $("#res").html("I will redirect you to the feeder list");
-				          window.location.href = "/FishFeedIndex";
-				        }else{
-				          console.log("Incorrect password or username, try again mofo");
-				        }
-				      });
+										// login user after registering
+										$.post("/userLogin", {User:username, Pass:password}, function(result3){
+									        console.log("Ayoooo", result3["success"]);
+									        if(result3["success"]){
+									          // $("#res").html("I will redirect you to the feeder list");
+									          window.location.href = "/FishFeedIndex";
+									        }else{
+									          console.log("Incorrect password or username, try again mofo");
+									        }
+									      });
+									});
+								});
+							}
+						});
+					}
 				});
-			});
+			}
 		}
 
 		$("#finalRegister").click(function(){

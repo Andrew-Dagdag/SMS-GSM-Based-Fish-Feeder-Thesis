@@ -69,6 +69,43 @@ app.get("/finance", (request, response) => {
 /*********************
 **AJAX POST REQUESTS**
 *********************/
+app.post('/checkNumber', (request, response) => {
+  let number = request.body.number
+  let data = {}
+
+  let userPhone = userdata["user_phone"];
+  if(number == userPhone){
+    data["response"] = "Success"
+    response.send(data)
+  }else{
+    let fidPhoneSQL = "SELECT `units`.`phoneno` FROM `units` WHERE `units`.`fid`=" + currentFID
+    con.query(fidPhoneSQL, function(err, fidPhone){
+      if(number == fidPhone[0].phoneno){
+        data["response"] = "Success"
+        response.send(data)
+      }else{
+        let userQuery = "SELECT `users`.`name` FROM `users` WHERE `users`.`phoneno`=" + number
+        con.query(userQuery, function(err, userRes){
+          if(userRes.length > 0){
+            data["response"] = "Phone number is already registered to the account " + userRes[0].name
+            response.send(data)
+          }else{
+            let fieldQuery = "SELECT `units`.`label` FROM `units` WHERE `units`.`phoneno`=" + number
+            con.query(fieldQuery, function(err, fieldRes){
+              if(fieldRes.length > 0){
+                data["response"] = "Phone number is already registered to the field unit " + fieldRes[0].label
+                response.send(data)
+              }else{
+                data["response"] = "Success"
+                response.send(data)
+              }
+            })
+          }
+        })
+      }
+    })
+  }
+});
 
 app.post('/archive', (request, response) => {
   let species = request.body.species 
@@ -536,11 +573,11 @@ const sendTextMessage = (message, number) => {
   }
   console.log("I'm sending the text '" + message + "' with the number =>" + number)
   let messageQuery = "INSERT INTO `messagesend` (`Id`, `MessageFrom`, `MessageTo`, `MessageText`) VALUES (NULL, NULL, '"+number+"', '"+message+"')"
-  // console.log(messageQuery)
-  // textCon.query(messageQuery, function(err, res){
-  //   if(err)
-  //     throw err
-  // })
+  console.log(messageQuery)
+  textCon.query(messageQuery, function(err, res){
+    if(err)
+      throw err
+  })
 }
 
 const feedNow = (fid, amount, userphone, text) => {

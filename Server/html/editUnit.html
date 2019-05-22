@@ -185,7 +185,6 @@
 		function mainSql(label, number, feedid, currentload, amount){
 			let schedtype = $("#schedtype").val();
 			let schedule = "";
-
 			if(schedtype == "interval"){
 				let startTime= $("#startTime").val();
 				let endTime= $("#endTime").val();
@@ -198,10 +197,17 @@
 				
 			//do user query
 			console.log("Im doing the query");
-			$.post("/updateUnit", {uid:uid, label:label, phoneno:number, feedId:feedid, feederload:currentload, schedule:schedule, amount:amount, type:schedtype}, function(response){
-				// console.log(response);
-				alert("Successfully updated the new field unit details!");
-				window.location.href = "/FishFeedIndex";
+			$.post("/checkNumber", {number:number}, function(fieldPhoneResponse){
+				if(fieldPhoneResponse["response"] != "Success"){
+					let error = fieldPhoneResponse["response"];
+					alert(error);
+				}else{
+					$.post("/updateUnit", {uid:uid, label:label, phoneno:number, feedId:feedid, feederload:currentload, schedule:schedule, amount:amount, type:schedtype}, function(response){
+						// console.log(response);
+						alert("Successfully updated the new field unit details!");
+						window.location.href = "/FishFeedIndex";
+					});
+				}
 			});
 		}
 

@@ -74,10 +74,17 @@
 			}else{
 				//do query
 				console.log("Im doing the query")
-				$.post("/updateUser", {uid:uid, name:newName, phoneno:newNumber}, function(response){
-					console.log(response);
-					alert("Successfully updated your account details!");
-					window.location.href = "/profile";
+				$.post("/checkNumber", {number:newNumber}, function(userPhoneResponse){
+					if(userPhoneResponse["response"] != "Success"){
+						let error = userPhoneResponse["response"];
+						alert(error);
+					}else{
+						$.post("/updateUser", {uid:uid, name:newName, phoneno:newNumber}, function(response){
+							console.log(response);
+							alert("Successfully updated your account details!");
+							window.location.href = "/profile";
+						});
+					}
 				});
 			}
 		});
