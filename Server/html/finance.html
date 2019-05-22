@@ -102,15 +102,17 @@
 					}
 					$.post("/getFeedsOfOwner", function(feeds){
 						let insert = "<table><tr><th>Feed Name</th><th>Cost per Kilo</th><th>Feeders using the feed</th><th>Costs so far</th></tr>";
-						console.log(feeds);
+						let totalCost = 0
+						// console.log(feeds);
 						for(let i = 0; i < feeds.length; i++){
+							totalCost += parseFloat(getTotalCost(feeds[i].feedId, feeds[i].cost));
 							insert += "<tr>" +
 								"<td>" + feeds[i].feedname + "</td>" +
 								"<td>" + feeds[i].cost + "</td>" +
 								"<td>" + getFeederNames(feeds[i].feedId) + "</td>" + 
 								"<td>" + getTotalCost(feeds[i].feedId, feeds[i].cost)
 						}
-						insert += "</table>"
+						insert += "<tr><td colspan=3 style='font-weight:bold'>Total Costs Of Everything™</td><td style='font-weight:bold'>" + totalCost + "</td></tr></table>"
 						$("#feeds").html(insert);
 					});
 				});

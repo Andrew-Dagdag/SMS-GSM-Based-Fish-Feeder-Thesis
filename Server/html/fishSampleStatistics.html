@@ -73,10 +73,33 @@
 		<hr />
 		<div class="row">
 			<div class="col-10">
-				<div>Input market price for <span id="species"></span>: <br id="predictionBreak" /><input type="number" id="estPrice"/></div>
-				<div>Income: <span id="fishweight">N</span> kg x <span id="fishpop"> N </span> fishes x <span id="marketPrice"></span> php/kg = <span id="estIncome"></span></div>
-				<div>Expenses: <span id="fishcapital">N</span> capital + <span id="feedcost"> N </span>/kg for feed = <span id="estExpenses"></span></div>
-				<div>Net Profit: <span id="income">Income</span> - <span id="expenses">Expenses</span> = <span id="profit">Profit</span></div>
+				<table>
+					<tr>
+						<th colspan=4>
+							Input Market Price for <span id="species"></span>
+						</th>
+						<td><input type="number" id="estPrice"/></td>
+					</tr>
+					<tr>
+						<th>Income</th>
+						<td><span id="fishweight">N</span> kg (ave weight)</td>
+						<td><span id="fishpop"> N </span> fishes (est pop)</td>
+						<td><span id="marketPrice"></span> php/kg</td>
+						<td><span id="estIncome"></span></td>
+					</tr>
+					<tr>
+						<th colspan=2>Expenses</th>
+						<td><span id="fishcapital">N</span> capital</td>
+						<td><span id="feedcost"> N </span> for feeds</td>
+						<td><span id="estExpenses"></span></td>
+					</tr>
+					<tr>
+						<th colspan=2>Net Profit</th>
+						<td><span id="income"></span> Income</td>
+						<td><span id="expenses"></span> Expenses</td>
+						<td><span id="profit"></span></td>
+					</tr>
+				</table>
 			</div>
 			<div class="col-2"><button class="btn btn-default" id="harvest">HARVEST THIS UNIT</button></div>
 		</div>
