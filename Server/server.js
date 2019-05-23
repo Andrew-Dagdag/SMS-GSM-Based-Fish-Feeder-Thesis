@@ -71,16 +71,18 @@ app.get("/finance", (request, response) => {
 *********************/
 app.post('/checkNumber', (request, response) => {
   let number = request.body.number
+  let type = request.body.type
   let data = {}
 
   let userPhone = userdata["user_phone"];
-  if(number == userPhone){
+
+  if(type == "user" && number == userPhone){
     data["response"] = "Success"
     response.send(data)
   }else{
     let fidPhoneSQL = "SELECT `units`.`phoneno` FROM `units` WHERE `units`.`fid`=" + currentFID
     con.query(fidPhoneSQL, function(err, fidPhone){
-      if(number == fidPhone[0].phoneno){
+      if(type == "field" && number == fidPhone[0].phoneno){
         data["response"] = "Success"
         response.send(data)
       }else{
