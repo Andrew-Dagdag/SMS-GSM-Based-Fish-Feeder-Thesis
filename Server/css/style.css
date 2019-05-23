@@ -1,11 +1,18 @@
 body
 {
 	font-family: Arial;
+	background-color: #e1e8ed !important;
+}
+
+#indextitle
+{
+	color: #075F9D;
 }
 
 .navbar
 {
-	background-color: #555;
+	background-color: white;
+	border-bottom: 1px solid #075F9D;
 }
 
 .navbar > ul
@@ -14,7 +21,7 @@ body
 	margin: 0;
 	padding: 0;
 	overflow: hidden;
-	background-color: #555;
+	background-color: white;
 }
 
 .navbar li
@@ -23,23 +30,37 @@ body
 	float: left;
 }
 
-.navbar a, #editUnitBtn, #editProfileBtn, #addSampleBtn, #statisticsBtn, #financialBtn
+.navbar a
 {
 	display: block;
 	text-decoration: none;	
-	color: black;
+	color: #29526C;
 	text-align: center;
-	padding: 15px;
+	padding: 15px 20px;
 	margin: 5px 0px 5px 5px;
-	background-color: gray;
-	border: 1px solid black;
-	border-radius: 5px;
+	background-color: white;
+	border-bottom: 3px solid #075F9D;
+	border-radius: 25px;
+}
+
+#editUnitBtn, #editProfileBtn, #addSampleBtn, #statisticsBtn, #financialBtn
+{
+	display: block;
+	text-decoration: none;	
+	color: #29526C;
+	text-align: center;
+	padding: 15px 20px;
+	margin: 5px 0px 5px 5px;
+	background-color: white;
+	border: 2px solid #075F9D;
+	border-radius: 50px;
 }
 
 #editUnitBtn, #editProfileBtn, #deleteUnitBtn, #addSampleBtn, #statisticsBtn, #financialBtn
 {
 	margin: auto;
 	margin-top: 20px;
+
 }
 
 .navbar li:last-child
@@ -49,7 +70,7 @@ body
 
 .navbar a:hover:not(.active), #editUnitBtn:hover, #editProfileBtn:hover, #addSampleBtn:hover, #statisticsBtn:hover
 {
-	background-color: #333;
+	background-color: #075F9D;
 	text-decoration: none;
 	color: white;
 }
@@ -61,29 +82,41 @@ body
 
 .contentBox
 {
-	background-color: #999;
+	background-color: white;
 	margin-top: 30px;
 	padding: 15px 35px 35px 35px;
-	border: 1px solid #111;
+	border-radius: 20px;
 	margin-bottom: 30px;
 }
 
 #username
 {
-	margin-top: 10px;
-	margin-left: 20px;
+	margin: 8px;
+	padding: 10px 30px;
 	font-weight: bold;
+	display: inline-block;
+	border-radius: 50px;
+	background-color: white;
+	color: #075F9D;
 }
 
 h2:not(#username), #optionsContent, h3, h4, h5, h6
 {
 	text-align: center;
+	font-weight: bold;
+	color: #075F9D;
 }
 
 table, th, td
 {
 	text-align: left;
-	border: 1px solid #111;
+	border: 1px solid #657786;
+}
+
+th
+{
+	font-weight: bolder;
+	color: #075F9D;
 }
 
 tr > *
@@ -292,6 +325,11 @@ label
 .warningtxt
 {
 	color: red;
+}
+
+#harvest
+{
+	border-radius: 5px;
 }
 
 /* =============================================================================

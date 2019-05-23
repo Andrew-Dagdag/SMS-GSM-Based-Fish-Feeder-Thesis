@@ -96,7 +96,7 @@
 					<input type="number" name="feedAmt" id="feedAmt" value="100" min="100" required="required" /> grams
 				</div>
 			</div>
-			<button id="addUnit" class="btn btn-success">Add Unit</button>
+			<button id="addUnit" class="btn btn-primary">Add Unit</button>
 		</div>
 	</div>
 	<script>
@@ -173,7 +173,7 @@
 			//do user query
 			console.log("Im doing the query");
 
-			$.post("/checkNumber", {number:number}, function(fieldPhoneResponse){
+			$.post("/checkNumber", {number:number, type:"unit"}, function(fieldPhoneResponse){
 				if(fieldPhoneResponse["response"] != "Success"){
 					let error = fieldPhoneResponse["response"];
 					alert(error);

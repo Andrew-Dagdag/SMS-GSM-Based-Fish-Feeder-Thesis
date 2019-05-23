@@ -85,7 +85,7 @@
 				</div>
 			</div>
 		</div>
-		<button id="saveUnitChanges" class="btn btn-success">Save Changes</button>
+		<button id="saveUnitChanges" class="btn btn-primary">Save Changes</button>
 	</div>
 
 	<div class="contentBox container">
@@ -197,7 +197,7 @@
 				
 			//do user query
 			console.log("Im doing the query");
-			$.post("/checkNumber", {number:number}, function(fieldPhoneResponse){
+			$.post("/checkNumber", {number:number, type:"unit"}, function(fieldPhoneResponse){
 				if(fieldPhoneResponse["response"] != "Success"){
 					let error = fieldPhoneResponse["response"];
 					alert(error);

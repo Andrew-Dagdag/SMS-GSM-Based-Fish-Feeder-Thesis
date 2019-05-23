@@ -30,7 +30,7 @@
 			<h6>Cellphone Number:</h6>
 			<input id="numForm" type="text" placeholder="+639xxxxxxxxx"/>
 		</div>
-		<button id="saveProfileChanges" class="btn btn-success">Save Changes</button>
+		<button id="saveProfileChanges" class="btn btn-primary">Save Changes</button>
 	</div>
 	<script>
 	$(document).ready(function(){
@@ -74,7 +74,7 @@
 			}else{
 				//do query
 				console.log("Im doing the query")
-				$.post("/checkNumber", {number:newNumber}, function(userPhoneResponse){
+				$.post("/checkNumber", {number:newNumber, type:"user"}, function(userPhoneResponse){
 					if(userPhoneResponse["response"] != "Success"){
 						let error = userPhoneResponse["response"];
 						alert(error);

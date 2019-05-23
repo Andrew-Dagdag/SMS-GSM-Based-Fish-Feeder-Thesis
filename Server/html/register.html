@@ -112,7 +112,7 @@
 		</div>
 	</div>
 	<div id="submitdiv">
-		<button class="btn btn-success" id="finalRegister">Submit</button>
+		<button class="btn btn-primary" id="finalRegister">Submit</button>
 	</div>
 	<script>
 	$(document).ready(function(){
@@ -154,12 +154,12 @@
 			if(userno == number){
 				alert("You can't have the same phone number for both your account and your field unit");
 			}else{
-				$.post("/checkNumber", {number:userno}, function(userPhoneResponse){
+				$.post("/checkNumber", {number:userno, type:"user"}, function(userPhoneResponse){
 					if(userPhoneResponse["response"] != "Success"){
 						let error = userPhoneResponse["response"];
 						alert(error);
 					}else{
-						$.post("/checkNumber", {number:number}, function(fieldPhoneResponse){
+						$.post("/checkNumber", {number:number, type:"unit"}, function(fieldPhoneResponse){
 							if(fieldPhoneResponse["response"] != "Success"){
 								let error = fieldPhoneResponse["response"];
 								alert(error);
